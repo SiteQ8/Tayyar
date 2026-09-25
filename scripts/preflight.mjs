@@ -51,7 +51,8 @@ console.log(`secrets: scanned ${text.length} files`);
 
 // 3. Every link in the README answers.
 if (!offline) {
-  const readme = readFileSync(join(root, 'README.md'), 'utf8');
+  // Addresses inside code blocks and inline code are examples to copy, not links.
+  const readme = readFileSync(join(root, 'README.md'), 'utf8').replace(/```[\s\S]*?```/g, '').replace(/`[^`\n]*`/g, '');
   const urls = [...new Set(readme.match(/https:\/\/[^\s)`'"<>]+/g) || [])];
   for (const url of urls) {
     try {
