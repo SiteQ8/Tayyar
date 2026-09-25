@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.2 (25 September 2026)
+
+- Tayyar is shared to show how Certificate Transparency monitoring works: the README, the site, the interface and `--help` now say it comes as is, without warranty.
+- The watchlist shows its domains and words with proper spacing in both languages.
+
 ## 0.2.1 (25 September 2026)
 
 - The interface footer, `tayyar --help`, the package homepage and the user agent sent to the logs now point at https://tayyar.3li.info.

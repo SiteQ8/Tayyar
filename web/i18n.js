@@ -45,6 +45,7 @@ export const STRINGS = {
     insights_empty: 'Figures appear after the first minute.',
     endpoints: 'Connect your own tools over WebSocket at {lite}, {full} or {domains}, and alerts arrive at {alerts}.',
     source: 'Source code on GitHub',
+    disclaimer: 'Shared to show how the tool works, as is and without warranty. Alerts are automated guesses and can be wrong.',
 
     alerts_title: 'Alerts',
     alerts_intro: 'Names that imitate a brand on your watchlist, raised as soon as a certificate is issued for them.',
@@ -226,6 +227,7 @@ export const STRINGS = {
     insights_empty: 'تظهر الأرقام بعد الدقيقة الأولى.',
     endpoints: 'اربط أدواتك عبر WebSocket على {lite} أو {full} أو {domains}، وتصل التنبيهات على {alerts}.',
     source: 'الشيفرة المصدرية على GitHub',
+    disclaimer: 'يُشارَك ليبيّن طريقة عمل الأداة كما هو دون أي ضمان، والتنبيهات تقديرات آلية قد تخطئ.',
 
     alerts_title: 'التنبيهات',
     alerts_intro: 'أسماء تقلّد علامة في قائمة المراقبة، تظهر هنا فور إصدار شهادة لها.',

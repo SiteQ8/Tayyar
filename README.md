@@ -99,6 +99,16 @@ npm run preflight
 
 <div dir="rtl">
 
+## إخلاء المسؤولية
+
+يُشارَك تيّار ليبيّن كيف تعمل مراقبة شفافية الشهادات، لذا يُقدَّم كما هو دون أي ضمان، ولا يتحمل صاحبه أي مسؤولية عن طريقة استخدامه أو عن أي قرار يُتخذ بناءً على نتائجه.
+
+والتنبيهات تقديرات آلية، أي أن الاسم الذي يُنبَّه عليه ليس دليلاً على أن أحداً أخطأ، كما أن الاسم الذي لا يُنبَّه عليه ليس دليلاً على سلامته.
+
+وأسماء العلامات والنطاقات في شاشات التنبيهات وقائمة المراقبة وفي أمثلة هذا الملف متخيَّلة ومحجوزة للأمثلة، بينما يعرض البث الحي شهادات عامة من سجلات الشفافية، فلا يعني ظهور أي اسم ادعاءً على أحد ولا ارتباطاً به.
+
+ثم إنك تشغّل تيّار على جهازك بنفسك، لذا تتحمل مسؤولية استخدامه واحترام سياسة الاستخدام لكل سجل يقرؤه.
+
 ## الترخيص
 
 الشيفرة متاحة بترخيص MIT.
@@ -291,6 +301,16 @@ npm run preflight   # syntax, secret scan and README links, then the tests
 ```
 
 The tests run offline against real data recorded from public CT logs: part of a static CT data tile with its issuers, `get-entries` output, and signed tree heads. Project rules are enforced by failing tests rather than by review: Arabic number agreement in the interface, no full stop in the middle of an Arabic sentence, no long dashes anywhere, message fields that match this document, and a site that is complete in both languages.
+
+## Disclaimer
+
+Tayyar is shared to show how Certificate Transparency monitoring works. It comes as is, without warranty of any kind, and its author accepts no liability for how it is used or for any decision based on its output.
+
+Alerts are automated guesses: a flagged name is not proof that anyone did anything wrong, and a name that is not flagged is not proof that it is safe.
+
+The brands and domains in the alert and watchlist screens and in the examples here are invented, using names reserved for examples, while the live stream shows public certificates from CT logs. No name shown implies a claim against anyone or any affiliation.
+
+You run Tayyar on your own machine, so how you use it, and respecting each log's usage policy, are up to you.
 
 ## License
 

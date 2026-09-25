@@ -278,6 +278,8 @@ html[dir="rtl"] .alert { padding: 0.85rem 0.9rem 0.85rem 0; }
 .alert[data-severity="high"] .score b { color: var(--high); }
 .alert[data-severity="medium"] .score b { color: var(--medium); }
 .alert .domain { font-family: var(--mono); font-size: 1rem; overflow-wrap: anywhere; }
+.n .idn { font-family: var(--sans-arabic); color: var(--pre); margin-inline-start: 0.5rem; }
+.watch-item .detail { display: flex; flex-wrap: wrap; gap: 0.15rem 0.9rem; align-items: center; }
 .alert .domain .idn { font-family: var(--sans-arabic); color: var(--pre); margin-inline-start: 0.5rem; }
 .alert .meta { color: var(--muted); font-size: 0.85rem; display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; }
 .alert .actions { grid-row: span 2; align-self: center; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.35rem; max-width: 22rem; }

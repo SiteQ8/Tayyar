@@ -145,10 +145,17 @@ npx github:SiteQ8/Tayyar watch --watchlist watchlist.json --format json</code></
       <pre dir="ltr"><code>const ws = new WebSocket('ws://127.0.0.1:4000/alerts');
 ws.onmessage = (e) =&gt; console.log(JSON.parse(e.data));</code></pre>
     </section>
+    <section id="disclaimer" class="block">
+      <h2><span class="ar" lang="ar">إخلاء المسؤولية</span><span class="en" lang="en">Disclaimer</span></h2>
+      <p><span class="ar" lang="ar">يُشارَك تيّار ليبيّن كيف تعمل مراقبة شفافية الشهادات، لذا يُقدَّم كما هو دون أي ضمان، ولا يتحمل صاحبه أي مسؤولية عن طريقة استخدامه أو عن أي قرار يُتخذ بناءً على نتائجه.</span><span class="en" lang="en">Tayyar is shared to show how Certificate Transparency monitoring works. It comes as is, without warranty of any kind, and its author accepts no liability for how it is used or for any decision based on its output.</span></p>
+      <p><span class="ar" lang="ar">والتنبيهات تقديرات آلية، أي أن الاسم الذي يُنبَّه عليه ليس دليلاً على أن أحداً أخطأ، كما أن الاسم الذي لا يُنبَّه عليه ليس دليلاً على سلامته.</span><span class="en" lang="en">Alerts are automated guesses: a flagged name is not proof that anyone did anything wrong, and a name that is not flagged is not proof that it is safe.</span></p>
+      <p><span class="ar" lang="ar">وأسماء العلامات والنطاقات في شاشات التنبيهات وقائمة المراقبة متخيَّلة ومحجوزة للأمثلة، بينما يعرض البث الحي شهادات عامة من سجلات الشفافية، فلا يعني ظهور أي اسم ادعاءً على أحد ولا ارتباطاً به.</span><span class="en" lang="en">The brands and domains in the alert and watchlist screens are invented, using names reserved for examples, while the live stream shows public certificates from CT logs. No name shown implies a claim against anyone or any affiliation.</span></p>
+      <p><span class="ar" lang="ar">ثم إنك تشغّل تيّار على جهازك بنفسك، لذا تتحمل مسؤولية استخدامه واحترام سياسة الاستخدام لكل سجل يقرؤه.</span><span class="en" lang="en">You run Tayyar on your own machine, so how you use it, and respecting each log's usage policy, are up to you.</span></p>
+    </section>
   </main>
 
   <footer class="foot">
-    <p><span class="ar" lang="ar">تيّار مفتوح المصدر بترخيص MIT.</span><span class="en" lang="en">Tayyar is open source under the MIT license.</span> <a href="https://github.com/SiteQ8/Tayyar">github.com/SiteQ8/Tayyar</a></p>
+    <p><span class="ar" lang="ar">تيّار مفتوح المصدر بترخيص MIT، ويُقدَّم كما هو دون أي ضمان.</span><span class="en" lang="en">Tayyar is open source under the MIT license, shared as is and without warranty.</span> <a href="https://github.com/SiteQ8/Tayyar">github.com/SiteQ8/Tayyar</a></p>
   </footer>
 </body>
 </html>

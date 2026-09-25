@@ -77,6 +77,7 @@ Choosing logs, for every command
   -v, --version             Show the version
 
 Site and screenshots: https://tayyar.3li.info
+Shared to show how it works, as is and without warranty.
 `;
 
 class UsageError extends Error {}
