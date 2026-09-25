@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <title>تيّار | Tayyar</title>
+  <meta name="description" content="Tayyar streams every new TLS certificate from public Certificate Transparency logs and alerts on names that imitate your brand, in Arabic and English.">
+  <meta property="og:title" content="Tayyar">
+  <meta property="og:description" content="Every new TLS certificate the moment it is logged, and every name that imitates your brand.">
+  <meta property="og:image" content="https://tayyar.3li.info/img/live-en.png">
+  <meta property="og:url" content="https://tayyar.3li.info/">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="site.css">
+  <script src="site.js"></script>
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="#top">
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7"/><path class="w1" d="M5 11c3.7-3 7.3-3 11 0s7.3 3 11 0"/><path class="w2" d="M5 17.5c3.7-3 7.3-3 11 0s7.3 3 11 0"/><circle cx="23.5" cy="24.5" r="2.6"/></svg>
+      <span class="ar" lang="ar">تيّار</span><span class="en" lang="en">Tayyar</span>
+    </a>
+    <nav class="links">
+      <a href="#features"><span class="ar" lang="ar">المزايا</span><span class="en" lang="en">Features</span></a>
+      <a href="#screens"><span class="ar" lang="ar">الشاشات</span><span class="en" lang="en">Screens</span></a>
+      <a href="#start"><span class="ar" lang="ar">التشغيل</span><span class="en" lang="en">Run it</span></a>
+      <a href="https://github.com/SiteQ8/Tayyar">GitHub</a>
+    </nav>
+    <button id="lang" class="btn ghost" type="button"><span class="ar" lang="en">English</span><span class="en" lang="ar">العربية</span></button>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <h1><span class="ar" lang="ar">كل شهادة TLS جديدة لحظة تسجيلها، وكل اسم يقلّد علامتك قبل أن يصل إلى أحد.</span><span class="en" lang="en">Every new TLS certificate the moment it is logged, and every name that imitates your brand before it reaches anyone.</span></h1>
+      <p class="lede"><span class="ar" lang="ar">تيّار أداة مفتوحة المصدر تقرأ سجلات شفافية الشهادات العامة كلها، فتبث الشهادات لحظة إصدارها وتفحص كل اسم فيها بمقارنته بقائمة مراقبتك، بما في ذلك الأسماء العربية والحروف المتشابهة.</span><span class="en" lang="en">Tayyar is open source. It reads every public Certificate Transparency log, streams certificates as they are issued, and checks every name on them against your watchlist, Arabic names and look-alike letters included.</span></p>
+      <div class="cta">
+        <a class="btn primary" href="#start"><span class="ar" lang="ar">شغّله الآن</span><span class="en" lang="en">Run it now</span></a>
+        <a class="btn" href="https://github.com/SiteQ8/Tayyar"><span class="ar" lang="ar">الشيفرة على GitHub</span><span class="en" lang="en">Code on GitHub</span></a>
+      </div>
+      <figure class="shot hero-shot">
+        <img class="ar" src="img/live-ar.png" width="1280" height="820" alt="الواجهة بالعربية وفيها البث الحي وأرقامه وأكثر الجهات إصداراً">
+        <img class="en" src="img/live-en.png" width="1280" height="820" alt="The interface in English showing the live stream, its figures and the top issuers">
+      </figure>
+    </section>
+
+    <section class="numbers" aria-label="Figures">
+      <p><b>49</b><span class="ar" lang="ar">سجلاً يقرؤها في آن واحد</span><span class="en" lang="en">logs read at once</span></p>
+      <p><b>1,200</b><span class="ar" lang="ar">شهادة فريدة في الثانية</span><span class="en" lang="en">unique certificates a second</span></p>
+      <p><b>10</b><span class="ar" lang="ar">أسباب يُرفع بها التنبيه</span><span class="en" lang="en">reasons a name is flagged</span></p>
+    </section>
+
+    <section id="features" class="block">
+      <h2><span class="ar" lang="ar">ما يقدّمه</span><span class="en" lang="en">What it does</span></h2>
+      <div class="features">
+        <article>
+          <h3><span class="ar" lang="ar">كل السجلات موثَّقة</span><span class="en" lang="en">Every log, verified</span></h3>
+          <p><span class="ar" lang="ar">يقرأ تيّار نوعي السجلات معاً، أي السجلات التي تتبع RFC 6962 والسجلات الثابتة، ويتحقق من توقيع كل رأس شجرة قبل أن يثق بحجمها.</span><span class="en" lang="en">Tayyar reads both kinds of log, RFC 6962 and static tiles, and checks each log's signature on every tree head before it trusts the size.</span></p>
+        </article>
+        <article>
+          <h3><span class="ar" lang="ar">المقلِّدات بالعربية أيضاً</span><span class="en" lang="en">Look-alikes, in Arabic too</span></h3>
+          <p><span class="ar" lang="ar">يكشف الأسماء التي تقلّد علامتك بحروف من خطوط أخرى أو بأرقام مكان الحروف أو بأخطاء إملائية أو بامتداد آخر، ويوحّد الحروف العربية المتشابهة كالكاف الفارسية والعربية.</span><span class="en" lang="en">It spots names that imitate your brand with letters from other scripts, digits for letters, misspellings or another ending, and it unifies Arabic letters that read alike, such as the Persian and Arabic kaf.</span></p>
+        </article>
+        <article>
+          <h3><span class="ar" lang="ar">تنبيهات تتابعها حتى النهاية</span><span class="en" lang="en">Alerts you can work through</span></h3>
+          <p><span class="ar" lang="ar">لكل تنبيه درجة وأسباب مشروحة وحالة تنقله فيها من جديد إلى مُعالَج، مع ملاحظاتك وتصدير CSV واستعلام DNS عند الطلب.</span><span class="en" lang="en">Every alert has a score, its reasons in plain words and a status you move from new to resolved, with notes, CSV export and a DNS lookup on demand.</span></p>
+        </article>
+        <article>
+          <h3><span class="ar" lang="ar">إشعارات موقَّعة</span><span class="en" lang="en">Signed webhooks</span></h3>
+          <p><span class="ar" lang="ar">يرسل التنبيهات الجديدة إلى أي عنوان ويب بصيغة JSON أو نص، ويوقّع كل رسالة بمفتاح سري حتى يتأكد المستقبِل من مصدرها.</span><span class="en" lang="en">New alerts go to any webhook as JSON or text, and every body is signed with HMAC SHA-256 so the receiver can check where it came from.</span></p>
+        </article>
+        <article>
+          <h3><span class="ar" lang="ar">البحث وآخر ساعة</span><span class="en" lang="en">Search and the last hour</span></h3>
+          <p><span class="ar" lang="ar">ابحث في آخر نصف مليون شهادة، واطّلع على أكثر الجهات إصداراً وأكثر الامتدادات ظهوراً خلال الساعة الأخيرة.</span><span class="en" lang="en">Search the last half a million certificates, and see which issuers and endings led the last hour.</span></p>
+        </article>
+        <article>
+          <h3><span class="ar" lang="ar">على جهازك وتحت سيطرتك</span><span class="en" lang="en">On your machine, under your control</span></h3>
+          <p><span class="ar" lang="ar">لا يعتمد على أي مكتبة خارجية ولا يرسل شيئاً إلى طرف ثالث، ويستمع على العنوان المحلي ما لم تطلب غير ذلك، ويحمي الواجهة برمز وصول حين يصل إليها غيرك.</span><span class="en" lang="en">No dependencies and no third-party requests. It listens locally unless you say otherwise, and an access token guards the interface when others can reach it.</span></p>
+        </article>
+      </div>
+    </section>
+
+    <section id="screens" class="block">
+      <h2><span class="ar" lang="ar">الشاشات</span><span class="en" lang="en">Screens</span></h2>
+      <div class="gallery">
+        <figure class="shot">
+          <img class="ar" src="img/alerts-ar.png" width="1280" height="820" loading="lazy" alt="قائمة التنبيهات مرتبة حسب الحالة والخطورة">
+          <img class="en" src="img/alerts-en.png" width="1280" height="820" loading="lazy" alt="The alerts list by status and severity">
+          <figcaption><span class="ar" lang="ar">التنبيهات مرتبة حسب الحالة والخطورة.</span><span class="en" lang="en">Alerts by status and severity.</span></figcaption>
+        </figure>
+        <figure class="shot">
+          <img class="ar" src="img/alert-ar.png" width="1280" height="820" loading="lazy" alt="تفاصيل تنبيه وأسبابه والشهادة">
+          <img class="en" src="img/alert-en.png" width="1280" height="820" loading="lazy" alt="An alert's details, reasons and certificate">
+          <figcaption><span class="ar" lang="ar">سبب كل تنبيه بكلمات واضحة، مع الشهادة كاملة.</span><span class="en" lang="en">Why each alert was raised, in plain words, with the full certificate.</span></figcaption>
+        </figure>
+        <figure class="shot">
+          <img class="ar" src="img/watchlist-ar.png" width="1280" height="1000" loading="lazy" alt="قائمة المراقبة ونموذج إضافة علامة وتجربة اسم">
+          <img class="en" src="img/watchlist-en.png" width="1280" height="1000" loading="lazy" alt="The watchlist with the add brand form and a tested name">
+          <figcaption><span class="ar" lang="ar">أضف علاماتك وأنماطك ثم جرّب أي اسم قبل أن يظهر.</span><span class="en" lang="en">Add your brands and patterns, then try any name before it appears.</span></figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="img/logs-en.png" width="1280" height="820" loading="lazy" alt="The logs table with each log's state, tree size and lag">
+          <figcaption><span class="ar" lang="ar">حالة كل سجل وحجم شجرته ومقدار التأخر عنه.</span><span class="en" lang="en">Every log's state, tree size and lag.</span></figcaption>
+        </figure>
+      </div>
+      <figure class="shot phone">
+        <img src="img/mobile-ar.png" width="390" height="844" loading="lazy" alt="الواجهة على الهاتف">
+        <figcaption><span class="ar" lang="ar">الواجهة كاملة على الهاتف.</span><span class="en" lang="en">The whole interface on a phone.</span></figcaption>
+      </figure>
+    </section>
+
+    <section id="how" class="block">
+      <h2><span class="ar" lang="ar">كيف يعمل</span><span class="en" lang="en">How it works</span></h2>
+      <ol class="steps">
+        <li><span class="ar" lang="ar">يجلب القائمة العامة للسجلات الموثوقة ويختار منها ما يقبل الشهادات اليوم.</span><span class="en" lang="en">It loads the public list of trusted logs and keeps the ones accepting certificates today.</span></li>
+        <li><span class="ar" lang="ar">يقرأ رأس الشجرة الموقَّع من كل سجل ويتحقق من توقيعه.</span><span class="en" lang="en">It reads each log's signed tree head and checks the signature.</span></li>
+        <li><span class="ar" lang="ar">يجلب المدخلات الجديدة ويحذف النسخ المكررة ثم يحلل كل شهادة مرة واحدة.</span><span class="en" lang="en">It fetches the new entries, drops the copies from other logs and parses each certificate once.</span></li>
+        <li><span class="ar" lang="ar">يفحص كل اسم بمقارنته بقائمة المراقبة ويرفع تنبيهاً عند التشابه.</span><span class="en" lang="en">It checks every name against the watchlist and raises an alert on a look-alike.</span></li>
+        <li><span class="ar" lang="ar">يبث الشهادات والتنبيهات عبر WebSocket ويرسل التنبيهات إلى عناوين الويب.</span><span class="en" lang="en">It streams certificates and alerts over WebSocket and posts alerts to webhooks.</span></li>
+      </ol>
+    </section>
+
+    <section id="start" class="block">
+      <h2><span class="ar" lang="ar">التشغيل</span><span class="en" lang="en">Run it</span></h2>
+      <p><span class="ar" lang="ar">يعمل تيّار على Node 22 أو أحدث دون تثبيت، فشغّله ثم افتح العنوان المحلي في متصفحك.</span><span class="en" lang="en">Tayyar runs on Node 22 or later with nothing to install. Start it, then open the local address in your browser.</span></p>
+      <pre dir="ltr"><code>npx github:SiteQ8/Tayyar serve --data ./tayyar-data
+# http://127.0.0.1:4000/</code></pre>
+      <p><span class="ar" lang="ar">وحين يصل إليه غيرك فاحمِه برمز وصول وأرسل التنبيهات إلى عنوان ويب يوقّع تيّار رسائله إليه.</span><span class="en" lang="en">When others can reach it, protect it with an access token and send alerts to a webhook, with every message signed.</span></p>
+      <pre dir="ltr"><code>TAYYAR_TOKEN='a long random secret' npx github:SiteQ8/Tayyar serve \
+  --host 0.0.0.0 --data /var/lib/tayyar \
+  --webhook text:https://example.com/hooks/tayyar --webhook-secret 'another secret'</code></pre>
+      <p><span class="ar" lang="ar">ومن سطر الأوامر تجرّب الأسماء بمقارنتها بقائمة المراقبة أو تتابع البث دون واجهة.</span><span class="en" lang="en">From the command line you can test names against a watchlist, or follow the stream without the interface.</span></p>
+      <pre dir="ltr"><code>npx github:SiteQ8/Tayyar check --watchlist watchlist.json examp1e-pay.test
+npx github:SiteQ8/Tayyar watch --watchlist watchlist.json --format json</code></pre>
+    </section>
+
+    <section id="connect" class="block">
+      <h2><span class="ar" lang="ar">اربط أدواتك</span><span class="en" lang="en">Connect your tools</span></h2>
+      <p><span class="ar" lang="ar">كل مسار WebSocket يرسل رسائل JSON، فتبدأ بسطرين وتصلك التنبيهات على مسارها الخاص.</span><span class="en" lang="en">Every WebSocket path sends JSON messages, so two lines are enough to start, and alerts have a path of their own.</span></p>
+      <ul class="endpoints" dir="ltr">
+        <li><code>/</code> <span class="ar" lang="ar">الشهادات</span><span class="en" lang="en">certificates</span></li>
+        <li><code>/full-stream</code> <span class="ar" lang="ar">الشهادات مع بياناتها الكاملة</span><span class="en" lang="en">certificates with their DER bytes and chain</span></li>
+        <li><code>/domains-only</code> <span class="ar" lang="ar">الأسماء فقط</span><span class="en" lang="en">names only</span></li>
+        <li><code>/alerts</code> <span class="ar" lang="ar">التنبيهات</span><span class="en" lang="en">alerts</span></li>
+      </ul>
+      <pre dir="ltr"><code>const ws = new WebSocket('ws://127.0.0.1:4000/alerts');
+ws.onmessage = (e) =&gt; console.log(JSON.parse(e.data));</code></pre>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p><span class="ar" lang="ar">تيّار مفتوح المصدر بترخيص MIT.</span><span class="en" lang="en">Tayyar is open source under the MIT license.</span> <a href="https://github.com/SiteQ8/Tayyar">github.com/SiteQ8/Tayyar</a></p>
+  </footer>
+</body>
+</html>

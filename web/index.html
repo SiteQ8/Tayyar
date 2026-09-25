@@ -4,75 +4,181 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="color-scheme" content="dark light">
-  <meta name="description" content="Live stream of TLS certificates from Certificate Transparency logs">
+  <meta name="description" content="Live stream of TLS certificates from Certificate Transparency logs, with look-alike alerts">
   <title>تيّار</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/app.css">
   <script type="module" src="/app.js"></script>
 </head>
 <body>
-  <header class="top">
-    <div class="brand">
-      <h1 data-t="title">تيّار</h1>
-      <p class="tagline" data-t="tagline"></p>
-    </div>
-    <div class="top-side">
-      <p class="conn" data-state="connecting">
-        <span class="conn-dot" aria-hidden="true"></span>
-        <span id="status" role="status" data-t="status_connecting"></span>
-      </p>
-      <button id="lang" type="button"></button>
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-live" viewBox="0 0 24 24"><path d="M3 9.5c3-2.6 6-2.6 9 0s6 2.6 9 0M3 15.5c3-2.6 6-2.6 9 0s6 2.6 9 0"/></symbol>
+    <symbol id="i-alerts" viewBox="0 0 24 24"><path d="M12 3.5a5.5 5.5 0 0 0-5.5 5.5v4.2L4.8 16h14.4l-1.7-2.8V9A5.5 5.5 0 0 0 12 3.5ZM10 19a2 2 0 0 0 4 0"/></symbol>
+    <symbol id="i-watch" viewBox="0 0 24 24"><path d="M12 3l7.5 2.8v5.7c0 4.4-3.1 8.1-7.5 9.5-4.4-1.4-7.5-5.1-7.5-9.5V5.8Z"/><path d="M8.8 12.2l2.2 2.2 4.2-4.4"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></symbol>
+    <symbol id="i-logs" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="4.5" rx="1"/><rect x="4" y="9.75" width="16" height="4.5" rx="1"/><rect x="4" y="15.5" width="16" height="4.5" rx="1"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  </svg>
+
+  <header class="bar">
+    <a class="brand" href="#live">
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7"/><path class="w1" d="M5 11c3.7-3 7.3-3 11 0s7.3 3 11 0"/><path class="w2" d="M5 17.5c3.7-3 7.3-3 11 0s7.3 3 11 0"/><circle cx="23.5" cy="24.5" r="2.6"/></svg>
+      <span class="brand-name" data-t="title"></span>
+    </a>
+    <nav class="tabs" id="tabs">
+      <a href="#live" data-view="live"><svg><use href="#i-live"/></svg><span data-t="nav_live"></span></a>
+      <a href="#alerts" data-view="alerts"><svg><use href="#i-alerts"/></svg><span data-t="nav_alerts"></span><span class="badge" id="badge" dir="ltr" hidden></span></a>
+      <a href="#watchlist" data-view="watchlist"><svg><use href="#i-watch"/></svg><span data-t="nav_watchlist"></span></a>
+      <a href="#search" data-view="search"><svg><use href="#i-search"/></svg><span data-t="nav_search"></span></a>
+      <a href="#logs" data-view="logs"><svg><use href="#i-logs"/></svg><span data-t="nav_logs"></span></a>
+    </nav>
+    <div class="bar-end">
+      <p class="conn" data-state="connecting"><span class="conn-dot" aria-hidden="true"></span><span id="status" role="status"></span></p>
+      <button id="lang" class="btn ghost" type="button"></button>
+      <button id="signout" class="btn ghost" type="button" hidden data-t="sign_out"></button>
     </div>
   </header>
 
-  <section class="meter" id="meter">
-    <div class="figure figure-rate">
-      <span class="num" id="rate">0</span>
-      <span class="label" id="rate-label"></span>
-      <svg class="spark" id="spark" viewBox="0 0 120 30" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-        <polyline id="spark-line" points="0,30 120,30"></polyline>
-      </svg>
-    </div>
-    <div class="figure">
-      <span class="num" id="seen">0</span>
-      <span class="label" id="seen-label"></span>
-    </div>
-    <div class="figure figure-split">
-      <div class="split-bar" aria-hidden="true"><span class="split-pre" id="bar-pre"></span><span class="split-crt" id="bar-crt"></span></div>
-      <p class="split-legend"><span class="legend-pre" id="pre-legend"></span><span class="legend-crt" id="crt-legend"></span></p>
-    </div>
-    <div class="figure figure-hits">
-      <span class="num" id="hits">0</span>
-      <span class="label" id="hits-label"></span>
-    </div>
-  </section>
+  <main id="main">
+    <section class="view" id="view-live" aria-labelledby="live-title">
+      <h1 class="visually-hidden" id="live-title" data-t="nav_live"></h1>
+      <p class="lede" data-t="tagline"></p>
+      <div class="meter" id="meter">
+        <div class="figure figure-rate">
+          <span class="num" id="rate">0</span>
+          <span class="label" id="rate-label"></span>
+          <svg class="spark" viewBox="0 0 120 30" preserveAspectRatio="none" aria-hidden="true" focusable="false"><polyline id="spark-line" points="0,30 120,30"></polyline></svg>
+        </div>
+        <div class="figure"><span class="num" id="seen">0</span><span class="label" id="seen-label"></span></div>
+        <div class="figure figure-split">
+          <div class="split-bar" aria-hidden="true"><span class="split-pre" id="bar-pre"></span><span class="split-crt" id="bar-crt"></span></div>
+          <p class="split-legend"><span class="legend-pre" id="pre-legend"></span><span class="legend-crt" id="crt-legend"></span></p>
+        </div>
+        <div class="figure figure-hits"><span class="num" id="hits">0</span><span class="label" id="hits-label"></span></div>
+      </div>
+      <div class="controls">
+        <label class="filter"><span class="visually-hidden" data-t="filter_label"></span><input id="filter" type="search" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
+        <label class="toggle"><input id="only" type="checkbox"><span data-t="only_matches"></span></label>
+        <button id="pause" class="btn" type="button" aria-pressed="false"></button>
+        <button id="clear" class="btn" type="button" data-t="clear"></button>
+        <p id="filter-note" class="note warn" hidden data-t="filter_literal"></p>
+      </div>
+      <div class="live-grid">
+        <div>
+          <p id="sampling" class="note" hidden data-t="sampling"></p>
+          <div class="stream-head" aria-hidden="true"><span data-t="col_time"></span><span></span><span data-t="col_name"></span><span data-t="col_issuer"></span><span data-t="col_log"></span></div>
+          <ol id="stream" class="stream"></ol>
+          <p id="empty" class="empty"></p>
+        </div>
+        <aside class="insights" aria-labelledby="insights-title">
+          <h2 id="insights-title" data-t="insights_title"></h2>
+          <h3 data-t="insights_issuers"></h3>
+          <ol class="bars" id="top-issuers"></ol>
+          <h3 data-t="insights_endings"></h3>
+          <ol class="bars" id="top-endings"></ol>
+          <p class="note" id="insights-empty" data-t="insights_empty"></p>
+        </aside>
+      </div>
+    </section>
 
-  <section class="controls">
-    <label class="filter">
-      <span class="visually-hidden" data-t="filter_label"></span>
-      <input id="filter" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" dir="ltr">
-    </label>
-    <label class="toggle">
-      <input id="only" type="checkbox">
-      <span data-t="only_matches"></span>
-    </label>
-    <button id="pause" type="button" aria-pressed="false" data-t="pause"></button>
-    <button id="clear" type="button" data-t="clear"></button>
-    <p id="filter-note" class="note" hidden data-t="filter_literal"></p>
-  </section>
+    <section class="view" id="view-alerts" aria-labelledby="alerts-title" hidden>
+      <div class="view-head"><h1 id="alerts-title" data-t="alerts_title"></h1><p class="lede" data-t="alerts_intro"></p></div>
+      <div class="toolbar">
+        <div class="seg" id="alert-status" role="group"></div>
+        <select id="alert-severity" class="select"></select>
+        <label class="filter"><span class="visually-hidden" data-t="alerts_search"></span><input id="alert-q" type="search" autocomplete="off" spellcheck="false"></label>
+        <a class="btn" id="alert-export" download data-t="export_csv"></a>
+      </div>
+      <ol class="alert-list" id="alert-list"></ol>
+      <div class="empty-state" id="alerts-empty" hidden>
+        <p id="alerts-empty-text"></p>
+        <a class="btn primary" href="#watchlist" id="alerts-go" data-t="go_watchlist"></a>
+      </div>
+    </section>
 
-  <main>
-    <p id="sampling" class="note" hidden data-t="sampling"></p>
-    <div class="stream-head" aria-hidden="true">
-      <span data-t="col_time"></span><span></span><span data-t="col_name"></span><span data-t="col_issuer"></span><span data-t="col_log"></span>
-    </div>
-    <ol id="stream" class="stream"></ol>
-    <p id="empty" class="empty" data-t="empty"></p>
+    <section class="view" id="view-watchlist" aria-labelledby="watchlist-title" hidden>
+      <div class="view-head"><h1 id="watchlist-title" data-t="watchlist_title"></h1><p class="lede" data-t="watchlist_intro"></p></div>
+      <p class="note warn" id="not-persisted" hidden data-t="not_persisted"></p>
+      <div class="watch-grid">
+        <div>
+          <ul class="watch-list" id="watch-list"></ul>
+          <div class="empty-state" id="watch-empty" hidden><p data-t="watchlist_empty"></p></div>
+          <div class="row-actions">
+            <button class="btn" type="button" id="export-watch" data-t="export"></button>
+            <label class="btn file-btn"><span data-t="import"></span><input type="file" id="import-watch" accept="application/json,.json"></label>
+          </div>
+        </div>
+        <div class="side-panels">
+          <form class="panel" id="brand-form" novalidate>
+            <h2 id="brand-form-title" data-t="add_brand"></h2>
+            <label class="field"><span data-t="field_name"></span><input name="name" required maxlength="80" autocomplete="off"></label>
+            <label class="field"><span data-t="field_domains"></span><textarea name="domains" rows="2" dir="ltr" spellcheck="false"></textarea><small data-t="field_domains_hint"></small></label>
+            <label class="field"><span data-t="field_keywords"></span><input name="keywords" autocomplete="off" spellcheck="false"><small data-t="field_keywords_hint"></small></label>
+            <p class="form-error" role="alert" hidden></p>
+            <div class="row-actions"><button class="btn primary" type="submit" data-t="save"></button><button class="btn ghost" type="button" data-cancel hidden data-t="cancel"></button></div>
+          </form>
+          <details class="panel" id="pattern-panel">
+            <summary data-t="add_pattern"></summary>
+            <form id="pattern-form" novalidate>
+              <label class="field"><span data-t="field_name"></span><input name="name" required maxlength="80" autocomplete="off"></label>
+              <label class="field"><span data-t="field_pattern"></span><input name="pattern" required dir="ltr" spellcheck="false" autocomplete="off"></label>
+              <label class="field"><span data-t="field_severity"></span><select name="severity" class="select"><option value="low" data-t="severity_low"></option><option value="medium" selected data-t="severity_medium"></option><option value="high" data-t="severity_high"></option></select></label>
+              <p class="form-error" role="alert" hidden></p>
+              <div class="row-actions"><button class="btn primary" type="submit" data-t="save"></button><button class="btn ghost" type="button" data-cancel hidden data-t="cancel"></button></div>
+            </form>
+          </details>
+          <form class="panel" id="test-form" novalidate>
+            <h2 data-t="test_title"></h2>
+            <div class="inline"><input name="domain" dir="ltr" spellcheck="false" autocomplete="off"><button class="btn" type="submit" data-t="test_button"></button></div>
+            <div id="test-result" class="test-result" aria-live="polite"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-search" aria-labelledby="search-title" hidden>
+      <div class="view-head"><h1 id="search-title" data-t="search_title"></h1></div>
+      <form class="toolbar" id="search-form" role="search">
+        <label class="filter"><span class="visually-hidden" data-t="search_title"></span><input id="search-q" type="search" autocomplete="off" spellcheck="false"></label>
+        <div class="seg" id="search-type" role="group"></div>
+      </form>
+      <p class="note" id="search-window"></p>
+      <ol class="stream" id="search-results"></ol>
+      <p class="empty" id="search-empty"></p>
+    </section>
+
+    <section class="view" id="view-logs" aria-labelledby="logs-title" hidden>
+      <div class="view-head"><h1 id="logs-title" data-t="logs_title"></h1><p class="lede" data-t="logs_intro"></p></div>
+      <p class="summary" id="logs-summary"></p>
+      <div class="table-wrap"><table class="table" id="logs-table"><thead><tr>
+        <th data-t="col_log"></th><th data-t="col_operator"></th><th data-t="col_kind"></th><th data-t="col_state"></th>
+        <th class="n" data-t="col_tree"></th><th class="n" data-t="col_lag"></th><th class="n" data-t="col_errors"></th><th class="n" data-t="col_signature"></th><th data-t="col_success"></th>
+      </tr></thead><tbody></tbody></table></div>
+    </section>
   </main>
 
   <footer class="foot">
     <p id="endpoints"></p>
     <p><span id="logs-count"></span> <a href="https://github.com/SiteQ8/Tayyar" data-t="source"></a></p>
   </footer>
+
+  <div class="scrim" id="scrim" hidden></div>
+  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" hidden>
+    <header class="drawer-head"><h2 id="drawer-title"></h2><button class="icon-btn" id="drawer-close" type="button"><svg><use href="#i-close"/></svg><span class="visually-hidden" data-t="drawer_close"></span></button></header>
+    <div class="drawer-body" id="drawer-body"></div>
+  </aside>
+
+  <div class="signin" id="signin" hidden>
+    <form class="panel" id="signin-form" novalidate>
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7"/><path class="w1" d="M5 11c3.7-3 7.3-3 11 0s7.3 3 11 0"/><path class="w2" d="M5 17.5c3.7-3 7.3-3 11 0s7.3 3 11 0"/><circle cx="23.5" cy="24.5" r="2.6"/></svg>
+      <h1 data-t="signin_title"></h1>
+      <p data-t="signin_text"></p>
+      <label class="field"><span data-t="signin_label"></span><input type="password" name="token" autocomplete="current-password" dir="ltr" required></label>
+      <p class="form-error" role="alert" hidden></p>
+      <button class="btn primary" type="submit" data-t="signin_button"></button>
+    </form>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 </body>
 </html>

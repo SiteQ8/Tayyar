@@ -7,7 +7,7 @@ const ARABIC = /[\u0600-\u06FF]/;
 const DASHES = /[\u2013\u2014]/;
 // Latin that may appear inside Arabic text: product names, protocol names,
 // placeholders and the filter examples.
-const LATIN_ALLOWED = [/\{\w+\}/g, /\bTLS\b/g, /\bWebSocket\b/g, /\bGitHub\b/g, /\bEnglish\b/g, /\bbank\b/g, /\\\\?\.kw\$/g];
+const LATIN_ALLOWED = [/\{\w+\}/g, /\bTLS\b/g, /\bWebSocket\b/g, /\bGitHub\b/g, /\bEnglish\b/g, /\bCSV\b/g, /\bJSON\b/g, /\bDNS\b/g, /\bSHA-256\b/g, /\bRFC 6962\b/g, /\bbank\b/g, /\\\\?\.kw\$/g];
 
 function stripAllowed(s) {
   return LATIN_ALLOWED.reduce((acc, re) => acc.replace(re, ''), s);

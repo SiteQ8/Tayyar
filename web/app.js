@@ -1,375 +1,208 @@
-// The live viewer. It reads the same WebSocket stream any other client reads,
-// counts everything, and draws a sample: the stream can carry more than a
-// thousand certificates a second, which no page can show one by one. Every
-// certificate that matches the filter is always drawn.
+// The shell: language, sign-in, routing between views, the two WebSocket
+// connections, and the alerts badge.
 
-import { plural, text, formatNumber } from './i18n.js';
-import { toUnicode } from './punycode.js';
-import { shortLogName, issuerName } from './names.js';
+import { LANGS } from './i18n.js';
+import { ui, t, p, $, el, toast, initDrawer, closeDrawer, formatNumber } from './ui.js';
+import { api } from './api.js';
+import * as live from './views/live.js';
+import * as alerts from './views/alerts.js';
+import * as watchlist from './views/watchlist.js';
+import * as search from './views/search.js';
+import * as logs from './views/logs.js';
 
-const MAX_ROWS = 150;
-const SAMPLE_PER_TICK = 5;
-const RENDER_MS = 250;
-const HISTORY_SECONDS = 60;
+const VIEWS = { live, alerts, watchlist, search, logs };
 
-const $ = (id) => document.getElementById(id);
-
-const state = {
-  lang: initialLang(),
-  conn: 'connecting',
-  paused: false,
-  onlyHits: false,
-  matcher: null,
-  seen: 0,
-  pre: 0,
-  crt: 0,
-  hits: 0,
-  thisSecond: 0,
-  history: new Array(HISTORY_SECONDS).fill(0),
-  queue: [],
-  sampled: false,
-  logs: null,
-  retry: 0,
+const app = {
+  overview: null,
+  newAlerts: 0,
+  current: null,
+  started: false,
+  setNew(n) {
+    app.newAlerts = n;
+    const badge = $('badge');
+    badge.hidden = n === 0;
+    badge.textContent = n > 99 ? '99+' : formatNumber(n);
+    badge.title = p('alerts_new', n);
+  },
+  async refreshOverview() {
+    try {
+      app.overview = await api('/api/overview');
+      app.setNew(app.overview.alerts.by_status.new);
+      $('logs-count').textContent = p('logs', app.overview.logs.total);
+    } catch {
+      // The next refresh tries again.
+    }
+    return app.overview;
+  },
 };
 
-function initialLang() {
+function pickLang() {
   try {
     const saved = localStorage.getItem('tayyar-lang');
-    if (saved === 'ar' || saved === 'en') return saved;
+    if (LANGS.includes(saved)) return saved;
   } catch {
-    // Storage can be unavailable; the browser language decides instead.
+    // Storage can be blocked; fall back to the browser language.
   }
   return (navigator.language || '').toLowerCase().startsWith('ar') ? 'ar' : 'en';
 }
 
-function wsBase() {
-  return `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}`;
-}
-
-/* Language */
-
-function applyLang() {
-  const lang = state.lang;
-  document.documentElement.lang = lang;
-  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-  document.title = text(lang, 'title');
-  for (const el of document.querySelectorAll('[data-t]')) el.textContent = text(lang, el.dataset.t);
-  const langButton = $('lang');
-  langButton.textContent = text(lang, 'switch_language');
-  langButton.lang = lang === 'ar' ? 'en' : 'ar';
-  langButton.setAttribute('aria-label', text(lang, 'switch_language_label'));
-  $('filter').placeholder = text(lang, 'filter_placeholder');
-  syncFilterDirection();
-  $('meter').setAttribute('aria-label', text(lang, 'meter_label'));
-  $('pause').textContent = text(lang, state.paused ? 'resume' : 'pause');
-  setConn(state.conn);
-  renderEndpoints();
-  updateFigures();
-  updateEmpty();
-  for (const row of $('stream').children) labelRow(row);
-}
-
 function renderEndpoints() {
-  const el = $('endpoints');
-  el.textContent = '';
-  const urls = { lite: `${wsBase()}/`, full: `${wsBase()}/full-stream`, domains: `${wsBase()}/domains-only` };
-  for (const part of text(state.lang, 'endpoints').split(/(\{lite\}|\{full\}|\{domains\})/)) {
+  const ws = `${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}`;
+  const codes = { lite: `${ws}/`, full: `${ws}/full-stream`, domains: `${ws}/domains-only`, alerts: `${ws}/alerts` };
+  const box = $('endpoints');
+  box.textContent = '';
+  for (const part of t('endpoints').split(/(\{\w+\})/)) {
     const m = /^\{(\w+)\}$/.exec(part);
-    if (m) {
-      const code = document.createElement('code');
-      code.dir = 'ltr';
-      code.textContent = urls[m[1]];
-      el.append(code);
-    } else if (part) {
-      el.append(part);
-    }
+    if (m) box.append(el('code', { dir: 'ltr', text: codes[m[1]] }));
+    else if (part) box.append(part);
   }
 }
 
-/* Connection */
-
-function setConn(s) {
-  state.conn = s;
-  $('status').textContent = text(state.lang, `status_${s}`);
-  document.querySelector('.conn').dataset.state = s;
+function setTitle() {
+  document.title = app.current && app.current !== 'live' ? `${t('title')} | ${t(`nav_${app.current}`)}` : t('title');
 }
 
-function connect() {
-  setConn(state.retry === 0 ? 'connecting' : 'retry');
-  let ws;
-  try {
-    ws = new WebSocket(`${wsBase()}/`);
-  } catch {
-    reconnectLater();
-    return;
-  }
-  ws.onopen = () => {
-    state.retry = 0;
-    setConn('live');
-  };
-  ws.onmessage = onMessage;
-  ws.onclose = () => {
-    setConn('retry');
-    reconnectLater();
-  };
-  ws.onerror = () => ws.close();
+let connState = 'connecting';
+function setConn(state) {
+  connState = state;
+  document.querySelector('.conn').dataset.state = state;
+  $('status').textContent = t(`status_${state}`);
 }
 
-function reconnectLater() {
-  const delay = Math.min(30000, 1000 * 2 ** state.retry);
-  state.retry += 1;
-  setTimeout(connect, delay);
+function applyLang(lang) {
+  ui.lang = lang;
+  const root = document.documentElement;
+  root.lang = lang;
+  root.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  for (const node of document.querySelectorAll('[data-t]')) node.textContent = t(node.dataset.t);
+  $('filter').placeholder = t('filter_placeholder');
+  $('alert-q').placeholder = t('alerts_search_placeholder');
+  $('search-q').placeholder = t('search_placeholder');
+  document.querySelector('#test-form input').placeholder = t('test_placeholder');
+  const btn = $('lang');
+  btn.textContent = t('switch_language');
+  btn.lang = lang === 'ar' ? 'en' : 'ar';
+  btn.setAttribute('aria-label', t('switch_language_label'));
+  $('meter').setAttribute('aria-label', t('meter_label'));
+  $('tabs').setAttribute('aria-label', t('title'));
+  renderEndpoints();
+  app.setNew(app.newAlerts);
+  if (app.overview) $('logs-count').textContent = p('logs', app.overview.logs.total);
+  setConn(connState);
+  setTitle();
+  for (const v of Object.values(VIEWS)) v.relabel?.();
 }
 
-async function refreshStats() {
-  try {
-    const res = await fetch('/stats', { cache: 'no-store' });
-    if (!res.ok) return;
-    const stats = await res.json();
-    state.logs = stats?.logs?.total ?? null;
-    updateFigures();
-  } catch {
-    // The count is a nicety; the stream works without it.
-  }
-}
-
-/* Filtering */
-
-function buildMatcher(value) {
-  const v = value.trim();
-  $('filter-note').hidden = true;
-  if (!v) return null;
-  let test;
-  try {
-    const re = new RegExp(v, 'iu');
-    test = (s) => re.test(s);
-  } catch {
-    const lower = v.toLowerCase();
-    test = (s) => s.toLowerCase().includes(lower);
-    $('filter-note').hidden = false;
-  }
-  return (domains) => {
-    for (const d of domains) {
-      if (test(d)) return d;
-      if (d.includes('xn--')) {
-        const u = toUnicode(d);
-        if (u !== d && test(u)) return d;
+function connect(path, onMessage, onState) {
+  let retry = 1000;
+  const open = () => {
+    onState?.('connecting');
+    const ws = new WebSocket(`${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}${path}`);
+    ws.onopen = () => {
+      retry = 1000;
+      onState?.('live');
+    };
+    ws.onmessage = (ev) => {
+      let msg;
+      try {
+        msg = JSON.parse(ev.data);
+      } catch {
+        return;
       }
-    }
-    return null;
+      onMessage(msg);
+    };
+    ws.onclose = () => {
+      onState?.('retry');
+      api('/api/session').then((s) => { if (s.auth && !s.signed_in) showSignin(); }).catch(() => {});
+      setTimeout(open, retry);
+      retry = Math.min(retry * 2, 30000);
+    };
   };
+  open();
 }
 
-function syncFilterDirection() {
-  const input = $('filter');
-  input.dir = input.value ? 'ltr' : document.documentElement.dir;
-}
-
-function onFilter() {
-  syncFilterDirection();
-  state.matcher = buildMatcher($('filter').value);
-  state.hits = 0;
-  for (const row of $('stream').children) {
-    row.classList.toggle('hit', Boolean(state.matcher && state.matcher(row.domains)));
+function route() {
+  const wanted = (location.hash || '#live').slice(1);
+  const view = VIEWS[wanted] ? wanted : 'live';
+  for (const [name, mod] of Object.entries(VIEWS)) {
+    const on = name === view;
+    $(`view-${name}`).hidden = !on;
+    if (on && app.current !== name) mod.show?.();
+    if (!on && app.current === name) mod.hide?.();
   }
-  updateFigures();
-  updateEmpty();
-}
-
-/* Stream */
-
-function onMessage(ev) {
-  let msg;
-  try {
-    msg = JSON.parse(ev.data);
-  } catch {
-    return;
+  for (const a of document.querySelectorAll('#tabs a')) {
+    if (a.dataset.view === view) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
   }
-  if (msg.message_type !== 'certificate_update' || !msg.data || !msg.data.leaf_cert) return;
-  const d = msg.data;
-  state.seen += 1;
-  state.thisSecond += 1;
-  if (d.update_type === 'PrecertLogEntry') state.pre += 1;
-  else state.crt += 1;
-  const hit = state.matcher ? state.matcher(d.leaf_cert.all_domains || []) : null;
-  if (hit) state.hits += 1;
-  if (state.paused || (state.onlyHits && !hit)) return;
-  state.queue.push({ d, hit });
-  if (state.queue.length > 2000) state.queue.splice(0, state.queue.length - 2000);
+  app.current = view;
+  closeDrawer();
+  setTitle();
 }
 
-function el(tag, className, textContent) {
-  const node = document.createElement(tag);
-  if (className) node.className = className;
-  if (textContent !== undefined) node.textContent = textContent;
-  return node;
-}
-
-function makeRow({ d, hit }) {
-  const row = el('li', hit ? 'row hit' : 'row');
-  row.dataset.type = d.update_type === 'PrecertLogEntry' ? 'pre' : 'crt';
-  const domains = d.leaf_cert.all_domains || [];
-  row.domains = domains;
-
-  const seen = new Date((d.seen || Date.now() / 1000) * 1000);
-  const time = el('time', '', seen.toLocaleTimeString('en-GB', { hour12: false }));
-  time.dateTime = seen.toISOString();
-
-  const mark = el('span', 'mark');
-  mark.setAttribute('role', 'img');
-
-  const name = el('span', 'name');
-  const primary = hit || domains[0] || (d.leaf_cert.subject && d.leaf_cert.subject.CN) || '';
-  const ascii = el('bdi', '', primary);
-  ascii.dir = 'ltr';
-  name.append(ascii);
-  if (primary.includes('xn--')) {
-    const unicode = toUnicode(primary);
-    if (unicode !== primary) name.append(el('bdi', 'idn', unicode));
-  }
-  if (domains.length > 1) {
-    const more = el('span', 'more', `+${formatNumber(domains.length - 1)}`);
-    more.dir = 'ltr';
-    name.append(more);
-  }
-
-  const issuerText = issuerName(d.leaf_cert.issuer);
-  const issuer = el('span', 'issuer');
-  issuer.dir = 'ltr';
-  issuer.append(el('bdi', '', issuerText));
-  issuer.title = issuerText;
-
-  const sourceName = (d.source && d.source.name) || '';
-  const log = el('span', 'log');
-  log.dir = 'ltr';
-  log.append(el('bdi', '', shortLogName(sourceName)));
-  log.title = sourceName;
-
-  row.append(time, mark, name, issuer, log);
-  labelRow(row);
-  return row;
-}
-
-function labelRow(row) {
-  const label = text(state.lang, row.dataset.type === 'pre' ? 'type_pre' : 'type_crt');
-  const mark = row.querySelector('.mark');
-  mark.setAttribute('aria-label', label);
-  mark.title = label;
-  const more = row.querySelector('.more');
-  if (more) more.title = plural(state.lang, 'more', row.domains.length - 1);
-}
-
-function renderTick() {
-  if (state.queue.length === 0) return;
-  const items = state.queue;
-  state.queue = [];
-  if (document.hidden) {
-    // Nobody is looking: keep only the matches for when the tab returns.
-    state.queue = items.filter((x) => x.hit).slice(-100);
-    return;
-  }
-  const rest = items.filter((x) => !x.hit);
-  const sample = new Set(rest.slice(-SAMPLE_PER_TICK));
-  if (rest.length > sample.size && !state.onlyHits) state.sampled = true;
-  const chosen = items.filter((x) => x.hit || sample.has(x)).slice(-60);
-  const frag = document.createDocumentFragment();
-  for (let i = chosen.length - 1; i >= 0; i--) frag.append(makeRow(chosen[i]));
-  const list = $('stream');
-  list.prepend(frag);
-  while (list.children.length > MAX_ROWS) list.lastElementChild.remove();
-  $('sampling').hidden = !state.sampled;
-  updateEmpty();
-}
-
-function updateEmpty() {
-  const list = $('stream');
-  const visible = state.onlyHits ? list.querySelectorAll('.row.hit').length : list.children.length;
-  const empty = $('empty');
-  empty.hidden = visible > 0;
-  empty.textContent = text(state.lang, state.matcher && state.onlyHits ? 'empty_filtered' : 'empty');
-}
-
-/* Figures */
-
-function currentRate() {
-  const recent = state.history.slice(-5);
-  return Math.round(recent.reduce((a, b) => a + b, 0) / recent.length);
-}
-
-function updateFigures() {
-  const lang = state.lang;
-  const rate = currentRate();
-  $('rate').textContent = formatNumber(rate);
-  $('rate-label').textContent = plural(lang, 'rate', rate);
-  $('seen').textContent = formatNumber(state.seen);
-  $('seen-label').textContent = plural(lang, 'seen', state.seen);
-  $('hits').textContent = formatNumber(state.hits);
-  $('hits-label').textContent = plural(lang, 'hits', state.hits);
-  document.querySelector('.figure-hits').dataset.active = String(state.hits > 0);
-  const total = state.pre + state.crt;
-  const preShare = total ? (state.pre / total) * 100 : 50;
-  $('bar-pre').style.width = `${preShare}%`;
-  $('bar-crt').style.width = `${100 - preShare}%`;
-  $('pre-legend').textContent = plural(lang, 'pre', state.pre);
-  $('crt-legend').textContent = plural(lang, 'crt', state.crt);
-  $('logs-count').textContent = state.logs === null ? '' : plural(lang, 'logs', state.logs);
-}
-
-function drawSpark() {
-  const max = Math.max(1, ...state.history);
-  const step = 120 / (HISTORY_SECONDS - 1);
-  const points = state.history.map((v, i) => `${(i * step).toFixed(1)},${(29 - (v / max) * 27).toFixed(1)}`);
-  $('spark-line').setAttribute('points', points.join(' '));
-}
-
-function secondTick() {
-  state.history.push(state.thisSecond);
-  state.history.shift();
-  state.thisSecond = 0;
-  updateFigures();
-  drawSpark();
-}
-
-/* Controls */
-
-function wire() {
-  let debounce;
-  $('filter').addEventListener('input', () => {
-    clearTimeout(debounce);
-    debounce = setTimeout(onFilter, 200);
-  });
-  $('only').addEventListener('change', (e) => {
-    state.onlyHits = e.target.checked;
-    $('stream').classList.toggle('only-hits', state.onlyHits);
-    updateEmpty();
-  });
-  $('pause').addEventListener('click', () => {
-    state.paused = !state.paused;
-    if (state.paused) state.queue = [];
-    $('pause').setAttribute('aria-pressed', String(state.paused));
-    $('pause').textContent = text(state.lang, state.paused ? 'resume' : 'pause');
-  });
-  $('clear').addEventListener('click', () => {
-    $('stream').textContent = '';
-    state.sampled = false;
-    $('sampling').hidden = true;
-    updateEmpty();
-  });
-  $('lang').addEventListener('click', () => {
-    state.lang = state.lang === 'ar' ? 'en' : 'ar';
-    try {
-      localStorage.setItem('tayyar-lang', state.lang);
-    } catch {
-      // Without storage the choice lasts until the page closes.
+function start() {
+  if (app.started) return;
+  app.started = true;
+  for (const mod of Object.values(VIEWS)) mod.init?.(app);
+  connect('/', (msg) => live.onMessage(msg), setConn);
+  connect('/alerts', (msg) => {
+    if (msg.message_type === 'alert') {
+      app.setNew(app.newAlerts + 1);
+      if (msg.data.severity === 'high') toast(t('new_alert', { domain: msg.data.unicode || msg.data.domain, name: msg.data.watch.name }));
     }
-    applyLang();
+    alerts.onEvent(msg);
   });
+  app.refreshOverview();
+  setInterval(() => app.refreshOverview(), 20000);
+  window.addEventListener('hashchange', route);
+  route();
 }
 
-wire();
-applyLang();
-connect();
-refreshStats();
-setInterval(renderTick, RENDER_MS);
-setInterval(secondTick, 1000);
-setInterval(refreshStats, 20000);
+function showSignin() {
+  $('signin').hidden = false;
+  $('signin-form').elements.token.focus();
+}
+
+async function boot() {
+  applyLang(pickLang());
+  initDrawer();
+  $('lang').addEventListener('click', () => {
+    const next = ui.lang === 'ar' ? 'en' : 'ar';
+    try {
+      localStorage.setItem('tayyar-lang', next);
+    } catch {
+      // Not remembered, still switched.
+    }
+    applyLang(next);
+  });
+  $('signout').addEventListener('click', async () => {
+    await api('/api/session', { method: 'DELETE' }).catch(() => {});
+    location.reload();
+  });
+  $('signin-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const error = form.querySelector('.form-error');
+    error.hidden = true;
+    try {
+      await api('/api/session', { method: 'POST', body: { token: form.elements.token.value } });
+      form.reset();
+      $('signin').hidden = true;
+      start();
+    } catch (err) {
+      error.textContent = t(err.status === 429 ? 'signin_wait' : 'signin_wrong');
+      error.hidden = false;
+    }
+  });
+  window.addEventListener('tayyar:signin', showSignin);
+  let session = { auth: false, signed_in: true };
+  try {
+    session = await api('/api/session');
+  } catch {
+    // An old server without sign-in: carry on.
+  }
+  $('signout').hidden = !session.auth;
+  if (session.auth && !session.signed_in) showSignin();
+  else start();
+}
+
+boot();

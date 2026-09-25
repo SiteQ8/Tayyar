@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import { join, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { VERSION } from '../src/version.js';
-import { WEB_FILES } from '../src/server.js';
+import { webFiles } from '../src/server.js';
 import { FIELDS } from './fields.js';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
@@ -46,6 +46,10 @@ const UNNAMED = new Set([
   '4164eefb6967131369776ebdae16e22a5aa9713ab6d5eeac5b9a2b4b6fd2ff01',
   'b1a4759d6f2ecca205f46492c68d3ea7be318bf04d2dec39c2d28a45802ae3c7',
   'f6da92f871878f0651619d89afdc2c2d09ffd876574ba441b78e5476e1a9f9b8',
+  'edcb8c004146015fd39ca283d710b3ab55c719ee2366b068b185f8121282600d',
+  'fab3fc2267272c375b5319a588339041452d751938899cde6da3b116ac570fb4',
+  '9b97ac5e767e5393cd0eed09a8e51b6f3775eba38f792593ea016e8ba9e996b0',
+  '6afd038687a96730d65753ed0d292878e819324ab3470585c4558861126be9a5',
 ]);
 
 const sha256 = (s) => createHash('sha256').update(s).digest('hex');
@@ -94,10 +98,39 @@ test('Arabic prose in the README ends each sentence with its only full stop', ()
   assert.ok(checked >= 6, 'the Arabic section has prose to check');
 });
 
-test('every module the page imports is served', () => {
-  const app = read('web/app.js');
-  const imports = [...app.matchAll(/from '\.\/([\w.-]+)'/g)].map((m) => `/${m[1]}`);
-  assert.ok(imports.length >= 3);
-  for (const route of ['/app.js', '/app.css', '/favicon.svg', ...imports]) assert.ok(route in WEB_FILES, `${route} is not served`);
-  for (const [, [file]] of Object.entries(WEB_FILES)) assert.ok(statSync(join(root, 'web', file)).isFile(), file);
+test('every file the interface loads is served, down to the last import', async () => {
+  const served = await webFiles();
+  const seen = new Set();
+  const visit = (route) => {
+    if (seen.has(route)) return;
+    seen.add(route);
+    assert.ok(served.has(route), `${route} is not served`);
+    const body = served.get(route).body.toString('utf8');
+    for (const m of body.matchAll(/from '(\.{1,2}\/[\w./-]+)'/g)) visit(new URL(m[1], `http://x${route}`).pathname);
+  };
+  for (const m of served.get('/').body.toString('utf8').matchAll(/(?:src|href)="(\/[\w./-]*)"/g)) visit(m[1]);
+  for (const route of ['/app.js', '/app.css', '/favicon.svg', '/ui.js', '/views/live.js', '/views/alerts.js', '/views/watchlist.js']) {
+    assert.ok(seen.has(route), `${route} is never loaded`);
+  }
+});
+
+test('the site is complete in both languages and loads nothing from elsewhere', () => {
+  const html = read('docs/index.html');
+  assert.equal(read('docs/CNAME').trim(), 'tayyar.3li.info');
+  const pairs = [...html.matchAll(/<span class="ar" lang="ar">([^<]*)<\/span><span class="en" lang="en">([^<]*)<\/span>/g)];
+  const arabic = (html.match(/class="ar" lang="ar"/g) || []).length;
+  assert.equal(arabic, (html.match(/class="en" lang="en"/g) || []).length, 'every Arabic text has its English twin');
+  assert.equal(arabic, pairs.length, 'every Arabic text sits right before its English twin');
+  assert.ok(pairs.length >= 30);
+  for (const [, ar, en] of pairs) {
+    assert.ok(ar.trim() && en.trim());
+    const prose = ar.replace(/[\w-]+(?:\.[\w-]+)+/g, 'NAME');
+    for (const m of prose.matchAll(/\./g)) assert.equal(m.index, prose.length - 1, `full stop mid-sentence: ${ar}`);
+  }
+  for (const m of html.matchAll(/(?:src|href)="([^"#]+)"/g)) {
+    const ref = m[1];
+    if (/^https:\/\/(github\.com\/SiteQ8\/Tayyar|tayyar\.3li\.info\/)/.test(ref)) continue;
+    assert.ok(!/^[a-z]+:/.test(ref), `${ref} would load from elsewhere`);
+    assert.ok(statSync(join(root, 'docs', ref)).isFile(), `${ref} is missing`);
+  }
 });

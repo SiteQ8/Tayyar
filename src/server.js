@@ -1,49 +1,67 @@
-// The network face of Tayyar: three WebSocket streams and a few HTTP routes.
+// The network face of Tayyar: the interface, the JSON API, four WebSocket
+// streams and a few plain routes.
 //
-//   WebSocket  /               lite certificate_update messages
+//   WebSocket  /               certificate_update messages without DER or chain
 //   WebSocket  /full-stream    with the DER bytes and the chain
 //   WebSocket  /domains-only   dns_entries messages
-//   GET        /latest.json    the 25 most recent certificates, oldest first (lite)
-//   GET        /example.json   the most recent certificate (full)
+//   WebSocket  /alerts         alert and alert_update messages
+//   GET        /latest.json    the 25 most recent certificates, oldest first
+//   GET        /example.json   the most recent certificate, in full
 //   GET        /stats          engine, log and client statistics
 //   GET        /healthz        liveness for load balancers
-//   GET        /               the live viewer page
+//   *          /api/...        the interface's API (see api.js)
+//   GET        /              the interface
 
 import http from 'node:http';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
+import { join, extname, relative, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { WebSocketHub, encodeFrame, OP_TEXT } from './ws.js';
 import { liteMessage, fullMessage, domainsMessage, heartbeatMessage } from './format.js';
+import { handleApi } from './api.js';
+import { Auth } from './auth.js';
+import { Monitor } from './monitor.js';
 import { VERSION } from './version.js';
 
-export const CHANNELS = { '/': 'lite', '/full-stream': 'full', '/domains-only': 'domains' };
+export const CHANNELS = { '/': 'lite', '/full-stream': 'full', '/domains-only': 'domains', '/alerts': 'alerts' };
+export const WEB_DIR = fileURLToPath(new URL('../web/', import.meta.url));
 
-export const WEB_FILES = {
-  '/': ['index.html', 'text/html; charset=utf-8'],
-  '/app.js': ['app.js', 'text/javascript; charset=utf-8'],
-  '/i18n.js': ['i18n.js', 'text/javascript; charset=utf-8'],
-  '/punycode.js': ['punycode.js', 'text/javascript; charset=utf-8'],
-  '/names.js': ['names.js', 'text/javascript; charset=utf-8'],
-  '/app.css': ['app.css', 'text/css; charset=utf-8'],
-  '/favicon.svg': ['favicon.svg', 'image/svg+xml'],
+const TYPES = {
+  '.html': 'text/html; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.json': 'application/json; charset=utf-8',
 };
+
+// Loads the interface into memory once, keyed by URL path.
+export async function webFiles(dir = WEB_DIR) {
+  const files = new Map();
+  async function walk(d) {
+    for (const entry of await readdir(d, { withFileTypes: true })) {
+      const p = join(d, entry.name);
+      if (entry.isDirectory()) await walk(p);
+      else if (TYPES[extname(entry.name)]) files.set(`/${relative(dir, p).split(sep).join('/')}`, { body: await readFile(p), type: TYPES[extname(entry.name)] });
+    }
+  }
+  await walk(dir);
+  if (files.has('/index.html')) files.set('/', files.get('/index.html'));
+  return files;
+}
 
 const PAGE_HEADERS = {
   'x-content-type-options': 'nosniff',
   'referrer-policy': 'no-referrer',
   'x-frame-options': 'DENY',
   'cross-origin-opener-policy': 'same-origin',
+  'permissions-policy': 'camera=(), microphone=(), geolocation=()',
   'content-security-policy':
     "default-src 'self'; connect-src 'self' ws: wss:; img-src 'self' data:; style-src 'self'; script-src 'self'; " +
     "object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
 };
 
-// The data is public, so any site may read the JSON endpoints.
-const JSON_HEADERS = {
-  'content-type': 'application/json; charset=utf-8',
-  'cache-control': 'no-store',
-  'access-control-allow-origin': '*',
-  'x-content-type-options': 'nosniff',
-};
+const JSON_HEADERS = { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' };
 
 const textFrame = (obj) => encodeFrame(OP_TEXT, Buffer.from(JSON.stringify(obj)));
 
@@ -51,13 +69,18 @@ export class StreamServer {
   constructor(engine, opts = {}) {
     this.engine = engine;
     this.opts = { host: '127.0.0.1', port: 4000, heartbeatMs: 30000, latest: 25, ...opts };
-    this.hub = new WebSocketHub({
-      maxClients: this.opts.maxClients,
-      maxPerIp: this.opts.maxPerIp,
-      trustProxy: this.opts.trustProxy,
-    });
+    this.monitor = opts.monitor || new Monitor();
+    this.auth = opts.auth || new Auth({ token: opts.token || null });
+    this.hub = new WebSocketHub({ maxClients: this.opts.maxClients, maxPerIp: this.opts.maxPerIp, trustProxy: this.opts.trustProxy });
     this.recent = [];
     this.files = new Map();
+    this.ctx = {
+      engine,
+      monitor: this.monitor,
+      auth: this.auth,
+      clientIp: (req) => this.hub.clientIp(req),
+      isSecure: (req) => Boolean(req.socket.encrypted) || (this.opts.trustProxy && req.headers['x-forwarded-proto'] === 'https'),
+    };
     this.server = http.createServer((req, res) => this.route(req, res));
     this.server.on('upgrade', (req, socket, head) => this.upgrade(req, socket, head));
     this.server.on('clientError', (err, socket) => {
@@ -66,13 +89,14 @@ export class StreamServer {
     });
     this.onCert = (cert) => this.publish(cert);
     engine.on('cert', this.onCert);
+    this.onAlert = (a) => this.hub.broadcast('alerts', textFrame({ message_type: 'alert', data: a }));
+    this.onAlertUpdate = (a) => this.hub.broadcast('alerts', textFrame({ message_type: 'alert_update', data: a }));
+    this.monitor.alerts.on('alert', this.onAlert);
+    this.monitor.alerts.on('update', this.onAlertUpdate);
   }
 
   async start() {
-    const webDir = this.opts.webDir || new URL('../web/', import.meta.url);
-    for (const [route, [file, type]] of Object.entries(WEB_FILES)) {
-      this.files.set(route, { body: await readFile(new URL(file, webDir)), type });
-    }
+    this.files = await webFiles(this.opts.webDir || WEB_DIR);
     await new Promise((resolve, reject) => {
       this.server.once('error', reject);
       this.server.listen(this.opts.port, this.opts.host, () => {
@@ -90,8 +114,6 @@ export class StreamServer {
     return a && typeof a === 'object' ? { host: a.address, port: a.port } : null;
   }
 
-  // Each message is serialised once per shape, and only for shapes that
-  // somebody is listening to.
   publish(cert) {
     this.recent.push(cert);
     if (this.recent.length > this.opts.latest) this.recent.shift();
@@ -113,6 +135,10 @@ export class StreamServer {
       WebSocketHub.refuse(socket, 404, 'Not Found');
       return;
     }
+    if (!this.auth.allowed(req)) {
+      WebSocketHub.refuse(socket, 401, 'Unauthorized');
+      return;
+    }
     this.hub.handleUpgrade(req, socket, head, channel);
   }
 
@@ -132,6 +158,7 @@ export class StreamServer {
         lite: this.hub.count('lite'),
         full: this.hub.count('full'),
         domains: this.hub.count('domains'),
+        alerts: this.hub.count('alerts'),
         messages_dropped_for_slow_clients: this.hub.dropped,
       },
       ...this.engine.status(),
@@ -139,15 +166,25 @@ export class StreamServer {
   }
 
   route(req, res) {
+    let url;
+    try {
+      url = new URL(req.url, 'http://localhost');
+    } catch {
+      this.send(res, req, 400, { 'content-type': 'text/plain' }, 'Bad Request');
+      return;
+    }
+    const { pathname } = url;
+    if (pathname.startsWith('/api/')) {
+      handleApi(req, res, this.ctx, url);
+      return;
+    }
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       this.send(res, req, 405, { allow: 'GET, HEAD', 'content-type': 'text/plain' }, 'Method Not Allowed');
       return;
     }
-    let pathname;
-    try {
-      pathname = new URL(req.url, 'http://localhost').pathname;
-    } catch {
-      this.send(res, req, 400, { 'content-type': 'text/plain' }, 'Bad Request');
+    const data = ['/latest.json', '/example.json', '/stats'].includes(pathname);
+    if (data && !this.auth.allowed(req)) {
+      this.json(res, req, 401, { error: 'Sign in with the access token first.' });
       return;
     }
     switch (pathname) {
@@ -175,7 +212,7 @@ export class StreamServer {
           this.json(res, req, 404, { error: 'Not found' });
           return;
         }
-        const cache = pathname === '/' ? 'no-cache' : 'public, max-age=300';
+        const cache = pathname === '/' || pathname.endsWith('.html') ? 'no-cache' : 'public, max-age=300';
         this.send(res, req, 200, { ...PAGE_HEADERS, 'content-type': file.type, 'cache-control': cache }, file.body);
       }
     }
@@ -184,9 +221,12 @@ export class StreamServer {
   async stop() {
     clearInterval(this.heartbeat);
     this.engine.off('cert', this.onCert);
+    this.monitor.alerts.off('alert', this.onAlert);
+    this.monitor.alerts.off('update', this.onAlertUpdate);
     this.hub.close();
     const closed = new Promise((resolve) => this.server.close(() => resolve()));
     this.server.closeAllConnections();
     await closed;
+    await this.monitor.alerts.flush();
   }
 }
