@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1 (25 September 2026)
+
+- Arabic text in the interface and on the site uses Readex Pro, served by Tayyar and the site themselves rather than by a font service, with its licence alongside.
+
 ## 0.3.0 (25 September 2026)
 
 - Every alert explains itself: the name is drawn with the brand's letters, the look-alike characters and the lure words marked, and each reason shows its evidence, such as the script and code point of a look-alike letter, the swapped characters, or how many letters a misspelling is away. The watchlist's name tester shows the same, and findings carry the evidence in the API.

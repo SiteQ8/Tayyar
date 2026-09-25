@@ -86,7 +86,7 @@ npx github:SiteQ8/Tayyar logs --probe
 
 ## الأمان والخصوصية
 
-لا ترسل الواجهة أي طلب إلى طرف ثالث ولا تحمّل خطوطاً من الخارج، ويستمع الخادم على العنوان المحلي ما لم تطلب غير ذلك، فإن ضبطت رمز الوصول طلبه لكل قراءة وكل تغيير وكل بث.
+لا ترسل الواجهة أي طلب إلى طرف ثالث ولا تحمّل خطوطاً من الخارج، إذ يأتي خطها العربي Readex Pro مع تيّار نفسه، ويستمع الخادم على العنوان المحلي ما لم تطلب غير ذلك، فإن ضبطت رمز الوصول طلبه لكل قراءة وكل تغيير وكل بث.
 
 ولا يقبل الخادم أي تغيير إلا من الصفحة نفسها، ولا يستعلم عن DNS لأي اسم إلا حين تطلب ذلك أو تشغّل الخيار `--resolve`، لأن الاستعلام قد يُعلم صاحب النطاق بأن أحداً سأل عنه.
 
@@ -115,7 +115,7 @@ npm run preflight
 
 ## الترخيص
 
-الشيفرة متاحة بترخيص MIT.
+الشيفرة متاحة بترخيص MIT، بينما يأتي خط Readex Pro بترخيص SIL Open Font License 1.1 الموجود بجانبه في `web/fonts/OFL.txt`.
 
 </div>
 
@@ -300,7 +300,7 @@ function signed(rawBody, header, secret) {
 
 ## Security and privacy
 
-The interface makes no third-party requests and loads no web fonts. The server listens on 127.0.0.1 unless told otherwise. With an access token, sessions live in an `HttpOnly`, `SameSite=Strict` cookie, wrong tokens are limited to ten a minute per address, and changes are refused without the `x-tayyar-request` header. Names are looked up in DNS only when you ask, or with `--resolve`, because a lookup can tell the domain's owner that someone asked. The server limits WebSocket clients per address (`--max-per-ip`), disconnects clients that cannot keep up rather than slowing everyone down, and serves its pages with a strict Content Security Policy. Everything it streams is already public in the logs.
+The interface makes no third-party requests. Its Arabic typeface, Readex Pro, ships with Tayyar and is served by the server itself. The server listens on 127.0.0.1 unless told otherwise. With an access token, sessions live in an `HttpOnly`, `SameSite=Strict` cookie, wrong tokens are limited to ten a minute per address, and changes are refused without the `x-tayyar-request` header. Names are looked up in DNS only when you ask, or with `--resolve`, because a lookup can tell the domain's owner that someone asked. The server limits WebSocket clients per address (`--max-per-ip`), disconnects clients that cannot keep up rather than slowing everyone down, and serves its pages with a strict Content Security Policy. Everything it streams is already public in the logs.
 
 ## Development
 
@@ -323,4 +323,4 @@ You run Tayyar on your own machine, so how you use it, and respecting each log's
 
 ## License
 
-MIT
+MIT. The Readex Pro typeface in `web/fonts` and `docs/fonts` is licensed under the SIL Open Font License 1.1, in `OFL.txt` beside it.

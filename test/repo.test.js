@@ -109,8 +109,23 @@ test('every file the interface loads is served, down to the last import', async 
     for (const m of body.matchAll(/from '(\.{1,2}\/[\w./-]+)'/g)) visit(new URL(m[1], `http://x${route}`).pathname);
   };
   for (const m of served.get('/').body.toString('utf8').matchAll(/(?:src|href)="(\/[\w./-]*)"/g)) visit(m[1]);
+  for (const [route, file] of served) {
+    if (!route.endsWith('.css')) continue;
+    for (const m of file.body.toString('utf8').matchAll(/url\("?([^")]+)"?\)/g)) {
+      if (!m[1].startsWith('data:')) assert.ok(served.has(m[1]), `${route} uses ${m[1]}, which is not served`);
+    }
+  }
   for (const route of ['/app.js', '/app.css', '/favicon.svg', '/ui.js', '/views/live.js', '/views/alerts.js', '/views/watchlist.js']) {
     assert.ok(seen.has(route), `${route} is never loaded`);
+  }
+});
+
+test('the Arabic typeface ships with its licence, in the interface and on the site', () => {
+  for (const dir of ['web/fonts', 'docs/fonts']) {
+    assert.match(read(`${dir}/OFL.txt`), /SIL OPEN FONT LICENSE/i);
+    for (const f of ['readex-pro-arabic.woff2', 'readex-pro-latin.woff2']) {
+      assert.equal(readFileSync(join(root, dir, f)).subarray(0, 4).toString('latin1'), 'wOF2', `${dir}/${f}`);
+    }
   }
 });
 
@@ -126,6 +141,10 @@ test('the site is complete in both languages and loads nothing from elsewhere', 
     assert.ok(ar.trim() && en.trim());
     const prose = ar.replace(/[\w-]+(?:\.[\w-]+)+/g, 'NAME');
     for (const m of prose.matchAll(/\./g)) assert.equal(m.index, prose.length - 1, `full stop mid-sentence: ${ar}`);
+  }
+  for (const m of read('docs/site.css').matchAll(/url\("?([^")]+)"?\)/g)) {
+    assert.ok(!/^[a-z]+:/.test(m[1]), `site.css would load ${m[1]} from elsewhere`);
+    assert.ok(statSync(join(root, 'docs', m[1])).isFile(), `${m[1]} is missing`);
   }
   for (const m of html.matchAll(/(?:src|href)="([^"#]+)"/g)) {
     const ref = m[1];
