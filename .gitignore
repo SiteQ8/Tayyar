@@ -1,0 +1,4 @@
+node_modules/
+*.tmp
+tayyar-state.json
+.DS_Store

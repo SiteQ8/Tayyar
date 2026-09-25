@@ -1,0 +1,526 @@
+/* Tayyar viewer.
+   Amber marks a precertificate (a certificate announced before issue),
+   sea green marks an issued certificate, coral marks a filter match.
+   No web fonts are loaded, so the page makes no third-party requests. */
+
+:root {
+  --bg: #0f1822;
+  --surface: #16222e;
+  --rule: #25374a;
+  --text: #e3eaf0;
+  --muted: #8a9cac;
+  --pre: #e6b04c;
+  --crt: #56c8b8;
+  --hit: #ff7c6a;
+  --sans-latin: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --sans-arabic: "Noto Kufi Arabic", "Noto Sans Arabic", "Geeza Pro", "Segoe UI", Tahoma, sans-serif;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f4f6f8;
+    --surface: #ffffff;
+    --rule: #d7dfe6;
+    --text: #13212e;
+    --muted: #56687a;
+    --pre: #a96b00;
+    --crt: #0a7c6e;
+    --hit: #c23d2d;
+    color-scheme: light;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans-latin);
+  font-size: 1rem;
+  line-height: 1.5;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+}
+
+html:lang(ar) body {
+  font-family: var(--sans-arabic);
+  line-height: 1.7;
+}
+
+.top,
+.meter,
+.controls,
+main,
+.foot {
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 2.5rem);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Header */
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  padding-block: 1.75rem 1.25rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.tagline {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  max-width: 38rem;
+}
+
+.top-side {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.conn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.conn-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.conn[data-state="live"] .conn-dot {
+  background: var(--crt);
+}
+
+.conn[data-state="retry"] .conn-dot {
+  background: var(--hit);
+}
+
+/* Figures */
+
+.meter {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-block: 1px solid var(--rule);
+}
+
+.figure {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.15rem;
+  padding-block: 1rem;
+  padding-inline: 1.25rem;
+  border-inline-start: 1px solid var(--rule);
+  min-width: 0;
+}
+
+.figure:first-child {
+  padding-inline-start: 0;
+  border-inline-start: 0;
+}
+
+.num {
+  font-size: 2.25rem;
+  font-weight: 600;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.label {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.figure-rate .num {
+  color: var(--crt);
+}
+
+.spark {
+  width: 100%;
+  height: 30px;
+  margin-top: 0.5rem;
+  overflow: visible;
+}
+
+.spark polyline {
+  fill: none;
+  stroke: var(--crt);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.split-bar {
+  display: flex;
+  height: 0.4rem;
+  border-radius: 0.2rem;
+  overflow: hidden;
+  background: var(--rule);
+}
+
+.split-pre {
+  background: var(--pre);
+}
+
+.split-crt {
+  background: var(--crt);
+}
+
+.split-legend {
+  display: flex;
+  flex-direction: column;
+  margin: 0.6rem 0 0;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.legend-pre {
+  color: var(--pre);
+}
+
+.legend-crt {
+  color: var(--crt);
+}
+
+.figure-hits[data-active="true"] .num {
+  color: var(--hit);
+}
+
+/* Controls */
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding-block: 1.25rem 0.75rem;
+}
+
+.filter {
+  flex: 1 1 18rem;
+  display: flex;
+}
+
+.filter input {
+  width: 100%;
+  font: 0.95rem var(--mono);
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 0.55rem 0.75rem;
+}
+
+.filter input::placeholder {
+  color: var(--muted);
+  font-family: inherit;
+}
+
+html:lang(ar) .filter input:placeholder-shown {
+  font-family: var(--sans-arabic);
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.toggle input {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: var(--hit);
+}
+
+button {
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 0.5rem 0.9rem;
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: var(--muted);
+}
+
+button[aria-pressed="true"] {
+  background: var(--surface);
+  border-color: var(--pre);
+}
+
+#lang:lang(en) {
+  font-family: var(--sans-latin);
+}
+
+#lang:lang(ar) {
+  font-family: var(--sans-arabic);
+}
+
+:focus-visible {
+  outline: 2px solid var(--crt);
+  outline-offset: 2px;
+}
+
+.filter input:focus-visible {
+  outline-offset: 0;
+}
+
+.note {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+#filter-note {
+  color: var(--pre);
+}
+
+/* Stream */
+
+main {
+  padding-bottom: 2rem;
+}
+
+#sampling {
+  margin-bottom: 0.5rem;
+}
+
+.stream-head,
+.row {
+  display: grid;
+  grid-template-columns: 4.75rem 0.7rem minmax(0, 1fr) minmax(0, 15rem) minmax(0, 9rem);
+  column-gap: 0.9rem;
+  align-items: baseline;
+  border-inline-start: 3px solid transparent;
+  padding-inline-start: 0.6rem;
+}
+
+.stream-head {
+  padding-block: 0.4rem;
+  border-bottom: 1px solid var(--rule);
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.stream {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.row {
+  padding-block: 0.45rem;
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.9rem;
+}
+
+.row time,
+.row .issuer,
+.row .log {
+  color: var(--muted);
+  font-size: 0.85rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row time {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Issuer and log names are Latin. They keep left-to-right order so a long
+   name is cut at its end, and sit at the start edge of an Arabic page. */
+html[dir="rtl"] .row .issuer,
+html[dir="rtl"] .row .log {
+  text-align: right;
+}
+
+.mark {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  align-self: start;
+  margin-top: 0.4rem;
+  margin-top: calc((1lh - 0.6rem) / 2);
+}
+
+.row[data-type="pre"] .mark {
+  border: 2px solid var(--pre);
+}
+
+.row[data-type="crt"] .mark {
+  background: var(--crt);
+}
+
+.name {
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.name .idn {
+  font-family: var(--sans-arabic);
+  color: var(--pre);
+  margin-inline-start: 0.5rem;
+}
+
+.name .more {
+  color: var(--muted);
+  font-family: var(--sans-latin);
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
+}
+
+/* The count and the Unicode form sit after the name in reading order, which
+   on an Arabic page is to its left. */
+html[dir="rtl"] .name .more {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+
+.row.hit {
+  border-inline-start-color: var(--hit);
+}
+
+.row.hit .name bdi:first-child {
+  color: var(--hit);
+}
+
+.stream.only-hits .row:not(.hit) {
+  display: none;
+}
+
+.empty {
+  color: var(--muted);
+  padding-block: 2rem;
+  margin: 0;
+}
+
+/* Footer */
+
+.foot {
+  border-top: 1px solid var(--rule);
+  padding-block: 1.25rem 2rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.foot p {
+  margin: 0 0 0.4rem;
+}
+
+.foot code {
+  font-family: var(--mono);
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 0.05rem 0.35rem;
+}
+
+.foot a {
+  color: var(--crt);
+}
+
+/* Narrow screens: figures in a 2 by 2 grid, each row on two lines. */
+
+@media (max-width: 44rem) {
+  .meter {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .figure:nth-child(3) {
+    padding-inline-start: 0;
+    border-inline-start: 0;
+  }
+
+  .figure:nth-child(n + 3) {
+    border-top: 1px solid var(--rule);
+  }
+
+  .num {
+    font-size: 1.75rem;
+  }
+
+  .stream-head {
+    display: none;
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 0.6rem;
+    row-gap: 0.1rem;
+  }
+
+  .row .mark {
+    order: 1;
+    flex: none;
+    align-self: center;
+    margin-top: 0;
+  }
+
+  .row .name {
+    order: 2;
+    flex: 1 1 calc(100% - 1.5rem);
+  }
+
+  .row time {
+    order: 3;
+    margin-inline-start: 1.2rem;
+  }
+
+  .row .issuer {
+    order: 4;
+    max-width: 55%;
+  }
+
+  .row .log {
+    order: 5;
+  }
+}

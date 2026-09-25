@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta name="description" content="Live stream of TLS certificates from Certificate Transparency logs">
+  <title>تيّار</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/app.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <h1 data-t="title">تيّار</h1>
+      <p class="tagline" data-t="tagline"></p>
+    </div>
+    <div class="top-side">
+      <p class="conn" data-state="connecting">
+        <span class="conn-dot" aria-hidden="true"></span>
+        <span id="status" role="status" data-t="status_connecting"></span>
+      </p>
+      <button id="lang" type="button"></button>
+    </div>
+  </header>
+
+  <section class="meter" id="meter">
+    <div class="figure figure-rate">
+      <span class="num" id="rate">0</span>
+      <span class="label" id="rate-label"></span>
+      <svg class="spark" id="spark" viewBox="0 0 120 30" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <polyline id="spark-line" points="0,30 120,30"></polyline>
+      </svg>
+    </div>
+    <div class="figure">
+      <span class="num" id="seen">0</span>
+      <span class="label" id="seen-label"></span>
+    </div>
+    <div class="figure figure-split">
+      <div class="split-bar" aria-hidden="true"><span class="split-pre" id="bar-pre"></span><span class="split-crt" id="bar-crt"></span></div>
+      <p class="split-legend"><span class="legend-pre" id="pre-legend"></span><span class="legend-crt" id="crt-legend"></span></p>
+    </div>
+    <div class="figure figure-hits">
+      <span class="num" id="hits">0</span>
+      <span class="label" id="hits-label"></span>
+    </div>
+  </section>
+
+  <section class="controls">
+    <label class="filter">
+      <span class="visually-hidden" data-t="filter_label"></span>
+      <input id="filter" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" dir="ltr">
+    </label>
+    <label class="toggle">
+      <input id="only" type="checkbox">
+      <span data-t="only_matches"></span>
+    </label>
+    <button id="pause" type="button" aria-pressed="false" data-t="pause"></button>
+    <button id="clear" type="button" data-t="clear"></button>
+    <p id="filter-note" class="note" hidden data-t="filter_literal"></p>
+  </section>
+
+  <main>
+    <p id="sampling" class="note" hidden data-t="sampling"></p>
+    <div class="stream-head" aria-hidden="true">
+      <span data-t="col_time"></span><span></span><span data-t="col_name"></span><span data-t="col_issuer"></span><span data-t="col_log"></span>
+    </div>
+    <ol id="stream" class="stream"></ol>
+    <p id="empty" class="empty" data-t="empty"></p>
+  </main>
+
+  <footer class="foot">
+    <p id="endpoints"></p>
+    <p><span id="logs-count"></span> <a href="https://github.com/SiteQ8/Tayyar" data-t="source"></a></p>
+  </footer>
+</body>
+</html>

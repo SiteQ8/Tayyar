@@ -1,0 +1,247 @@
+{
+  "version": "92.2",
+  "log_list_timestamp": "2026-09-24T13:36:50Z",
+  "operators": [
+    {
+      "name": "Google",
+      "email": [
+        "google-ct-logs@googlegroups.com"
+      ],
+      "logs": [
+        {
+          "description": "Google 'Argon2026h2' log",
+          "log_id": "1219ENGn9XfCx+lf1wC/+YLJM1pl4dCzAXMXwMjFaXc=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEKjpni/66DIYrSlGK6Rf+e6F2c/28ZUvDJ79N81+gyimAESAyeNZ++TRgjHWg9TVQnKHTSU0T1TtqDupFnSQTIg==",
+          "url": "https://ct.googleapis.com/logs/us1/argon2026h2/",
+          "mmd": 86400,
+          "state": {
+            "usable": {
+              "timestamp": "2024-09-30T22:19:27Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2026-07-01T00:00:00Z",
+            "end_exclusive": "2027-01-01T00:00:00Z"
+          }
+        },
+        {
+          "description": "Google 'Argon2027h1'",
+          "log_id": "1tWNqdAXU/NqSqDHV0kCr+vH3CzTjNn3ZMgMiRkenwI=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEKHRm0H/zUaFA6Idz5cGvGO3tCPQyfGMgJmVBOPyKAP6mGM1IiNXi4CLomOUyYj0YN74p+eGVApFMsM4h/jzCsA==",
+          "url": "https://ct.googleapis.com/logs/us1/argon2027h1/",
+          "mmd": 86400,
+          "state": {
+            "usable": {
+              "timestamp": "2025-12-28T00:30:00Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2027-01-01T00:00:00Z",
+            "end_exclusive": "2027-07-01T00:00:00Z"
+          }
+        }
+      ],
+      "tiled_logs": [
+        {
+          "description": "Google 'ParcelYard2026h2' log",
+          "log_id": "utuIpG+cr6QJDoLlk1bbbni0pT9YLbCBl5UkLym2jJg=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEP2H56bHx6pPm5mCku6PFpeRuA5Ux0gs8iwXIVhvVdbojs0pPwZqLtlIEoJNbjxMEePTYo/qDW85AjhMJITlavA==",
+          "submission_url": "https://parcelyard2026h2.prod.certificate.transparency.goog/",
+          "monitoring_url": "https://storage.googleapis.com/parcelyard2026h2.prod.certificate.transparency.goog/",
+          "mmd": 60,
+          "state": {
+            "usable": {
+              "timestamp": "2026-08-31T13:50:00Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2026-07-01T00:00:00Z",
+            "end_exclusive": "2027-01-01T00:00:00Z"
+          }
+        },
+        {
+          "description": "Google 'ParcelYard2027h2' log",
+          "log_id": "aYS3IzyydLLRRn2l4EDXH+upCiHniGU3Srn5vPhocjc=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE+CTFsoroxXi53eLT+x2T4gsMKOcqzYEhqSLjyF6uVfdgF8yBeyA2cDWsu6nmhKGhqyoohwLh3PPgXdltfPP3BA==",
+          "submission_url": "https://parcelyard2027h2.prod.certificate.transparency.goog/",
+          "monitoring_url": "https://storage.googleapis.com/parcelyard2027h2.prod.certificate.transparency.goog/",
+          "mmd": 60,
+          "state": {
+            "usable": {
+              "timestamp": "2026-08-31T13:50:00Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2027-07-01T00:00:00Z",
+            "end_exclusive": "2028-01-01T00:00:00Z"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sectigo",
+      "email": [
+        "ctops@sectigo.com"
+      ],
+      "logs": [
+        {
+          "description": "Sectigo 'Mammoth2026h2'",
+          "log_id": "lLHBirDQV8R74KwEDh8svI3DdXJ7yVHyClJhJoY7pzw=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7INh8te0u+TkO+vIY3WYz2GQYxQ9XyLfdLpQp1ibaX3mY4lt2ddRhD/4AtjI/8KXceV+J/VysY8kJ1cKDXTAtg==",
+          "url": "https://mammoth2026h2.ct.sectigo.com/",
+          "mmd": 86400,
+          "state": {
+            "readonly": {
+              "timestamp": "2025-09-18T17:20:00Z",
+              "final_tree_head": {
+                "sha256_root_hash": "vJHecZC18lG3qp9lV2jZoi+7nkPHQx2SmM4VWglNsIk=",
+                "tree_size": 57634084
+              }
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2026-07-01T00:00:00Z",
+            "end_exclusive": "2027-01-01T00:00:00Z"
+          }
+        },
+        {
+          "description": "Sectigo 'Elephant2026h2'",
+          "log_id": "r2eIO1ewTt2Pptl+9i6o64EKx3Fg8CReVdYML+eFhzo=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEO/t4Uwkoou78zkCchh9tfAKbIUJmbOoUAb8szD8StnnHFKAVY5kq1Ljs8YD7CfzdD7xcVjmQYpbtNUhxRMRtmA==",
+          "url": "https://elephant2026h2.ct.sectigo.com/",
+          "mmd": 86400,
+          "state": {
+            "usable": {
+              "timestamp": "2025-07-22T01:33:20Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2026-07-01T00:00:00Z",
+            "end_exclusive": "2027-01-01T00:00:00Z"
+          }
+        }
+      ],
+      "tiled_logs": []
+    },
+    {
+      "name": "Let's Encrypt",
+      "email": [
+        "sre@letsencrypt.org"
+      ],
+      "logs": [
+        {
+          "description": "Let's Encrypt 'Oak2026h2'",
+          "log_id": "rKswcGzr7IQx9BPS9JFfER5CJEOx8qaMTzwrO6ceAsM=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEanCds5bj7IU2lcNPnIvZfMnVkSmu69aH3AS8O/Y0D/bbCPdSqYjvuz9Z1tT29PxcqYxf+w1g5CwPFuwqsm3rFQ==",
+          "url": "https://oak.ct.letsencrypt.org/2026h2/",
+          "mmd": 86400,
+          "state": {
+            "retired": {
+              "timestamp": "2026-02-28T00:00:00Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2026-06-20T00:00:00Z",
+            "end_exclusive": "2027-01-20T00:00:00Z"
+          }
+        }
+      ],
+      "tiled_logs": [
+        {
+          "description": "Let's Encrypt 'Sycamore2026h2'",
+          "log_id": "bP5QGUOoXqkWvFLRM+TcyR7xQRx9JYQg0XOAnhgY6zo=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwR1FtiiMbpvxR+sIeiZ5JSCIDIdTAPh7OrpdchcrCcyNVDvNUq358pqJx2qdyrOI+EjGxZ7UiPcN3bL3Q99FqA==",
+          "submission_url": "https://log.sycamore.ct.letsencrypt.org/2026h2/",
+          "monitoring_url": "https://mon.sycamore.ct.letsencrypt.org/2026h2/",
+          "mmd": 60,
+          "state": {
+            "usable": {
+              "timestamp": "2025-11-27T03:00:00Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2026-06-18T00:00:00Z",
+            "end_exclusive": "2026-12-17T00:00:00Z"
+          }
+        },
+        {
+          "description": "Let's Encrypt 'Willow2027h1'",
+          "log_id": "ooEAGHNOF24dR+CVQPOBulRml81jqENQcW64CU7a8Q0=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEzsMKtojO0BVB4t59lVyAhxtqObVA+wId5BpJGA8pZrw5GTjzuhpvLu/heQGi0hHCeislkDe34N/2D0SwEUBE0w==",
+          "submission_url": "https://log.willow.ct.letsencrypt.org/2027h1/",
+          "monitoring_url": "https://mon.willow.ct.letsencrypt.org/2027h1/",
+          "mmd": 60,
+          "state": {
+            "usable": {
+              "timestamp": "2025-11-27T03:00:00Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2026-12-16T00:00:00Z",
+            "end_exclusive": "2027-06-17T00:00:00Z"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Geomys",
+      "email": [
+        "ct@geomys.org"
+      ],
+      "logs": [
+        {
+          "description": "Bogus placeholder log to unbreak misbehaving CT libraries",
+          "log_id": "LtakTeuPDIZGZ3acTt0EH4QjZ1X6OqymNNCTXfzVmnA=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEj4lCAxWCY6SzIthkqZhwiUVzcK62i6Fc+/YS0WHaN6jjO1ITUFuu8beOiU9PdeNmdalZcC3iWovAfApvXS33Nw==",
+          "url": "https://ct.example.com/bogus/",
+          "mmd": 86400,
+          "state": {
+            "retired": {
+              "timestamp": "2025-06-21T07:00:00Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2020-01-01T08:00:00Z",
+            "end_exclusive": "2020-01-02T08:00:00Z"
+          }
+        }
+      ],
+      "tiled_logs": [
+        {
+          "description": "Geomys 'Tuscolo2026h2'",
+          "log_id": "Rq+GPTs+5Z+ld96oJF02sNntIqIj9GF3QSKUUu6VUF8=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEaA6P0i7JTsd9XfzF1/76avRWA3XXI4NStsFO/aFtBp6SY7olDEMiPSFSxGzFQjKA1r9vgG/oFQwurlWMy9FQNw==",
+          "submission_url": "https://tuscolo2026h2.sunlight.geomys.org/",
+          "monitoring_url": "https://tuscolo2026h2.skylight.geomys.org/",
+          "mmd": 60,
+          "state": {
+            "usable": {
+              "timestamp": "2025-08-31T07:00:00Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2026-07-01T00:00:00Z",
+            "end_exclusive": "2027-01-01T00:00:00Z"
+          }
+        },
+        {
+          "description": "Geomys Tuscolo2028h2",
+          "log_id": "A18eYQnn44YBqbhkHlfl9aePeIcnUy/PQlPx68mqDzk=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEFvXbrz+N3iRcf4pomNlyVokxas/fGQu1DqxIbZ9M34w9W98lDao2v6qV7mRDDDcoh2kSfyAe6GxLuBMrmRPEMg==",
+          "submission_url": "https://tuscolo2028h2.sunlight.geomys.org/",
+          "monitoring_url": "https://tuscolo2028h2.skylight.geomys.org/",
+          "mmd": 60,
+          "state": {
+            "qualified": {
+              "timestamp": "2026-09-09T13:45:00Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2028-07-01T00:00:00Z",
+            "end_exclusive": "2029-01-01T00:00:00Z"
+          }
+        }
+      ]
+    }
+  ]
+}

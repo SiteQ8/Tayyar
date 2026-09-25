@@ -1,0 +1,46 @@
+{
+  "name": "tayyar",
+  "version": "0.1.0",
+  "description": "Live stream of TLS certificates from Certificate Transparency logs. Reads RFC 6962 and static CT logs and streams every new certificate over WebSocket.",
+  "type": "module",
+  "bin": {
+    "tayyar": "bin/tayyar.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "web",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node bin/tayyar.js serve",
+    "test": "node --test test/*.test.js",
+    "preflight": "node scripts/preflight.mjs"
+  },
+  "keywords": [
+    "certificate-transparency",
+    "ct-logs",
+    "static-ct-api",
+    "tls",
+    "websocket",
+    "phishing",
+    "threat-intelligence",
+    "arabic",
+    "kuwait"
+  ],
+  "author": "Ali AlEnezi",
+  "license": "MIT",
+  "homepage": "https://github.com/SiteQ8/Tayyar",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SiteQ8/Tayyar.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SiteQ8/Tayyar/issues"
+  }
+}
