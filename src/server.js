@@ -8,6 +8,7 @@
 //   GET        /latest.json    the 25 most recent certificates, oldest first
 //   GET        /example.json   the most recent certificate, in full
 //   GET        /stats          engine, log and client statistics
+//   GET        /metrics        figures in the Prometheus text format
 //   GET        /healthz        liveness for load balancers
 //   *          /api/...        the interface's API (see api.js)
 //   GET        /              the interface
@@ -19,6 +20,7 @@ import { fileURLToPath } from 'node:url';
 import { WebSocketHub, encodeFrame, OP_TEXT } from './ws.js';
 import { liteMessage, fullMessage, domainsMessage, heartbeatMessage } from './format.js';
 import { handleApi } from './api.js';
+import { metricsText } from './metrics.js';
 import { Auth } from './auth.js';
 import { Monitor } from './monitor.js';
 import { VERSION } from './version.js';
@@ -182,7 +184,7 @@ export class StreamServer {
       this.send(res, req, 405, { allow: 'GET, HEAD', 'content-type': 'text/plain' }, 'Method Not Allowed');
       return;
     }
-    const data = ['/latest.json', '/example.json', '/stats'].includes(pathname);
+    const data = ['/latest.json', '/example.json', '/stats', '/metrics'].includes(pathname);
     if (data && !this.auth.allowed(req)) {
       this.json(res, req, 401, { error: 'Sign in with the access token first.' });
       return;
@@ -199,6 +201,10 @@ export class StreamServer {
       }
       case '/stats':
         this.json(res, req, 200, this.stats());
+        return;
+      case '/metrics':
+        this.send(res, req, 200, { 'content-type': 'text/plain; version=0.0.4; charset=utf-8', 'cache-control': 'no-store' },
+          metricsText({ engine: this.engine, monitor: this.monitor, hub: this.hub }));
         return;
       case '/healthz': {
         const s = this.engine.status();

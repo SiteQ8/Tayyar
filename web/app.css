@@ -373,10 +373,50 @@ html[dir="rtl"] .toast { transform: translateX(50%); }
 .foot p { margin: 0 0 0.4rem; }
 .foot code { font-family: var(--mono); color: var(--text); background: var(--surface); border: 1px solid var(--rule); border-radius: 4px; padding: 0.05rem 0.35rem; }
 
+/* Evidence: the name with its brand letters, look-alike characters and lure words marked */
+
+.ev-name { margin: 0.35rem 0 0.4rem; }
+.ribbon { display: inline-block; font-family: var(--mono); font-size: 1.05rem; line-height: 1.7; padding: 0.3rem 0.6rem; background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); overflow-wrap: anywhere; }
+.ev-brand { color: var(--crt); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.ev-lure { color: var(--pre); text-decoration: underline dotted; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.ev-odd { color: var(--hit); background: color-mix(in srgb, var(--hit) 22%, transparent); border-radius: 3px; }
+.ev-legend { display: flex; flex-wrap: wrap; gap: 0.2rem 1rem; margin: 0 0 0.6rem; font-size: 0.78rem; color: var(--muted); }
+.ev-legend span::before { content: ""; display: inline-block; width: 0.9rem; height: 0.6rem; margin-inline-end: 0.35rem; vertical-align: middle; border-radius: 2px; }
+.ev-legend .l-brand::before { border-bottom: 2px solid var(--crt); }
+.ev-legend .l-odd::before { background: color-mix(in srgb, var(--hit) 45%, transparent); }
+.ev-legend .l-lure::before { border-bottom: 2px dotted var(--pre); }
+.ev-line { margin: 0.2rem 0 0; font-size: 0.85rem; color: var(--text); }
+.ev-val { font-family: var(--mono); font-size: 0.82rem; background: var(--raise); border-radius: 3px; padding: 0 0.25rem; }
+.why li + li { border-top: 1px solid var(--rule); }
+.finding .why { list-style: none; margin: 0; padding: 0; }
+.finding .why li { padding: 0.35rem 0; }
+.finding .why b { display: block; font-size: 0.88rem; }
+.finding .why span { color: var(--muted); font-size: 0.82rem; }
+
+/* Keys */
+
+kbd { font-family: var(--mono); font-size: 0.74rem; color: var(--text); background: var(--surface); border: 1px solid var(--rule); border-bottom-width: 2px; border-radius: 4px; padding: 0 0.3rem; }
+.keys { margin: -0.35rem 0 0.75rem; }
+.alert.current { background: var(--surface); box-shadow: inset 0 0 0 1px var(--crt); }
+@media (hover: none) { .keys { display: none; } }
+
+/* How it works */
+
+.pipeline { margin-bottom: 2rem; }
+.pipe { list-style: none; margin: 0.9rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.75rem; }
+.stage { position: relative; display: flex; flex-direction: column; gap: 0.2rem; padding: 0.8rem 0.85rem; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; }
+.stage .num { font-size: 1.3rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--crt); line-height: 1.2; }
+.stage .label { font-size: 0.86rem; font-weight: 600; }
+.stage .explain { font-size: 0.76rem; line-height: 1.45; color: var(--muted); }
+.stage + .stage::before { content: ""; position: absolute; top: 50%; left: -0.55rem; width: 0.35rem; height: 0.35rem; border-top: 2px solid var(--muted); border-right: 2px solid var(--muted); transform: translate(0, -50%) rotate(45deg); }
+html[dir="rtl"] .stage + .stage::before { left: auto; right: -0.55rem; transform: translate(0, -50%) rotate(-135deg); }
+
 /* Narrow screens: tabs move to a bar at the bottom, grids collapse. */
 
 @media (max-width: 64rem) {
   .live-grid, .watch-grid { grid-template-columns: minmax(0, 1fr); }
+  .pipe { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stage + .stage::before { display: none; }
   .insights { position: static; border-top: 1px solid var(--rule); padding-top: 1rem; }
 }
 

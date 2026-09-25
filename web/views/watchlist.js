@@ -1,7 +1,7 @@
 // The watchlist view: brands and patterns, switched on and off in place,
 // edited in the side forms, tested against any name, imported and exported.
 
-import { $, el, t, p, toast, nameNode } from '../ui.js';
+import { $, el, t, p, toast, nameNode, evidenceBlock } from '../ui.js';
 import { api } from '../api.js';
 
 let app = null;
@@ -118,7 +118,7 @@ async function submit(form, body) {
 function finding(f) {
   return el('div', { class: 'finding' },
     el('p', {}, el('strong', { text: `${f.score} ` }), t(`severity_${f.severity}`), ' ', t(f.watch.kind === 'pattern' ? 'matches_pattern' : 'looks_like', { name: f.watch.name })),
-    el('div', { class: 'chips' }, f.reasons.map((r) => el('span', { class: 'chip', text: t(`reason_${r}`) }))));
+    ...evidenceBlock(f));
 }
 
 export function init(a) {

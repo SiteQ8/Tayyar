@@ -1,6 +1,6 @@
 {
   "name": "tayyar",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Live stream of TLS certificates from Certificate Transparency logs. Reads RFC 6962 and static CT logs and streams every new certificate over WebSocket.",
   "type": "module",
   "bin": {

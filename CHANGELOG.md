@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0 (25 September 2026)
+
+- Every alert explains itself: the name is drawn with the brand's letters, the look-alike characters and the lure words marked, and each reason shows its evidence, such as the script and code point of a look-alike letter, the swapped characters, or how many letters a misspelling is away. The watchlist's name tester shows the same, and findings carry the evidence in the API.
+- A How it works panel on the Logs page counts every stage live, from the logs read to the alerts raised and the webhooks sent.
+- The real domain written with hyphens for dots, as in `example-com-login`, counts as the real domain written inside a name.
+- A name marked as a false positive stays quiet for that watchlist entry from then on.
+- Keys for triage in the alerts view: `j` and `k` move, Enter opens, `a`, `r` and `f` set the status, `/` searches.
+- `/metrics` serves figures in the Prometheus text format.
+
 ## 0.2.2 (25 September 2026)
 
 - Tayyar is shared to show how Certificate Transparency monitoring works: the README, the site, the interface and `--help` now say it comes as is, without warranty.

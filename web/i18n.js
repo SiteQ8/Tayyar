@@ -185,6 +185,48 @@ export const STRINGS = {
     signin_text: 'This Tayyar asks for an access token, so ask whoever runs it.',
     signin_label: 'Access token',
     signin_button: 'Sign in',
+
+    pipe_title: 'How it works',
+    pipe_intro: 'From the logs to your alerts, counted since the server started.',
+    pipe_logs: 'Logs read',
+    pipe_logs_why: 'Every tree head is signed, and the signature is checked before it is trusted.',
+    pipe_entries: 'Entries read',
+    pipe_entries_why: 'Pages and tiles fetched from the logs.',
+    pipe_copies: 'Copies dropped',
+    pipe_copies_why: 'The same certificate arrives from two or three logs.',
+    pipe_certs: 'Certificates streamed',
+    pipe_certs_why: 'Parsed once, then sent to every client.',
+    pipe_names: 'Names checked',
+    pipe_names_why: 'Every name is folded, then compared with the watchlist.',
+    pipe_names_idle: 'Add a brand to the watchlist to start checking.',
+    pipe_alerts: 'Alerts raised',
+    pipe_alerts_why: 'Repeats within a day count on the open alert instead.',
+    pipe_hooks: 'Webhooks sent',
+    pipe_hooks_why: 'Signed, and retried after a failure.',
+    pipe_hooks_none: 'No webhook is set.',
+    ev_embedded: 'The real domain {domain} is written inside this name.',
+    ev_embedded_hyphens: 'The real domain {domain} is written with hyphens for dots, as {written}.',
+    ev_tld_swap: '{name} under {ending}, while the brand uses {real}.',
+    ev_keyword: 'It contains {word}.',
+    ev_subdomain: 'The word sits in the subdomain {label}.',
+    ev_char: '{char} ({code}) is {script}, and reads as {as}.',
+    ev_swap: '{from} stands in for {to}.',
+    ev_lure: 'Lure words: {words}.',
+    ev_idn: 'The certificate writes it as {ascii}.',
+    ev_pattern: 'It matches {pattern}.',
+    script_cyrillic: 'a Cyrillic letter',
+    script_greek: 'a Greek letter',
+    script_armenian: 'an Armenian letter',
+    script_arabic_variant: 'another form of an Arabic letter',
+    script_latin_marked: 'a Latin letter with a mark',
+    script_latin_variant: 'another form of a Latin letter',
+    script_fullwidth: 'a full width letter',
+    script_other: 'a letter from another script',
+    legend_brand: 'The brand',
+    legend_odd: 'Look-alike',
+    legend_lure: 'Lure word',
+    alert_keys: 'Keys: {j} and {k} move, {enter} opens, {a} acknowledges, {r} resolves, {f} marks a false positive, {slash} searches.',
+    fp_quiet: 'Marked as a false positive. This name stays quiet for this entry from now on.',
     signin_wrong: 'That token is not right.',
     signin_wait: 'Too many attempts, wait a minute and try again.',
     form_error: 'Check this: {detail}',
@@ -367,6 +409,48 @@ export const STRINGS = {
     signin_text: 'يطلب هذا الخادم رمز وصول، فاطلبه ممن يشغّله.',
     signin_label: 'رمز الوصول',
     signin_button: 'ادخل',
+
+    pipe_title: 'كيف يعمل',
+    pipe_intro: 'من السجلات إلى تنبيهاتك، والأرقام منذ تشغيل الخادم.',
+    pipe_logs: 'سجلات تُقرأ',
+    pipe_logs_why: 'رأس كل شجرة موقَّع، ويُتحقق من توقيعه قبل الوثوق به.',
+    pipe_entries: 'مدخلات مقروءة',
+    pipe_entries_why: 'صفحات وملفات تُجلب من السجلات.',
+    pipe_copies: 'نسخ محذوفة',
+    pipe_copies_why: 'تصل الشهادة نفسها من سجلين أو ثلاثة.',
+    pipe_certs: 'شهادات مبثوثة',
+    pipe_certs_why: 'تُحلَّل مرة واحدة ثم تُرسل إلى كل متصل.',
+    pipe_names: 'أسماء مفحوصة',
+    pipe_names_why: 'يُوحَّد كل اسم ثم يُقارَن بقائمة المراقبة.',
+    pipe_names_idle: 'أضف علامة إلى قائمة المراقبة ليبدأ الفحص.',
+    pipe_alerts: 'تنبيهات مرفوعة',
+    pipe_alerts_why: 'يُعدّ التكرار خلال يوم على التنبيه المفتوح بدل رفع تنبيه جديد.',
+    pipe_hooks: 'إشعارات مرسلة',
+    pipe_hooks_why: 'موقَّعة، ويُعاد إرسالها بعد الإخفاق.',
+    pipe_hooks_none: 'لم يُضبط أي عنوان ويب.',
+    ev_embedded: 'كُتب النطاق الحقيقي {domain} داخل هذا الاسم.',
+    ev_embedded_hyphens: 'كُتب النطاق الحقيقي {domain} بواصلات مكان النقاط، أي {written}.',
+    ev_tld_swap: 'الاسم {name} بالامتداد {ending}، بينما تستعمل العلامة {real}.',
+    ev_keyword: 'يحتوي على {word}.',
+    ev_subdomain: 'تقع الكلمة في النطاق الفرعي {label}.',
+    ev_char: '{char} برمز {code} {script}، ويُقرأ {as}.',
+    ev_swap: 'يحل {from} محل {to}.',
+    ev_lure: 'كلمات الاستدراج: {words}.',
+    ev_idn: 'تكتبه الشهادة هكذا {ascii}.',
+    ev_pattern: 'يطابق التعبير {pattern}.',
+    script_cyrillic: 'حرف كيريلي',
+    script_greek: 'حرف يوناني',
+    script_armenian: 'حرف أرمني',
+    script_arabic_variant: 'صورة أخرى لحرف عربي',
+    script_latin_marked: 'حرف لاتيني بعلامة',
+    script_latin_variant: 'صورة أخرى لحرف لاتيني',
+    script_fullwidth: 'حرف عريض',
+    script_other: 'حرف من خط آخر',
+    legend_brand: 'العلامة',
+    legend_odd: 'محرف مشابه',
+    legend_lure: 'كلمة استدراج',
+    alert_keys: 'المفاتيح: {j} و{k} للتنقل، و{enter} للفتح، و{a} للمتابعة، و{r} للمعالجة، و{f} للإنذار الخاطئ، و{slash} للبحث.',
+    fp_quiet: 'عُلّم إنذاراً خاطئاً، ولن يُرفع هذا الاسم مجدداً لهذا الإدخال.',
     signin_wrong: 'هذا الرمز غير صحيح.',
     signin_wait: 'محاولات كثيرة، فانتظر دقيقة ثم أعد المحاولة.',
     form_error: 'تحقق من هذا: {detail}',
@@ -425,6 +509,10 @@ export const PLURALS = {
     en: { one: 'Imported {n} entry', other: 'Imported {n} entries' },
     ar: { zero: 'لم يُستورد أي إدخال', one: 'استُورد إدخال واحد', two: 'استُورد إدخالان', few: 'استُوردت {n} إدخالات', many: 'استُورد {n} إدخالاً', other: 'استُورد {n} إدخال' },
   },
+  ev_typo: {
+    en: { one: '{piece} is one letter away from {word}.', other: '{piece} is {n} letters away from {word}.' },
+    ar: { zero: 'لا يختلف {piece} عن {word}.', one: 'يبعد {piece} عن {word} حرفاً واحداً.', two: 'يبعد {piece} عن {word} حرفين.', few: 'يبعد {piece} عن {word} {n} أحرف.', many: 'يبعد {piece} عن {word} {n} حرفاً.', other: 'يبعد {piece} عن {word} {n} حرف.' },
+  },
   alerts_new: {
     en: { one: '{n} new alert', other: '{n} new alerts' },
     ar: { zero: 'لا تنبيهات جديدة', one: 'تنبيه جديد واحد', two: 'تنبيهان جديدان', few: '{n} تنبيهات جديدة', many: '{n} تنبيهاً جديداً', other: '{n} تنبيه جديد' },
@@ -442,11 +530,14 @@ export function fill(template, vars = {}) {
   return template.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? String(vars[k]) : m));
 }
 
-export function plural(lang, key, n, vars = {}) {
+export function pluralTemplate(lang, key, n) {
   if (!rules.has(lang)) rules.set(lang, new Intl.PluralRules(lang));
   const forms = PLURALS[key][lang];
-  const form = forms[rules.get(lang).select(n)] ?? forms.other;
-  return fill(form, { ...vars, n: formatNumber(n) });
+  return forms[rules.get(lang).select(n)] ?? forms.other;
+}
+
+export function plural(lang, key, n, vars = {}) {
+  return fill(pluralTemplate(lang, key, n), { ...vars, n: formatNumber(n) });
 }
 
 export function text(lang, key, vars) {

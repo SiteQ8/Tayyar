@@ -7,6 +7,27 @@ import { api } from '../api.js';
 
 let timer = null;
 let rows = [];
+let pipeline = null;
+
+// The way from the logs to the alerts, one stage at a time, with what each
+// stage has counted since the server started.
+function renderPipeline() {
+  const box = $('pipe');
+  if (!pipeline || !box) return;
+  const stage = (key, value, note) => el('li', { class: 'stage' },
+    el('span', { class: 'num' }, el('bdi', { dir: 'ltr', text: value })),
+    el('span', { class: 'label', text: t(`pipe_${key}`) }),
+    el('span', { class: 'explain', text: note || t(`pipe_${key}_why`) }));
+  const n = formatNumber;
+  box.replaceChildren(
+    stage('logs', `${n(pipeline.logs.healthy)} / ${n(pipeline.logs.total)}`),
+    stage('entries', n(pipeline.entries)),
+    stage('copies', n(pipeline.copies)),
+    stage('certs', n(pipeline.certificates)),
+    stage('names', n(pipeline.names), pipeline.watching ? null : t('pipe_names_idle')),
+    stage('alerts', n(pipeline.alerts)),
+    stage('hooks', n(pipeline.webhooks.sent), pipeline.webhooks.configured ? null : t('pipe_hooks_none')));
+}
 
 function render() {
   const healthy = rows.filter((w) => w.state === 'ok').length;
@@ -34,8 +55,11 @@ function render() {
 
 async function load() {
   try {
-    rows = (await api('/api/logs')).logs;
+    const [logs, overview] = await Promise.all([api('/api/logs'), api('/api/overview')]);
+    rows = logs.logs;
+    pipeline = overview.pipeline;
     render();
+    renderPipeline();
   } catch {
     // Kept as it was.
   }
@@ -43,6 +67,7 @@ async function load() {
 
 export function relabel() {
   if (rows.length) render();
+  renderPipeline();
 }
 
 export function show() {

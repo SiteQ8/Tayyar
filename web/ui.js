@@ -1,7 +1,7 @@
 // Pieces shared by every view: the current language, text lookup, element
 // helpers, times and dates, the toast, the details drawer, and certificate rows.
 
-import { text, plural as pluralText, formatNumber } from './i18n.js';
+import { text, plural as pluralText, pluralTemplate, formatNumber } from './i18n.js';
 import { toUnicode } from './punycode.js';
 import { shortLogName, issuerName } from './names.js';
 
@@ -237,6 +237,114 @@ export function certSections(cert) {
       ['#', cert.index !== undefined ? el('span', { class: 'mono', text: String(cert.index) }) : null],
       ['', entry],
     ])),
+  ];
+}
+
+/* Evidence */
+
+// Placeholders that hold a domain or code stay left to right inside Arabic text.
+const LTR = new Set(['domain', 'written', 'name', 'ending', 'real', 'label', 'ascii', 'pattern', 'code']);
+
+// Fills a template with nodes: strings become isolated values, nodes go in as they are.
+export function nodes(template, vars = {}) {
+  return template.split(/(\{\w+\})/).filter(Boolean).map((part) => {
+    const m = /^\{(\w+)\}$/.exec(part);
+    if (!m || !(m[1] in vars)) return document.createTextNode(part);
+    const v = vars[m[1]];
+    if (v instanceof Node) return v;
+    return el('bdi', { class: 'ev-val', dir: LTR.has(m[1]) ? 'ltr' : 'auto', text: String(v) });
+  });
+}
+
+export const tn = (key, vars) => nodes(t(key, undefined), vars);
+export const pn = (key, n, vars) => nodes(pluralTemplate(ui.lang, key, n), { ...vars, n: document.createTextNode(formatNumber(n)) });
+
+const MARKED = new Set(['keyword', 'embedded-domain', 'typo', 'swap', 'homoglyph']);
+
+// Draws a name with its evidence marked: the part that names the brand, the
+// look-alike characters inside it, and lure words.
+export function nameRibbon(name, evidence = [], asciiShown = true) {
+  const chars = [...name];
+  const marks = chars.map(() => new Set());
+  const mark = (range, c) => {
+    if (!range) return;
+    for (let i = range[0]; i < range[1] && i < chars.length; i++) marks[i].add(c);
+  };
+  for (const e of evidence) {
+    if (MARKED.has(e.reason)) mark(e.at, 'ev-brand');
+    if (e.reason === 'homoglyph') for (const c of e.chars || []) mark([c.at, c.at + 1], 'ev-odd');
+    if (e.reason === 'swap') for (const s of e.swaps || []) mark([s.at, s.at + [...s.from].length], 'ev-odd');
+    if (e.reason === 'lure-word') for (const r of e.at || []) mark(r, 'ev-lure');
+    if (e.reason === 'pattern' && (e.on === 'ascii') === asciiShown) mark(e.at, 'ev-brand');
+  }
+  for (let i = 1; i < chars.length; i++) if (/\p{M}/u.test(chars[i])) marks[i] = marks[i - 1];
+  const out = el('bdi', { class: 'ribbon', dir: 'ltr' });
+  let run = '';
+  let key = '';
+  const flush = () => {
+    if (run) out.append(key ? el('span', { class: key, text: run }) : document.createTextNode(run));
+    run = '';
+  };
+  chars.forEach((ch, i) => {
+    const k = [...marks[i]].sort().join(' ');
+    if (k !== key) {
+      flush();
+      key = k;
+    }
+    run += ch;
+  });
+  flush();
+  return out;
+}
+
+function evidenceLines(e) {
+  const line = (...kids) => el('p', { class: 'ev-line' }, ...kids);
+  const words = (list) => {
+    const f = document.createDocumentFragment();
+    list.forEach((w, i) => {
+      if (i) f.append(ui.lang === 'ar' ? '، ' : ', ');
+      f.append(el('bdi', { class: 'ev-val', dir: 'auto', text: w }));
+    });
+    return f;
+  };
+  switch (e.reason) {
+    case 'embedded-domain':
+      return [line(...(e.form === 'hyphens' ? tn('ev_embedded_hyphens', { domain: e.domain, written: e.written }) : tn('ev_embedded', { domain: e.domain })))];
+    case 'tld-swap':
+      return [line(...tn('ev_tld_swap', { name: e.name, ending: `.${e.ending}`, real: (e.real || []).map((r) => `.${r}`).join(' ') }))];
+    case 'keyword':
+      return [line(...tn('ev_keyword', { word: e.word }))];
+    case 'subdomain':
+      return [line(...tn('ev_subdomain', { label: e.label }))];
+    case 'homoglyph':
+      return (e.chars || []).map((c) => line(...tn('ev_char', { char: c.char, code: c.code, script: document.createTextNode(t(`script_${c.script}`)), as: c.as })));
+    case 'swap':
+      return (e.swaps || []).map((s) => line(...tn('ev_swap', { from: s.from, to: s.to })));
+    case 'typo':
+      return [line(...pn('ev_typo', e.distance, { piece: e.piece, word: e.word }))];
+    case 'lure-word':
+      return [line(...tn('ev_lure', { words: words(e.words || []) }))];
+    case 'idn':
+      return [line(...tn('ev_idn', { ascii: e.ascii }))];
+    case 'pattern':
+      return [line(...tn('ev_pattern', { pattern: e.pattern }))];
+    default:
+      return [];
+  }
+}
+
+// The name drawn with its marks, a legend for the marks used, and every
+// reason with its explanation and the evidence behind it.
+export function evidenceBlock(f) {
+  const name = (f.unicode || String(f.domain).replace(/^\*\./, '')).toLowerCase();
+  const ribbon = nameRibbon(name, f.evidence || [], !f.unicode);
+  const used = ['ev-brand', 'ev-odd', 'ev-lure'].filter((c) => ribbon.querySelector(`.${c.replace(' ', '.')}`) || ribbon.querySelector(`[class~="${c}"]`));
+  const legend = used.length ? el('p', { class: 'ev-legend' }, used.map((c) => el('span', { class: `l-${c.slice(3)}`, text: t(`legend_${c.slice(3)}`) }))) : null;
+  const list = f.evidence || f.reasons.map((reason) => ({ reason }));
+  return [
+    el('div', { class: 'ev-name' }, ribbon),
+    legend,
+    el('ul', { class: 'why' }, list.map((e) => el('li', {}, el('b', { text: t(`reason_${e.reason}`) }), el('span', { text: t(`reason_${e.reason}_why`) }), ...evidenceLines(e)))),
   ];
 }
 

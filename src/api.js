@@ -88,6 +88,15 @@ export function overview(ctx) {
     webhooks: { count: m.notifier.hooks.length, ...m.notifier.stats },
     persisted: Boolean(m.dataDir),
     auth: ctx.auth.enabled,
+    pipeline: {
+      logs: { total: s.logs.total, healthy: s.logs.healthy },
+      entries: s.published.X509LogEntry + s.published.PrecertLogEntry + s.duplicates_dropped + (s.unreadable_entries || 0),
+      copies: s.duplicates_dropped,
+      certificates: s.published.X509LogEntry + s.published.PrecertLogEntry,
+      watching: m.watchlist.compiled.size,
+      ...m.counts,
+      webhooks: { configured: m.notifier.hooks.length, sent: m.notifier.stats.sent, failed: m.notifier.stats.failed },
+    },
   };
 }
 

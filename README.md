@@ -18,9 +18,13 @@
 
 ولكل تنبيه درجة من مئة وأسباب مشروحة بكلمات واضحة وحالة تنقله فيها من جديد إلى قيد المتابعة ثم إلى مُعالَج أو إنذار خاطئ، مع ملاحظاتك وتصدير CSV واستعلام DNS عند الطلب.
 
+ويشرح كل تنبيه نفسه، أي يرسم الاسم ويميّز فيه حروف العلامة والمحارف المشابهة وكلمات الاستدراج، ثم يذكر لكل سبب دليله كالحرف الكيريلي ورمزه أو الحرف البديل أو الخطأ الإملائي ومقداره، بينما يبقى الاسم الذي تعلّمه إنذاراً خاطئاً صامتاً لذلك الإدخال وتفرز التنبيهات بلوحة المفاتيح.
+
 ويرسل التنبيهات الجديدة إلى عناوين الويب بصيغة JSON أو نص، ويوقّع كل رسالة بمفتاح سري حتى يتأكد المستقبِل من مصدرها.
 
 علاوة على ذلك تبحث في آخر نصف مليون شهادة، وترى أكثر الجهات إصداراً في الساعة الأخيرة وحالة كل سجل ومقدار التأخر عنه.
+
+وتعرض صفحة السجلات كيف يعمل تيّار مرحلة بعد مرحلة، أي من السجلات المقروءة إلى الشهادات المبثوثة ثم الأسماء المفحوصة والتنبيهات والإشعارات، بأرقام حية منذ تشغيل الخادم، كما يقدّم المسار `/metrics` أرقامه بصيغة نصية تقرؤها أنظمة المراقبة.
 
 ## الشاشات
 
@@ -126,7 +130,9 @@ The site, with screenshots, is at [tayyar.3li.info](https://tayyar.3li.info).
 ## What sets it apart
 
 - Look-alike detection that understands Arabic. Names are folded before they are compared: Cyrillic, Greek and Armenian letters that look Latin, letters with marks, full width letters, the Persian kaf and yeh, the dotless yeh, teh marbuta and Arabic digits all map to one form.
-- Alerts you can work through: new, acknowledged, resolved or false positive, with notes, CSV export and a DNS lookup on demand. The same name seen again within a day counts as a repeat, not a new alert.
+- Alerts that explain themselves. The name is drawn with the brand's letters, the look-alike characters and the lure words marked, and each reason shows its evidence: the script and code point of a look-alike letter, the digit standing in for a letter, how many letters a misspelling is away. The watchlist's name tester shows the same.
+- Alerts you can work through: new, acknowledged, resolved or false positive, with notes, CSV export and a DNS lookup on demand. The same name seen again within a day counts as a repeat, not a new alert, and a false positive stays quiet for good. The keys `j` and `k` move through the list, `a`, `r` and `f` triage.
+- A How it works panel that counts every stage live, from the logs read to the alerts raised, and `/metrics` in the Prometheus text format.
 - Signed webhooks, as the full alert in JSON or as a short `{"text": ...}` message.
 - Both kinds of CT log: RFC 6962 logs, and static CT API logs served as tiles, with each log's signature checked on every tree head.
 - No dependencies. Node 22 or later, and it listens on 127.0.0.1 unless told otherwise.
@@ -195,7 +201,7 @@ A brand has its real domains, whose names and subdomains never raise alerts, and
 
 | Reason | Score | When |
 |---|---|---|
-| `embedded-domain` | 90 | the brand's real domain is written inside another domain, as in `example.com.verify-account.test` |
+| `embedded-domain` | 90, or 85 with hyphens | the brand's real domain is written inside another domain, as in `example.com.verify-account.test`, or with hyphens for dots, as in `example-com-login.test` |
 | `homoglyph` | 85 | the name matches only once look-alike letters are folded |
 | `tld-swap` | 75 | the brand's name under a different ending |
 | `swap` | 75 | digits or letter pairs stand in for letters, such as `0` for `o` or `rn` for `m` |
@@ -205,6 +211,8 @@ A brand has its real domains, whose names and subdomains never raise alerts, and
 | `lure-word` | plus 15 | the name also carries a word such as login, verify, pay, parcel or fines, or an Arabic one such as دفع |
 | `idn` | plus 5 | the name is internationalised |
 | `pattern` | 45, 65 or 85 | a regular expression on the watchlist matched, at its low, medium or high severity |
+
+Every finding also carries `evidence`, one entry per reason: where in the name it sits (`at`, code point positions in the name as displayed, Unicode form included) and what it found, such as `chars` for look-alike letters with their `script` and `code`, `swaps` for digits and letter pairs, the misspelled `piece` and its `distance`, the lure `words`, or the endings the brand really uses (`real`). Alerts keep it, the API returns it, and the interface draws it.
 
 ## Endpoints
 
@@ -217,6 +225,7 @@ A brand has its real domains, whose names and subdomains never raise alerts, and
 | `/latest.json` | the 25 most recent certificates, oldest first |
 | `/example.json` | the most recent certificate in full |
 | `/stats` | engine, log and client figures |
+| `/metrics` | the same figures and the watchlist's counts, in the Prometheus text format |
 | `/healthz` | liveness for load balancers |
 | `/api/...` | the interface's API, below |
 

@@ -35,6 +35,7 @@ export class Monitor extends EventEmitter {
     this.resolveNew = resolve;
     this.lookupFn = lookupFn;
     this.checked = 0;
+    this.counts = { names: 0, findings: 0, alerts: 0, repeats: 0 };
     for (const source of [this.watchlist, this.alerts]) source.on('warning', (m) => this.emit('warning', m));
   }
 
@@ -50,8 +51,11 @@ export class Monitor extends EventEmitter {
 
   onCert(cert) {
     this.history.add(cert);
+    if (!this.watchlist.compiled.size) return;
+    this.counts.names += cert.parsed.all_domains.length;
     const findings = detectNames(cert.parsed.all_domains, this.watchlist.compiled);
     if (!findings.length) return;
+    this.counts.findings += findings.length;
     const summary = {
       sha256: cert.fingerprints.sha256,
       update_type: cert.entryType === 1 ? 'PrecertLogEntry' : 'X509LogEntry',
@@ -67,7 +71,11 @@ export class Monitor extends EventEmitter {
     };
     for (const f of findings) {
       const { alert, isNew } = this.alerts.record(f, summary);
-      if (!isNew) continue;
+      if (!isNew) {
+        this.counts.repeats += 1;
+        continue;
+      }
+      this.counts.alerts += 1;
       this.notifier.send(alert);
       if (this.resolveNew) this.resolve(alert.id).catch(() => {});
     }

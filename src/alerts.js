@@ -99,11 +99,12 @@ export class AlertStore extends EventEmitter {
   // Records a finding. The same name for the same watchlist entry within the
   // repeat window counts as a repeat of the open alert rather than a new one,
   // since a precertificate and its certificate usually arrive minutes apart.
+  // A name marked as a false positive stays quiet for that entry for good.
   record(finding, cert) {
     const now = new Date().toISOString();
     const key = `${finding.watch.id}|${finding.domain}`;
     const open = this.byKey.get(key);
-    if (open && Date.now() - Date.parse(open.created_at) < this.repeatWindowMs) {
+    if (open && (open.status === 'false_positive' || Date.now() - Date.parse(open.created_at) < this.repeatWindowMs)) {
       open.count += 1;
       open.last_seen = now;
       this.persist({ type: 'repeat', id: open.id, at: now });
@@ -121,6 +122,7 @@ export class AlertStore extends EventEmitter {
       severity: finding.severity,
       score: finding.score,
       reasons: finding.reasons,
+      evidence: finding.evidence || null,
       domain: finding.domain,
       unicode: finding.unicode,
       watch: finding.watch,

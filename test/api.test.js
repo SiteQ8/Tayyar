@@ -17,6 +17,7 @@ import { Auth } from '../src/auth.js';
 import { Monitor } from '../src/monitor.js';
 import { StreamServer } from '../src/server.js';
 import { hostFrom } from '../src/api.js';
+import { VERSION } from '../src/version.js';
 
 const run = promisify(execFile);
 const tmp = () => mkdtemp(join(tmpdir(), 'tayyar-'));
@@ -87,6 +88,18 @@ test('alerts repeat instead of piling up, and their history survives a restart',
   assert.equal(reloaded.list({ severity: 'high' }).length, 0);
   assert.equal(new AlertStore({ repeatWindowMs: 0 }).record(FINDING, CERT).isNew, true);
   await rm(dir, { recursive: true });
+});
+
+test('a false positive stays quiet for its watchlist entry, and evidence is kept', () => {
+  const store = new AlertStore({ repeatWindowMs: 0 });
+  const evidence = [{ reason: 'keyword', word: 'example', at: [0, 7] }];
+  const { alert } = store.record({ ...FINDING, evidence }, CERT);
+  assert.deepEqual(alert.evidence, evidence);
+  store.update(alert.id, { status: 'false_positive' });
+  const again = store.record(FINDING, CERT);
+  assert.deepEqual([again.isNew, again.alert.id, again.alert.count], [false, alert.id, 2]);
+  store.update(alert.id, { status: 'resolved' });
+  assert.equal(store.record(FINDING, CERT).isNew, true, 'a resolved name alerts again once the repeat window has passed');
 });
 
 test('the CSV export quotes fields and defuses spreadsheet formulas', () => {
@@ -284,6 +297,16 @@ test('the API needs a session, refuses changes from other sites, and runs the wa
     assert.equal((await call(base, '/api/nothing', { cookie })).status, 404);
     const overview = await call(base, '/api/overview', { cookie });
     assert.deepEqual([overview.json.watchlist.total, overview.json.persisted, overview.json.auth], [1, true, true]);
+    const pipe = overview.json.pipeline;
+    assert.deepEqual([pipe.logs.total, pipe.watching, pipe.webhooks.configured], [1, 1, 0]);
+    for (const k of ['entries', 'copies', 'certificates', 'names', 'findings', 'alerts', 'repeats']) assert.equal(typeof pipe[k], 'number', k);
+    assert.equal((await call(base, '/metrics')).status, 401);
+    const metrics = await call(base, '/metrics', { cookie });
+    assert.match(metrics.headers.get('content-type'), /^text\/plain; version=0\.0\.4/);
+    for (const line of [`tayyar_info{version="${VERSION}"} 1`, '# TYPE tayyar_certificates_total counter', 'tayyar_certificates_total{type="precertificate"} 0', 'tayyar_alerts{status="resolved"} 1', 'tayyar_websocket_clients{channel="alerts"} 0']) {
+      assert.ok(metrics.text.split('\n').includes(line), line);
+    }
+    for (const line of metrics.text.trim().split('\n')) assert.match(line, /^(# (HELP|TYPE) \w+ .+|\w+(\{(\w+="(?:[^"\\]|\\.)*",?)+\})? -?[\d.]+(e[+-]?\d+)?)$/, line);
     assert.equal((await call(base, '/api/logs', { cookie })).json.logs[0].name, 'Example Log');
     const out = await call(base, '/api/session', { method: 'DELETE', cookie });
     assert.match(out.headers.get('set-cookie'), /Max-Age=0/);

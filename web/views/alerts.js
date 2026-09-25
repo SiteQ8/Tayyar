@@ -1,7 +1,7 @@
 // The alerts view: triage by status, filter by severity and text, export,
 // and a details drawer with the reasons, DNS and the certificate.
 
-import { $, el, t, p, formatNumber, nameNode, relTime, openDrawer, closeDrawer, section, dl, toast, certSections, certFromAlert } from '../ui.js';
+import { $, el, t, p, tn, formatNumber, nameNode, relTime, openDrawer, closeDrawer, section, dl, toast, certSections, certFromAlert, evidenceBlock } from '../ui.js';
 import { api } from '../api.js';
 
 const STATUSES = ['new', 'acknowledged', 'resolved', 'false_positive', 'all'];
@@ -15,6 +15,7 @@ let app = null;
 let visible = false;
 let reloadTimer = null;
 let queryTimer = null;
+let cursor = -1;
 
 function query() {
   return new URLSearchParams(filters).toString();
@@ -56,7 +57,7 @@ async function triage(alert, status, note) {
   try {
     const body = note === undefined ? { status } : { status, note };
     const updated = await api(`/api/alerts/${alert.id}`, { method: 'PATCH', body });
-    toast(t('status_changed', { status: t(`status_${updated.status}`) }));
+    toast(updated.status === 'false_positive' ? t('fp_quiet') : t('status_changed', { status: t(`status_${updated.status}`) }));
     await load();
     return updated;
   } catch {
@@ -108,6 +109,10 @@ function render() {
   const list = $('alert-list');
   list.textContent = '';
   for (const a of items) list.append(row(a));
+  if (cursor >= items.length) cursor = items.length - 1;
+  markCursor(false);
+  const kbd = (k) => el('kbd', { text: k });
+  $('alert-keys').replaceChildren(...tn('alert_keys', { j: kbd('j'), k: kbd('k'), enter: kbd('Enter'), a: kbd('a'), r: kbd('r'), f: kbd('f'), slash: kbd('/') }));
   const none = items.length === 0;
   $('alerts-empty').hidden = !none;
   const filtered = filters.status !== 'new' || filters.severity !== 'all' || filters.q;
@@ -141,7 +146,6 @@ function dnsSection(alert, refresh) {
 
 function openAlert(alert) {
   const refresh = (updated) => openAlert(updated);
-  const why = el('ul', { class: 'why' }, alert.reasons.map((r) => el('li', {}, el('b', { text: t(`reason_${r}`) }), el('span', { text: t(`reason_${r}_why`) }))));
   const note = el('textarea', { rows: '2', maxlength: '1000' });
   note.value = alert.note || '';
   const save = el('button', { class: 'btn small', type: 'button', text: t('details_note_save') });
@@ -155,7 +159,7 @@ function openAlert(alert) {
         [t('score'), `${alert.score} (${t(`severity_${alert.severity}`)})`],
         [t(`kind_${alert.watch.kind}`), el('bdi', { text: alert.watch.name })],
       ]),
-      why),
+      ...evidenceBlock(alert)),
     section(t('details_triage'),
       el('p', {}, el('span', { class: `chip status-${alert.status}`, text: t(`status_${alert.status}`) }), ' ', p('times_seen', alert.count)),
       el('div', { class: 'row-actions' }, actions(alert, refresh)),
@@ -164,6 +168,61 @@ function openAlert(alert) {
     dnsSection(alert, refresh),
     ...certSections(certFromAlert(alert)),
   ]);
+}
+
+function markCursor(scroll = true) {
+  const rows = [...$('alert-list').children];
+  rows.forEach((r, i) => r.classList.toggle('current', i === cursor));
+  if (scroll && rows[cursor]) rows[cursor].scrollIntoView({ block: 'nearest' });
+}
+
+// Keys for working through alerts without the mouse.
+function onKey(e) {
+  if (!visible || e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey || !$('drawer').hidden) return;
+  const active = document.activeElement;
+  if (active && ['INPUT', 'TEXTAREA', 'SELECT'].includes(active.tagName)) {
+    if (e.key === 'Escape') active.blur();
+    return;
+  }
+  const act = (status) => {
+    const a = items[cursor];
+    if (a && NEXT[a.status].includes(status)) triage(a, status);
+  };
+  switch (e.key) {
+    case 'j':
+    case 'ArrowDown':
+      cursor = Math.min(items.length - 1, cursor + 1);
+      markCursor();
+      break;
+    case 'k':
+    case 'ArrowUp':
+      cursor = Math.max(0, cursor - 1);
+      markCursor();
+      break;
+    case 'Enter':
+    case 'o':
+      if (!items[cursor] || (active && active.closest && active.closest('#alert-list'))) return;
+      openAlert(items[cursor]);
+      break;
+    case 'a':
+      act('acknowledged');
+      break;
+    case 'r':
+      act('resolved');
+      break;
+    case 'f':
+      act('false_positive');
+      break;
+    case 'u':
+      act('new');
+      break;
+    case '/':
+      $('alert-q').focus();
+      break;
+    default:
+      return;
+  }
+  e.preventDefault();
 }
 
 export function onEvent() {
@@ -186,6 +245,7 @@ export function init(a) {
     }, 300);
   });
   buildControls();
+  document.addEventListener('keydown', onKey);
 }
 
 export function relabel() {

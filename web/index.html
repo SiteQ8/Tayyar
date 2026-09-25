@@ -89,6 +89,7 @@
         <label class="filter"><span class="visually-hidden" data-t="alerts_search"></span><input id="alert-q" type="search" autocomplete="off" spellcheck="false"></label>
         <a class="btn" id="alert-export" download data-t="export_csv"></a>
       </div>
+      <p class="note keys" id="alert-keys"></p>
       <ol class="alert-list" id="alert-list"></ol>
       <div class="empty-state" id="alerts-empty" hidden>
         <p id="alerts-empty-text"></p>
@@ -148,7 +149,12 @@
     </section>
 
     <section class="view" id="view-logs" aria-labelledby="logs-title" hidden>
-      <div class="view-head"><h1 id="logs-title" data-t="logs_title"></h1><p class="lede" data-t="logs_intro"></p></div>
+      <section class="pipeline" aria-labelledby="pipe-title">
+        <h1 id="pipe-title" data-t="pipe_title"></h1>
+        <p class="lede" data-t="pipe_intro"></p>
+        <ol class="pipe" id="pipe"></ol>
+      </section>
+      <div class="view-head"><h2 id="logs-title" data-t="logs_title"></h2><p class="lede" data-t="logs_intro"></p></div>
       <p class="summary" id="logs-summary"></p>
       <div class="table-wrap"><table class="table" id="logs-table"><thead><tr>
         <th data-t="col_log"></th><th data-t="col_operator"></th><th data-t="col_kind"></th><th data-t="col_state"></th>
