@@ -1,6 +1,6 @@
 {
   "name": "tayyar",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Live stream of TLS certificates from Certificate Transparency logs. Reads RFC 6962 and static CT logs and streams every new certificate over WebSocket.",
   "type": "module",
   "bin": {
@@ -35,7 +35,7 @@
   ],
   "author": "Ali AlEnezi",
   "license": "MIT",
-  "homepage": "https://github.com/SiteQ8/Tayyar",
+  "homepage": "https://tayyar.3li.info",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SiteQ8/Tayyar.git"

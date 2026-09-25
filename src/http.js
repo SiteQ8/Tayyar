@@ -5,7 +5,7 @@
 import { gunzipSync } from 'node:zlib';
 import { VERSION } from './version.js';
 
-export const USER_AGENT = `tayyar/${VERSION} (+https://github.com/SiteQ8/Tayyar)`;
+export const USER_AGENT = `tayyar/${VERSION} (+https://tayyar.3li.info)`;
 
 export class HttpError extends Error {
   constructor(status, url, retryAfter = null) {

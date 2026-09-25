@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1 (25 September 2026)
+
+- The interface footer, `tayyar --help`, the package homepage and the user agent sent to the logs now point at https://tayyar.3li.info.
+
 ## 0.2.0 (25 September 2026)
 
 A full interface, a watchlist and alerts.

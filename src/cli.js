@@ -75,6 +75,8 @@ Choosing logs, for every command
 
   -h, --help                Show this help
   -v, --version             Show the version
+
+Site and screenshots: https://tayyar.3li.info
 `;
 
 class UsageError extends Error {}
