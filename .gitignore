@@ -2,3 +2,10 @@ node_modules/
 *.tmp
 tayyar-state.json
 .DS_Store
+.taste-skill/
+.impeccable/mocks/
+.impeccable/live/
+.impeccable/review/
+.impeccable/critique/
+.impeccable/build/
+.impeccable/config.local.json

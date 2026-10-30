@@ -10,12 +10,12 @@ import { FIELDS } from './fields.js';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const read = (p) => readFileSync(join(root, p), 'utf8');
-const BINARY = new Set(['.bin', '.der', '.png', '.ico']);
+const BINARY = new Set(['.bin', '.der', '.png', '.ico', '.jpg', '.jpeg', '.webp', '.gif', '.woff2', '.mp4']);
 
 function files(dir = root) {
   const out = [];
   for (const name of readdirSync(dir)) {
-    if (name === '.git' || name === 'node_modules') continue;
+    if (name === '.git' || name === 'node_modules' || name === '.taste-skill') continue;
     const p = join(dir, name);
     if (statSync(p).isDirectory()) out.push(...files(p));
     else if (!BINARY.has(extname(name))) out.push(p);
