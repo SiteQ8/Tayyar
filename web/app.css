@@ -302,7 +302,8 @@ kbd { font-family: var(--font-mono); font-size: var(--fs-1); color: var(--text);
 /* Views */
 
 main { max-width: var(--content-max); margin: 0 auto; padding: var(--sp-6) var(--gutter) var(--sp-12); }
-main:focus { outline: none; }
+/* Focus moved here by script, to keep the reader's place, shows no ring. */
+main:focus, :is(h1, h2)[tabindex="-1"]:focus { outline: none; }
 .view-head { margin-bottom: var(--sp-6); }
 .lede { margin: var(--sp-2) 0 0; max-width: var(--measure); color: var(--muted); font-size: var(--fs-4); }
 .note { margin: 0; font-size: var(--fs-2); color: var(--muted); }
