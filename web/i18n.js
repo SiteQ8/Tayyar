@@ -231,6 +231,14 @@ export const STRINGS = {
     signin_wait: 'Too many attempts, wait a minute and try again.',
     form_error: 'Check this: {detail}',
     alert_count_label: 'Alerts by status',
+    skip: 'Skip to the content',
+    stream_lost: 'The connection to Tayyar dropped, so the stream stops until it is back.',
+    paused_note: 'Paused, so new certificates are counted but not listed until you resume.',
+    error_load: 'Tayyar could not be reached, so what you see may be out of date.',
+    retry: 'Try again',
+    match: 'Matches your filter',
+    loading: 'Loading',
+    spark_window: 'Last minute',
   },
   ar: {
     title: 'تيّار',
@@ -455,6 +463,14 @@ export const STRINGS = {
     signin_wait: 'محاولات كثيرة، فانتظر دقيقة ثم أعد المحاولة.',
     form_error: 'تحقق من هذا: {detail}',
     alert_count_label: 'التنبيهات حسب الحالة',
+    skip: 'انتقل إلى المحتوى',
+    stream_lost: 'انقطع الاتصال بتيّار، لذا يتوقف البث حتى يعود.',
+    paused_note: 'البث متوقف مؤقتاً، لذا تُعدّ الشهادات الجديدة ولا تُعرض حتى تستأنفه.',
+    error_load: 'تعذّر الوصول إلى تيّار، لذا قد لا يكون ما تراه محدّثاً.',
+    retry: 'أعد المحاولة',
+    match: 'يطابق المرشّح',
+    loading: 'يجري التحميل',
+    spark_window: 'آخر دقيقة',
   },
 };
 
@@ -496,6 +512,10 @@ export const PLURALS = {
   results: {
     en: { one: '{n} result', other: '{n} results' },
     ar: { zero: 'لا نتائج', one: 'نتيجة واحدة', two: 'نتيجتان', few: '{n} نتائج', many: '{n} نتيجةً', other: '{n} نتيجة' },
+  },
+  results_capped: {
+    en: { one: 'Showing the latest match only', other: 'Showing the latest {n} matches only' },
+    ar: { zero: 'لا نتائج', one: 'تظهر آخر نتيجة فقط', two: 'تظهر آخر نتيجتين فقط', few: 'تظهر آخر {n} نتائج فقط', many: 'تظهر آخر {n} نتيجةً فقط', other: 'تظهر آخر {n} نتيجة فقط' },
   },
   search_window: {
     en: { one: 'Searching the last certificate, logged in the past {span}.', other: 'Searching the last {n} certificates, those logged in the past {span}.' },

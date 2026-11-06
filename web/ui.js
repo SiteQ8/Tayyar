@@ -1,5 +1,6 @@
 // Pieces shared by every view: the current language, text lookup, element
-// helpers, times and dates, the toast, the details drawer, and certificate rows.
+// helpers, times and dates, motion timing, the toast, the details drawer,
+// loading and error states, and certificate rows.
 
 import { text, plural as pluralText, pluralTemplate, formatNumber } from './i18n.js';
 import { toUnicode } from './punycode.js';
@@ -24,13 +25,42 @@ export function el(tag, attrs = {}, ...kids) {
   return node;
 }
 
-// A domain in left-to-right order, with its Unicode form when it differs.
+/* Motion: timings live in the stylesheet's tokens, so script and CSS agree. */
+
+export const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+export const token = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+export const ms = (name) => parseFloat(token(name)) || 0;
+
+// Shows an element that animates from its resting state: unhide it, let the
+// browser lay it out once, then set the open state the transition runs to.
+function enter(node) {
+  clearTimeout(node.leaving);
+  if (node.hidden) {
+    node.hidden = false;
+    void node.offsetWidth;
+  }
+  node.dataset.state = 'open';
+}
+
+// Runs the exit, then hides the element, unless it was opened again meanwhile.
+function leave(node, duration, instant = false) {
+  node.dataset.state = 'closed';
+  clearTimeout(node.leaving);
+  if (instant) node.hidden = true;
+  else node.leaving = setTimeout(() => { if (node.dataset.state === 'closed') node.hidden = true; }, duration);
+}
+
+const fromKeyboard = () => document.documentElement.dataset.input === 'keyboard';
+
+// A domain in left-to-right order, with its Unicode form when it differs. The
+// Unicode form sits in a span that takes the page's direction, so the space
+// between the two always faces the first one, in Arabic and in English.
 export function nameNode(domain, className = 'name') {
   const wrap = el('span', { class: className });
   wrap.append(el('bdi', { dir: 'ltr', text: domain }));
   if (domain.includes('xn--')) {
     const u = toUnicode(domain);
-    if (u !== domain) wrap.append(el('bdi', { class: 'idn', text: u }));
+    if (u !== domain) wrap.append(el('span', { class: 'idn' }, el('bdi', { dir: 'ltr', text: u })));
   }
   return wrap;
 }
@@ -38,8 +68,8 @@ export function nameNode(domain, className = 'name') {
 const locale = () => (ui.lang === 'ar' ? 'ar-u-nu-latn' : 'en-GB');
 
 export function relTime(when) {
-  const ms = typeof when === 'number' ? when * 1000 : Date.parse(when);
-  const secs = Math.round((ms - Date.now()) / 1000);
+  const msTime = typeof when === 'number' ? when * 1000 : Date.parse(when);
+  const secs = Math.round((msTime - Date.now()) / 1000);
   const rtf = new Intl.RelativeTimeFormat(locale(), { numeric: 'auto' });
   const abs = Math.abs(secs);
   if (abs < 60) return rtf.format(secs, 'second');
@@ -63,22 +93,29 @@ export function clock(seconds) {
   return new Date(seconds * 1000).toLocaleTimeString('en-GB', { hour12: false });
 }
 
-let toastTimer;
+/* Toast: rises a little and fades in, holds, then fades out. A second message
+   while one shows replaces the text and restarts the hold, without a jump. */
+
+let toastHold;
 export function toast(message) {
   const box = $('toast');
   box.textContent = message;
-  box.hidden = false;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { box.hidden = true; }, 3200);
+  enter(box);
+  clearTimeout(toastHold);
+  toastHold = setTimeout(() => leave(box, ms('--dur-2')), ms('--toast-hold'));
 }
 
-/* Drawer */
+/* Drawer: slides in from the reading end when opened with the pointer, and
+   opens at once from the keyboard, where triage is done many times a day. */
 
 let lastFocus = null;
 let onDrawerClose = null;
+let drawerOpen = false;
+export const isDrawerOpen = () => drawerOpen;
 
 export function openDrawer(title, sections, onClose = null) {
-  lastFocus = document.activeElement;
+  if (!drawerOpen) lastFocus = document.activeElement;
+  drawerOpen = true;
   onDrawerClose = onClose;
   const heading = $('drawer-title');
   heading.textContent = '';
@@ -86,25 +123,27 @@ export function openDrawer(title, sections, onClose = null) {
   const body = $('drawer-body');
   body.textContent = '';
   body.append(...sections.filter(Boolean));
-  $('drawer').hidden = false;
-  $('scrim').hidden = false;
-  $('drawer-close').focus();
+  enter($('scrim'));
+  enter($('drawer'));
+  $('drawer-close').focus({ preventScroll: true });
 }
 
 export function closeDrawer() {
-  if ($('drawer').hidden) return;
-  $('drawer').hidden = true;
-  $('scrim').hidden = true;
+  if (!drawerOpen) return;
+  drawerOpen = false;
+  const instant = fromKeyboard();
+  leave($('drawer'), ms('--dur-3'), instant);
+  leave($('scrim'), ms('--dur-3'), instant);
   if (onDrawerClose) onDrawerClose();
   onDrawerClose = null;
-  if (lastFocus && lastFocus.focus) lastFocus.focus();
+  if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
 }
 
 export function initDrawer() {
   $('drawer-close').addEventListener('click', closeDrawer);
   $('scrim').addEventListener('click', closeDrawer);
   document.addEventListener('keydown', (e) => {
-    if ($('drawer').hidden) return;
+    if (!drawerOpen) return;
     if (e.key === 'Escape') closeDrawer();
     if (e.key === 'Tab') {
       const items = [...$('drawer').querySelectorAll('button, a[href], input, textarea, select')].filter((x) => !x.disabled && x.offsetParent !== null);
@@ -144,7 +183,53 @@ export function copyButton(value) {
   return b;
 }
 
+/* States shared by the views */
+
+// One line inside the view that failed, with a way to try again. Whatever was
+// loaded before stays on screen under it.
+export function showFailure(box, retry) {
+  const button = el('button', { class: 'btn small quiet', type: 'button', text: t('retry') });
+  button.addEventListener('click', () => {
+    button.disabled = true;
+    retry();
+  });
+  box.replaceChildren(el('span', { text: t('error_load') }), button);
+  box.retry = retry;
+  box.hidden = false;
+}
+
+export function clearFailure(box) {
+  box.hidden = true;
+  box.retry = null;
+}
+
+export function relabelFailure(box) {
+  if (!box.hidden && box.retry) showFailure(box, box.retry);
+}
+
+export function skeletonBar(size = 'sk-2', extra = '') {
+  return el('span', { class: `skeleton ${size} ${extra}`.trim(), 'aria-hidden': 'true' });
+}
+
 /* Certificates */
+
+// A ring for a precertificate, a dot for an issued certificate: the same mark
+// in the stream, the meter's legend, the search filter and the drawer.
+export function typeMark(pre, labelled = true) {
+  const label = t(pre ? 'type_pre' : 'type_crt');
+  const mark = el('span', labelled ? { class: 'mark', role: 'img', 'aria-label': label, title: label } : { class: 'mark', 'aria-hidden': 'true' });
+  mark.dataset.type = pre ? 'pre' : 'crt';
+  return mark;
+}
+
+// A score with its severity in words, coloured by severity as well.
+export function scoreBlock(score, severity, inline = false) {
+  const box = el('div', { class: inline ? 'score inline' : 'score', title: `${t('score')} ${score}` },
+    el('b', { text: String(score) }),
+    el('span', { text: t(`severity_${severity}`) }));
+  box.dataset.severity = severity;
+  return box;
+}
 
 // One shape for a certificate, whether it came from the stream, an alert or search.
 export function certFromMessage(d) {
@@ -189,19 +274,22 @@ export function certFromSearch(it) {
 }
 
 // `hit` marks a row that matched the live filter; `show` only picks which
-// name leads, as search does with the name that contains the query.
-export function certRow(cert, { hit = null, show = null, onOpen } = {}) {
-  const row = el('li', { class: hit ? 'row hit' : 'row', tabindex: '0' });
+// name leads, as search does with the name that contains the query. `fresh`
+// marks a match that has just arrived, which fades its tint in once.
+export function certRow(cert, { hit = null, show = null, fresh = false, onOpen } = {}) {
+  let cls = 'row';
+  if (hit) cls += fresh ? ' hit fresh' : ' hit';
+  const row = el('li', { class: cls, tabindex: '0' });
   row.dataset.type = cert.pre ? 'pre' : 'crt';
   row.domains = cert.domains;
-  const label = t(cert.pre ? 'type_pre' : 'type_crt');
   const name = nameNode(hit || show || cert.domains[0] || '');
   if (cert.domains.length > 1) {
-    name.append(el('span', { class: 'more', dir: 'ltr', title: p('more', cert.domains.length - 1), text: `+${formatNumber(cert.domains.length - 1)}` }));
+    name.append(el('span', { class: 'more', title: p('more', cert.domains.length - 1) }, el('bdi', { dir: 'ltr', text: `+${formatNumber(cert.domains.length - 1)}` })));
   }
   row.append(
+    el('span', { class: 'hit-label visually-hidden', text: t('match') }),
     el('time', { datetime: new Date((cert.seen || 0) * 1000).toISOString(), text: clock(cert.seen || 0) }),
-    el('span', { class: 'mark', role: 'img', 'aria-label': label, title: label }),
+    typeMark(cert.pre),
     name,
     el('span', { class: 'issuer', dir: 'ltr', title: cert.issuer }, el('bdi', { text: cert.issuer || '' })),
     el('span', { class: 'log', dir: 'ltr', title: cert.log }, el('bdi', { text: cert.log || '' })),
@@ -209,7 +297,9 @@ export function certRow(cert, { hit = null, show = null, onOpen } = {}) {
   if (onOpen) {
     row.addEventListener('click', () => onOpen(cert));
     row.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') onOpen(cert);
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      onOpen(cert);
     });
   }
   return row;
@@ -225,7 +315,7 @@ export function certSections(cert) {
   return [
     section(t('details_names'), names),
     section(t('details_certificate'), dl([
-      [t('details_type'), t(cert.pre ? 'type_pre' : 'type_crt')],
+      [t('details_type'), el('span', { class: 'type' }, typeMark(cert.pre, false), t(cert.pre ? 'type_pre' : 'type_crt'))],
       [t('details_issuer'), cert.issuer ? el('bdi', { text: cert.issuer }) : null],
       [t('details_valid'), validity],
       [t('details_serial'), cert.serial ? el('span', { class: 'mono', dir: 'ltr', text: cert.serial }) : null],
@@ -338,7 +428,7 @@ function evidenceLines(e) {
 export function evidenceBlock(f) {
   const name = (f.unicode || String(f.domain).replace(/^\*\./, '')).toLowerCase();
   const ribbon = nameRibbon(name, f.evidence || [], !f.unicode);
-  const used = ['ev-brand', 'ev-odd', 'ev-lure'].filter((c) => ribbon.querySelector(`.${c.replace(' ', '.')}`) || ribbon.querySelector(`[class~="${c}"]`));
+  const used = ['ev-brand', 'ev-odd', 'ev-lure'].filter((c) => ribbon.querySelector(`[class~="${c}"]`));
   const legend = used.length ? el('p', { class: 'ev-legend' }, used.map((c) => el('span', { class: `l-${c.slice(3)}`, text: t(`legend_${c.slice(3)}`) }))) : null;
   const list = f.evidence || f.reasons.map((reason) => ({ reason }));
   return [

@@ -1,7 +1,7 @@
 // The watchlist view: brands and patterns, switched on and off in place,
 // edited in the side forms, tested against any name, imported and exported.
 
-import { $, el, t, p, toast, nameNode, evidenceBlock } from '../ui.js';
+import { $, el, t, p, toast, nameNode, evidenceBlock, scoreBlock, showFailure, clearFailure, relabelFailure } from '../ui.js';
 import { api } from '../api.js';
 
 let app = null;
@@ -12,9 +12,11 @@ const split = (s) => s.split(/[\s,،]+/).map((x) => x.trim()).filter(Boolean);
 async function load() {
   try {
     items = (await api('/api/watchlist')).items;
+    clearFailure($('watch-error'));
     render();
   } catch {
-    // Kept as it was.
+    // What was loaded stays on screen, with a way to try again.
+    showFailure($('watch-error'), load);
   }
   const o = app.overview || (await app.refreshOverview());
   $('not-persisted').hidden = !o || o.persisted;
@@ -43,9 +45,9 @@ function entry(item) {
   const detail = item.kind === 'brand'
     ? el('span', { class: 'detail' }, [...item.domains, ...item.keywords].map((w) => el('bdi', { dir: 'auto', text: w })))
     : el('span', { class: 'detail' }, el('bdi', { dir: 'ltr', text: item.pattern }), el('span', { class: 'chip', text: t(`severity_${item.severity}`) }));
-  const edit = el('button', { class: 'btn small ghost', type: 'button', text: t('edit') });
+  const edit = el('button', { class: 'btn small quiet', type: 'button', text: t('edit') });
   edit.addEventListener('click', () => startEdit(item));
-  const del = el('button', { class: 'btn small ghost', type: 'button', text: t('delete') });
+  const del = el('button', { class: 'btn small quiet', type: 'button', text: t('delete') });
   del.addEventListener('click', async () => {
     if (!window.confirm(t('delete_confirm', { name: item.name }))) return;
     try {
@@ -72,7 +74,7 @@ function resetForm(form) {
   form.querySelector('[data-cancel]').hidden = true;
   form.querySelector('.form-error').hidden = true;
   if (form.id === 'brand-form') $('brand-form-title').textContent = t('add_brand');
-  else $('pattern-panel').querySelector('summary').textContent = t('add_pattern');
+  else $('pattern-summary').textContent = t('add_pattern');
 }
 
 function startEdit(item) {
@@ -94,7 +96,7 @@ function startEdit(item) {
     f.elements.name.value = item.name;
     f.elements.pattern.value = item.pattern;
     f.elements.severity.value = item.severity;
-    $('pattern-panel').querySelector('summary').textContent = t('edit_pattern');
+    $('pattern-summary').textContent = t('edit_pattern');
     f.querySelector('[data-cancel]').hidden = false;
     f.elements.name.focus();
   }
@@ -115,9 +117,10 @@ async function submit(form, body) {
   }
 }
 
+// The same score, severity word and colour as an alert row, then the evidence.
 function finding(f) {
   return el('div', { class: 'finding' },
-    el('p', {}, el('strong', { text: `${f.score} ` }), t(`severity_${f.severity}`), ' ', t(f.watch.kind === 'pattern' ? 'matches_pattern' : 'looks_like', { name: f.watch.name })),
+    el('div', { class: 'finding-head' }, scoreBlock(f.score, f.severity, true), el('span', { text: t(f.watch.kind === 'pattern' ? 'matches_pattern' : 'looks_like', { name: f.watch.name }) })),
     ...evidenceBlock(f));
 }
 
@@ -140,7 +143,7 @@ export function init(a) {
     out.textContent = '';
     try {
       const r = await api('/api/watchlist/test', { method: 'POST', body: { domain: e.currentTarget.elements.domain.value } });
-      out.append(el('p', {}, nameNode(r.domain, 'n')));
+      out.append(el('p', { class: 'test-name' }, nameNode(r.domain, 'n')));
       if (!r.findings.length) out.append(el('p', { class: 'note', text: t('test_none') }));
       for (const f of r.findings) out.append(finding(f));
     } catch (err) {
@@ -175,6 +178,7 @@ export function init(a) {
 export function relabel() {
   if (!app) return;
   render();
+  relabelFailure($('watch-error'));
   for (const f of [$('brand-form'), $('pattern-form')]) if (!f.dataset.id) resetForm(f);
 }
 
