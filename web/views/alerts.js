@@ -99,6 +99,7 @@ function reasonChips(alert) {
 
 function row(alert) {
   const li = el('li', { class: arrived.delete(alert.id) ? 'alert arrived' : 'alert', tabindex: '0' });
+  li.dataset.id = alert.id;
   li.dataset.severity = alert.severity;
   li.dataset.status = alert.status;
   const meta = el('div', { class: 'meta' },

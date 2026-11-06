@@ -237,7 +237,9 @@ async function boot() {
       hideSignin();
       start();
     } catch (err) {
-      error.textContent = t(err.status === 429 ? 'signin_wait' : 'signin_wrong');
+      // Kept as a key, so a switch of language rewrites the line too.
+      error.dataset.t = err.status === 429 ? 'signin_wait' : 'signin_wrong';
+      error.textContent = t(error.dataset.t);
       error.hidden = false;
     }
   });

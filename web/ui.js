@@ -109,12 +109,18 @@ export function toast(message) {
    opens at once from the keyboard, where triage is done many times a day. */
 
 let lastFocus = null;
+// The list the drawer was opened from, kept because the row itself may be
+// drawn again, or leave the list, while the drawer is open.
+let lastList = null;
 let onDrawerClose = null;
 let drawerOpen = false;
 export const isDrawerOpen = () => drawerOpen;
 
 export function openDrawer(title, sections, onClose = null) {
-  if (!drawerOpen) lastFocus = document.activeElement;
+  if (!drawerOpen) {
+    lastFocus = document.activeElement;
+    lastList = lastFocus?.parentElement || null;
+  }
   drawerOpen = true;
   onDrawerClose = onClose;
   const heading = $('drawer-title');
@@ -136,7 +142,17 @@ export function closeDrawer() {
   leave($('scrim'), ms('--dur-3'), instant);
   if (onDrawerClose) onDrawerClose();
   onDrawerClose = null;
-  if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+  if (lastFocus?.isConnected) lastFocus.focus({ preventScroll: true });
+  else if (lastFocus) {
+    // The row was drawn again: focus its new copy. It left the list: focus
+    // the heading of the view it was in.
+    const id = lastFocus.dataset?.id;
+    const again = id && lastList?.isConnected ? [...lastList.children].find((r) => r.dataset.id === id) : null;
+    if (again) again.focus({ preventScroll: true });
+    else if (lastList?.isConnected) focusHeading(lastList);
+  }
+  lastFocus = null;
+  lastList = null;
 }
 
 export function initDrawer() {
@@ -207,19 +223,22 @@ export function showFailure(box, retry) {
   box.hidden = false;
 }
 
+// The heading that names the view or rail around a node, else its first
+// heading, takes focus, so the reader keeps their place when what they were
+// on goes away. It shows no ring, because the reader did not move it there.
+export function focusHeading(node) {
+  const scope = node?.closest('section, aside');
+  const named = scope?.getAttribute('aria-labelledby');
+  const heading = (named && document.getElementById(named)) || scope?.querySelector('h1, h2');
+  if (!heading) return;
+  heading.setAttribute('tabindex', '-1');
+  heading.focus({ preventScroll: true });
+}
+
 export function clearFailure(box) {
-  if (!box.hidden && box.contains(document.activeElement)) {
-    // Try again worked: focus moves to the heading of what came back, instead
-    // of falling to the page when the line disappears.
-    // The heading that names the view or rail, else its first heading.
-    const scope = box.closest('section, aside');
-    const named = scope?.getAttribute('aria-labelledby');
-    const heading = (named && document.getElementById(named)) || scope?.querySelector('h1, h2');
-    if (heading) {
-      heading.setAttribute('tabindex', '-1');
-      heading.focus({ preventScroll: true });
-    }
-  }
+  // Try again worked: focus moves to the heading of what came back, instead
+  // of falling to the page when the line disappears.
+  if (!box.hidden && box.contains(document.activeElement)) focusHeading(box);
   box.hidden = true;
   box.retry = null;
 }
@@ -305,6 +324,8 @@ export function certRow(cert, { hit = null, show = null, fresh = false, onOpen }
   if (hit) cls += fresh ? ' hit fresh' : ' hit';
   const row = el('li', { class: cls, tabindex: '0' });
   row.dataset.type = cert.pre ? 'pre' : 'crt';
+  // The entry in its log, which names the row when the list is drawn again.
+  if (cert.log && cert.index !== undefined) row.dataset.id = `${cert.log}:${cert.index}`;
   row.domains = cert.domains;
   const name = nameNode(hit || show || cert.domains[0] || '');
   if (cert.domains.length > 1) {
