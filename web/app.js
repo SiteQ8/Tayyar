@@ -74,7 +74,10 @@ let connState = 'connecting';
 function setConn(state) {
   connState = state;
   document.querySelector('.conn').dataset.state = state;
-  $('status').textContent = t(`status_${state}`);
+  // The words are a live region: written only when they change, so a screen
+  // reader does not hear the same state again at every reconnect attempt.
+  const words = t(`status_${state}`);
+  if ($('status').textContent !== words) $('status').textContent = words;
   live.setConnection(state);
 }
 
