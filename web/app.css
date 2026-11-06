@@ -686,7 +686,7 @@ html[dir="rtl"] .row .issuer, html[dir="rtl"] .row .log { text-align: right; }
 
 .signin { position: fixed; inset: 0; z-index: var(--z-signin); display: grid; place-items: center; padding: var(--sp-6); background: var(--bg); opacity: 0; transition: opacity var(--dur-3) var(--ease-out); }
 .signin[data-state="open"] { opacity: 1; }
-.signin form { width: var(--signin-w); max-width: 100%; transform: translateY(var(--lift)); transition: transform var(--dur-4) var(--ease-out); }
+.signin form { width: min(var(--signin-w), 100%); transform: translateY(var(--lift)); transition: transform var(--dur-4) var(--ease-out); }
 .signin[data-state="open"] form { transform: none; }
 .signin-top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--sp-4); margin-bottom: var(--sp-5); }
 .signin .logo { width: var(--logo-lg); height: var(--logo-lg); }
@@ -792,6 +792,10 @@ html[dir="rtl"] .row .issuer, html[dir="rtl"] .row .log { text-align: right; }
 
 @media (max-width: 40rem) {
   main { padding-top: var(--sp-4); }
+  /* With the tabs at the bottom, the bar holds the name, the language and
+     signing out, which must fit a 320px screen side by side. */
+  .bar { gap: var(--sp-3); }
+  .bar-end { gap: var(--sp-2); }
   h1 { font-size: var(--fs-5); }
   .view-head { margin-bottom: var(--sp-3); }
   .lede { font-size: var(--fs-3); }

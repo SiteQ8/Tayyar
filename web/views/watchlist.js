@@ -162,15 +162,23 @@ export function init(a) {
     const file = e.target.files[0];
     e.target.value = '';
     if (!file) return;
+    let list;
     try {
       const data = JSON.parse(await file.text());
-      const list = Array.isArray(data) ? data : data.items;
+      list = Array.isArray(data) ? data : data.items;
       if (!Array.isArray(list)) throw new Error('not a list');
+    } catch {
+      toast(t('import_bad'));
+      return;
+    }
+    try {
       const r = await api('/api/watchlist', { method: 'PUT', body: { items: list } });
       toast(p('imported', r.items.length));
       load();
-    } catch {
-      toast(t('import_bad'));
+    } catch (err) {
+      // The server refuses an entry it cannot read with 400; anything else is
+      // the connection, and the file may be fine.
+      toast(t(err.status === 400 ? 'import_bad' : 'error_generic'));
     }
   });
 }

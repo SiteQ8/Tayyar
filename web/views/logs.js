@@ -59,9 +59,18 @@ function renderPipeline() {
   }
 }
 
+// The table says it is loading, as the alerts list does, until the rows come
+// or the load fails.
+function busyTable(on) {
+  const table = $('logs-table');
+  table.tBodies[0].toggleAttribute('aria-busy', on);
+  if (on) table.setAttribute('aria-label', t('loading'));
+  else table.removeAttribute('aria-label');
+}
+
 function skeletonTable() {
   const body = $('logs-table').tBodies[0];
-  body.setAttribute('aria-busy', 'true');
+  busyTable(true);
   body.replaceChildren(...[0, 1, 2, 3].map(() => el('tr', { 'aria-hidden': 'true' },
     el('td', {}, skeletonBar('sk-3')), el('td', {}, skeletonBar('sk-2')), el('td', {}, skeletonBar('sk-2')), el('td', {}, skeletonBar('sk-1')),
     el('td', { class: 'n' }, skeletonBar('sk-2')), el('td', { class: 'n' }, skeletonBar('sk-1')), el('td', { class: 'n' }, skeletonBar('sk-1')),
@@ -72,7 +81,7 @@ function render() {
   const healthy = rows.filter((w) => w.state === 'ok').length;
   $('logs-summary').textContent = p('logs_healthy', healthy, { total: formatNumber(rows.length) });
   const body = $('logs-table').tBodies[0];
-  body.removeAttribute('aria-busy');
+  busyTable(false);
   body.textContent = '';
   const order = { stopped: 0, backoff: 1, starting: 2, ok: 3 };
   for (const w of [...rows].sort((a, b) => order[a.state] - order[b.state] || (b.lag ?? 0) - (a.lag ?? 0))) {
@@ -83,7 +92,7 @@ function render() {
     const num = (key, v) => el('td', { class: 'n', 'data-label': t(key), text: v === null || v === undefined ? '' : formatNumber(v) });
     body.append(el('tr', {},
       el('td', { title: w.url }, el('bdi', { text: shortLogName(w.name) })),
-      el('td', {}, el('bdi', { text: w.operator || '' })),
+      el('td', {}, el('bdi', { text: w.operator === 'custom' ? t('operator_custom') : w.operator || '' })),
       el('td', { text: t(w.kind === 'static' ? 'kind_static' : 'kind_rfc6962') }),
       el('td', {}, state),
       num('col_tree', w.tree_size),
@@ -109,9 +118,8 @@ async function load() {
     showFailure($('logs-error'), load);
     if (!loaded) {
       failed = true;
-      const body = $('logs-table').tBodies[0];
-      body.removeAttribute('aria-busy');
-      body.textContent = '';
+      busyTable(false);
+      $('logs-table').tBodies[0].textContent = '';
       renderPipeline();
     }
   }

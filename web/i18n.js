@@ -131,6 +131,7 @@ export const STRINGS = {
     import_bad: 'That file is not a Tayyar watchlist.',
 
     search_title: 'Search',
+    search_intro: 'Look for a name or an issuer among the recent certificates Tayyar keeps.',
     search_placeholder: 'A name, part of a name, or an issuer',
     type_all: 'All',
     type_filter_pre: 'Precertificates',
@@ -141,6 +142,7 @@ export const STRINGS = {
     logs_title: 'Logs',
     logs_intro: 'Every log Tayyar reads, with its signed tree size and how far behind Tayyar is.',
     col_operator: 'Operator',
+    operator_custom: 'Added by you',
     col_kind: 'Kind',
     col_state: 'State',
     col_tree: 'Tree size',
@@ -366,6 +368,7 @@ export const STRINGS = {
     import_bad: 'هذا الملف ليس قائمة مراقبة من تيّار.',
 
     search_title: 'البحث',
+    search_intro: 'ابحث عن اسم أو جهة مُصدِرة في الشهادات الأخيرة التي يحتفظ بها تيّار.',
     search_placeholder: 'اسم أو جزء منه أو جهة مُصدِرة',
     type_all: 'الكل',
     type_filter_pre: 'المسبقة',
@@ -376,6 +379,7 @@ export const STRINGS = {
     logs_title: 'السجلات',
     logs_intro: 'كل سجل يقرؤه تيّار، مع حجم شجرته الموقَّع ومقدار تأخر تيّار عنه.',
     col_operator: 'المشغّل',
+    operator_custom: 'أضفته أنت',
     col_kind: 'النوع',
     col_state: 'الحالة',
     col_tree: 'حجم الشجرة',
