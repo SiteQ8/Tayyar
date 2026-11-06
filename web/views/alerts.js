@@ -37,7 +37,10 @@ async function load() {
     // What was loaded stays on screen; the next event or visit tries again.
     showFailure($('alerts-error'), load);
     if (!loaded) {
-      $('alert-list').textContent = '';
+      const list = $('alert-list');
+      list.removeAttribute('aria-busy');
+      list.removeAttribute('aria-label');
+      list.textContent = '';
       $('alerts-empty').hidden = true;
     }
   }

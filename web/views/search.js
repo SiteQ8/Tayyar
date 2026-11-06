@@ -12,6 +12,7 @@ let last = null;
 
 function buildTypes() {
   const seg = $('search-type');
+  seg.setAttribute('aria-label', t('search_type_label'));
   seg.textContent = '';
   for (const [value, key] of TYPES) {
     const b = el('button', { type: 'button', 'aria-pressed': String(type === value) }, value === 'all' ? null : typeMark(value === 'pre', false), t(key));
@@ -28,7 +29,7 @@ function render() {
   if (!last) return;
   const q = $('search-q').value.trim();
   const w = last.window;
-  $('search-window').textContent = w.certificates ? p('search_window', w.certificates, { span: span(Date.now() / 1000 - w.since) }) : p('search_window', 0);
+  $('search-window').textContent = w.certificates ? p('search_window', w.certificates, { span: span(Date.now() / 1000 - w.since) }) : t('search_window_none');
   const list = $('search-results');
   list.textContent = '';
   $('search-count').textContent = '';

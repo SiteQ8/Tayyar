@@ -88,6 +88,7 @@
           <h3 data-t="insights_endings"></h3>
           <ol class="bars" id="top-endings"></ol>
           <p class="note" id="insights-empty" data-t="insights_empty"></p>
+          <p class="state-error" id="insights-error" role="alert" hidden></p>
         </aside>
       </div>
     </section>
@@ -96,6 +97,7 @@
       <div class="view-head"><h1 id="alerts-title" data-t="alerts_title"></h1><p class="lede" data-t="alerts_intro"></p></div>
       <div class="toolbar">
         <div class="seg" id="alert-status" role="group"></div>
+        <label class="visually-hidden" for="alert-severity" data-t="field_severity"></label>
         <select id="alert-severity" class="select"></select>
         <label class="filter"><span class="visually-hidden" data-t="alerts_search"></span><input id="alert-q" type="search" autocomplete="off" spellcheck="false"></label>
         <a class="btn" id="alert-export" download data-t="export_csv"></a>
@@ -124,8 +126,8 @@
             </div>
           </div>
           <form class="panel" id="test-form" novalidate>
-            <h2 data-t="test_title"></h2>
-            <div class="inline"><input name="domain" dir="ltr" spellcheck="false" autocomplete="off"><button class="btn" type="submit" data-t="test_button"></button></div>
+            <h2 id="test-title" data-t="test_title"></h2>
+            <div class="inline"><input name="domain" aria-labelledby="test-title" dir="ltr" spellcheck="false" autocomplete="off"><button class="btn" type="submit" data-t="test_button"></button></div>
             <div id="test-result" class="test-result" aria-live="polite"></div>
           </form>
         </div>
@@ -165,7 +167,7 @@
       <p class="empty empty-frame" id="search-empty"></p>
     </section>
 
-    <section class="view" id="view-logs" aria-labelledby="logs-title" hidden>
+    <section class="view" id="view-logs" aria-labelledby="pipe-title" hidden>
       <section class="pipeline" aria-labelledby="pipe-title">
         <h1 id="pipe-title" data-t="pipe_title"></h1>
         <p class="lede" data-t="pipe_intro"></p>
