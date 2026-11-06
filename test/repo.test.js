@@ -15,9 +15,12 @@ const BINARY = new Set(['.bin', '.der', '.png', '.ico', '.jpg', '.jpeg', '.webp'
 function files(dir = root) {
   const out = [];
   for (const name of readdirSync(dir)) {
-    if (name === '.git' || name === 'node_modules' || name === '.taste-skill') continue;
+    if (name === 'node_modules') continue;
     const p = join(dir, name);
-    if (statSync(p).isDirectory()) out.push(...files(p));
+    if (statSync(p).isDirectory()) {
+      // Hidden folders hold git's own data and local working files, never shipped ones.
+      if (!name.startsWith('.')) out.push(...files(p));
+    }
     else if (!BINARY.has(extname(name))) out.push(p);
   }
   return out;
