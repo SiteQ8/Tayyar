@@ -100,6 +100,8 @@
   --control: 2.25rem;
   --control-sm: 1.75rem;
   --bar-h: 3.5rem;
+  /* The strip under the bar that says a connection was lost, on phones: one line. */
+  --strip-h: calc(var(--fs-2) * var(--lh-arabic) + 2 * var(--sp-1) + var(--hairline));
   --tabbar-h: 3.5rem;
   --icon: 1.125rem;
   --logo: 1.75rem;
@@ -799,7 +801,12 @@ html[dir="rtl"] .row .issuer, html[dir="rtl"] .row .log { text-align: right; }
   h1 { font-size: var(--fs-5); }
   .view-head { margin-bottom: var(--sp-3); }
   .lede { font-size: var(--fs-3); }
-  .conn[data-state="live"] #status { position: absolute; width: var(--hairline); height: var(--hairline); overflow: hidden; clip: rect(0 0 0 0); }
+  .conn:not([data-state="retry"]) #status { position: absolute; width: var(--hairline); height: var(--hairline); overflow: hidden; clip: rect(0 0 0 0); }
+  /* A lost connection is said in words on a strip under the bar, where they
+     fit at any width, beside the name, the language and signing out. */
+  .conn[data-state="retry"] #status { position: absolute; inset-inline: 0; top: 100%; height: var(--strip-h); padding: var(--sp-1) var(--gutter); line-height: var(--lh-arabic); background: var(--surface); border-bottom: var(--hairline) solid var(--rule); color: var(--text); text-align: center; }
+  /* The page moves down by the strip, so it covers no heading. */
+  body:has(.conn[data-state="retry"]) main { padding-top: calc(var(--sp-4) + var(--strip-h)); }
   .meter { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .figure { padding: var(--sp-3) var(--sp-4); gap: 0; }
   .spark { height: var(--spark-h-sm); margin-top: var(--sp-1); }

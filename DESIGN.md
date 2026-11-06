@@ -247,7 +247,7 @@ Tight corners, chosen once: 2px for marks inside text (look-alike tints, legend 
 - **Top bar:** the wave mark and wordmark (20px, 700) at the start, the five tabs, then the connection status, the language switch and sign out at the end. Opaque ground, one rule underneath.
 - **Tabs:** 14px, 500, muted with an 18px outline icon; the current tab is ink with a 2px sea green line on the bar's edge. The alerts tab carries a coral count badge.
 - **Bottom bar (64rem and below):** the same five tabs as icon over 12px label, the current one marked by a 2px line on its top edge; safe areas respected.
-- **Connection status:** a dot and a word; coral and ink when lost. On a phone the word is visually hidden while live and shown otherwise.
+- **Connection status:** a dot and a word; coral and ink when lost. On a phone the word is visually hidden while connecting and live, and a lost connection is said in full on a one line strip under the bar, which moves the page down by its height so it covers no heading.
 
 ### Buttons
 - **Shape:** 6px corners, 36px tall (44px on touch), 14px 500 labels.
@@ -290,7 +290,7 @@ Seven stages in one band divided by rules, each with a 20px figure, a label and 
 Opens from the reading end at 32rem wide (full width on phones) over a scrim, with the domain as its title, a close button, and sections divided by rules: why it was flagged, triage, DNS, names, certificate and log entry.
 
 ### States
-- **Loading:** where the first load takes a moment (Alerts, Logs), the final layout with flat Raise bars where values will be; no shimmer, no spinner, no layout shift when data lands. Watchlist and Search answer from memory and show their content or their sentence directly. A failed first load ends the loading state and shows the error line, never bars under it.
+- **Loading:** where the first load takes a moment (Alerts, Logs), the final layout with flat Raise bars where values will be; no shimmer, no spinner, no layout shift when data lands. Watchlist and Search answer from memory and show their content or their sentence directly. A failed first load ends the loading state and shows the error line, never bars under it. A region with bars is marked busy and named Loading until its values come.
 - **Empty:** one sentence in the kept frame, with the next action when there is one ("Open the watchlist").
 - **Nothing matched:** the filter stays, the empty line says every certificate is still checked.
 - **Error:** one line inside the failed view, a Coral dot, what happened and "Try again"; what was loaded stays on screen.

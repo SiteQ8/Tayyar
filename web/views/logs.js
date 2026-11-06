@@ -30,15 +30,15 @@ function renderPipeline() {
   if (!pipeline) {
     if (failed) {
       // Nothing has loaded yet: the stages without figures, under the error line.
-      box.removeAttribute('aria-busy');
+      busy(box, false);
       box.replaceChildren(...STAGES.map((key) => stage(key, '\u00a0')));
       return;
     }
-    box.setAttribute('aria-busy', 'true');
+    busy(box, true);
     box.replaceChildren(...STAGES.map((key) => stage(key, null)));
     return;
   }
-  box.removeAttribute('aria-busy');
+  busy(box, false);
   const n = formatNumber;
   box.replaceChildren(
     stage('logs', `${n(pipeline.logs.healthy)} / ${n(pipeline.logs.total)}`),
@@ -59,13 +59,22 @@ function renderPipeline() {
   }
 }
 
-// The table says it is loading, as the alerts list does, until the rows come
-// or the load fails.
+// A region with loading bars says it is loading, as the alerts list does,
+// until its figures come or the load fails. The table is marked busy on its
+// body, where the rows will be, and named on the table itself.
+function busy(node, on, named = node) {
+  if (on) {
+    node.setAttribute('aria-busy', 'true');
+    named.setAttribute('aria-label', t('loading'));
+  } else {
+    node.removeAttribute('aria-busy');
+    named.removeAttribute('aria-label');
+  }
+}
+
 function busyTable(on) {
   const table = $('logs-table');
-  table.tBodies[0].toggleAttribute('aria-busy', on);
-  if (on) table.setAttribute('aria-label', t('loading'));
-  else table.removeAttribute('aria-label');
+  busy(table.tBodies[0], on, table);
 }
 
 function skeletonTable() {
