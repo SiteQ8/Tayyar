@@ -348,8 +348,8 @@ main:focus { outline: none; }
   .btn.primary:hover { background: var(--primary-hover); }
   .btn.ghost:hover, .btn.quiet:hover { background: var(--surface); border-color: var(--line); color: var(--text); }
 }
-.btn:active:not(:disabled) { transform: scale(var(--press)); }
-.btn:disabled { opacity: var(--o-quiet); cursor: default; }
+.btn:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(var(--press)); }
+.btn:disabled, .btn[aria-disabled="true"] { opacity: var(--o-quiet); cursor: default; }
 .btn.primary { background: var(--crt); border-color: var(--crt); color: var(--on-accent); font-weight: var(--fw-semibold); }
 .btn.ghost { border-color: transparent; color: var(--muted); }
 .btn.quiet { border-color: transparent; }
@@ -464,6 +464,10 @@ details[open] > summary .chev { transform: none; }
 .live-grid { display: grid; grid-template-columns: minmax(0, 1fr) var(--rail-insights); gap: var(--sp-8); align-items: start; }
 .insights { position: sticky; top: calc(var(--bar-h) + var(--sp-6)); }
 .insights h3 { margin-top: var(--sp-5); }
+/* In the narrow rail the error line keeps its dot beside the text and puts Try again under it. */
+.insights .state-error { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; }
+.insights .state-error::before { margin-top: calc((1lh - var(--dot)) / 2); }
+.insights .state-error > button { grid-column: 2; justify-self: start; }
 .bars { list-style: none; margin: var(--sp-2) 0 0; padding: 0; font-size: var(--fs-2); }
 .bars li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--sp-1) var(--sp-2); margin-bottom: var(--sp-2); }
 .bars .bar-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -725,7 +729,7 @@ html[dir="rtl"] .row .issuer, html[dir="rtl"] .row .log { text-align: right; }
 
 @media (prefers-reduced-motion: reduce) {
   .btn, .icon-btn, .tabs a, .switch span::after, .chev { transition: none; }
-  .btn:active:not(:disabled), .icon-btn:active, .tabs a:active { transform: none; }
+  .btn:active:not(:disabled):not([aria-disabled="true"]), .icon-btn:active, .tabs a:active { transform: none; }
   .drawer { transform: none; opacity: 0; transition: opacity var(--dur-2) var(--ease-out); }
   .drawer[data-state="open"] { opacity: 1; transition: opacity var(--dur-2) var(--ease-out); }
   .toast, .signin form { transform: none; }

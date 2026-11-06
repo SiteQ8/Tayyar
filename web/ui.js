@@ -191,12 +191,15 @@ export function showFailure(box, retry) {
   if (!box.hidden && box.retry === retry && box.querySelector('button')) {
     // Already on screen: the same nodes stay, so focus stays on Try again and
     // the line is not announced again each time a refresh fails.
-    box.querySelector('button').disabled = false;
+    box.querySelector('button').removeAttribute('aria-disabled');
     return;
   }
   const button = el('button', { class: 'btn small quiet', type: 'button', text: t('retry') });
+  // Marked busy rather than disabled while the retry runs, so a keyboard user
+  // keeps focus on it.
   button.addEventListener('click', () => {
-    button.disabled = true;
+    if (button.getAttribute('aria-disabled') === 'true') return;
+    button.setAttribute('aria-disabled', 'true');
     retry();
   });
   box.replaceChildren(el('span', { text: t('error_load') }), button);
@@ -205,6 +208,15 @@ export function showFailure(box, retry) {
 }
 
 export function clearFailure(box) {
+  if (!box.hidden && box.contains(document.activeElement)) {
+    // Try again worked: focus moves to the heading of what came back, instead
+    // of falling to the page when the line disappears.
+    const heading = box.closest('section, aside')?.querySelector('h1, h2');
+    if (heading) {
+      heading.setAttribute('tabindex', '-1');
+      heading.focus({ preventScroll: true });
+    }
+  }
   box.hidden = true;
   box.retry = null;
 }

@@ -31,7 +31,7 @@ function renderPipeline() {
     if (failed) {
       // Nothing has loaded yet: the stages without figures, under the error line.
       box.removeAttribute('aria-busy');
-      box.replaceChildren(...STAGES.map((key) => stage(key, '')));
+      box.replaceChildren(...STAGES.map((key) => stage(key, '\u00a0')));
       return;
     }
     box.setAttribute('aria-busy', 'true');
@@ -126,7 +126,8 @@ export function relabel() {
 export function show() {
   if (!loaded) {
     renderPipeline();
-    skeletonTable();
+    // Loading bars only before anything was tried; after a failure the error line stays alone.
+    if (!failed) skeletonTable();
   }
   load();
   timer = setInterval(load, 5000);
