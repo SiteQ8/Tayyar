@@ -1,105 +1,482 @@
-/* Readex Pro is served from here, with its licence in fonts/OFL.txt. "Readex Pro"
-   carries Arabic and Latin for Arabic pages. "Readex Pro Arabic" carries the Arabic
-   letters only, so English pages keep the system font for Latin while every Arabic
-   letter, in a sentence or a domain name, still uses Readex Pro. */
-@font-face { font-family: "Readex Pro"; src: url("fonts/readex-pro-arabic.woff2") format("woff2"); font-weight: 160 700; font-style: normal; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1; }
-@font-face { font-family: "Readex Pro"; src: url("fonts/readex-pro-latin.woff2") format("woff2"); font-weight: 160 700; font-style: normal; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@font-face { font-family: "Readex Pro Arabic"; src: url("fonts/readex-pro-arabic.woff2") format("woff2"); font-weight: 160 700; font-style: normal; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1; }
+/* Tayyar's site, set as a type specimen of the letters Tayyar reads as one.
 
+   Two typefaces, one job each. Readex Pro carries every Arabic letter and the
+   running text; its licence is fonts/OFL.txt. Geologica carries Latin, Cyrillic
+   and Greek display type and the specimens, because an impostor letter must be
+   drawn in the same design as the letter it imitates; its licence is
+   fonts/geologica-OFL.txt. Both are served from here. */
+@font-face { font-family: "Readex Pro"; src: url("fonts/readex-pro-arabic.woff2") format("woff2"); font-weight: 160 700; font-style: normal; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC; }
+@font-face { font-family: "Readex Pro"; src: url("fonts/readex-pro-latin.woff2") format("woff2"); font-weight: 160 700; font-style: normal; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2012-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Geologica"; src: url("fonts/geologica-latin.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2012-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Geologica"; src: url("fonts/geologica-cyrillic.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: "Geologica"; src: url("fonts/geologica-greek.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF; }
+
+/* ---------- Tokens. Every value below comes from here. ---------- */
 :root {
-  --bg: #0f1822;
-  --surface: #16222e;
-  --rule: #25374a;
-  --text: #e3eaf0;
-  --muted: #8a9cac;
-  --pre: #e6b04c;
-  --crt: #56c8b8;
-  --hit: #ff7c6a;
-  --on-accent: #0f1822;
-  --sans-latin: "Readex Pro Arabic", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --sans-arabic: "Readex Pro", "Noto Kufi Arabic", "Noto Sans Arabic", "Geeza Pro", "Segoe UI", Tahoma, sans-serif;
-  --mono: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, Consolas, "Readex Pro Arabic", monospace;
-  color-scheme: dark;
+  /* Colour: Tayyar's own inks on a cool limestone paper. Contrast on paper:
+     ink 15.3, ink-2 6.8, sea 6.3, coral 5.6, amber 5.2; paper on sea 6.3. */
+  --paper: #edeee9;
+  --paper-2: #e1e3dc;
+  --ink: #0f1822;
+  --ink-2: #465260;
+  --sea: #0b6157;
+  --sea-deep: #08493f;
+  --sea-ink-2: #bfe3dc;
+  --coral: #b42318;
+  --amber: #8a5800;
+  /* The interface's own colours, for what is drawn on its night ground. */
+  --night: #0f1822;
+  --night-2: #16222e;
+  --night-3: #25374a;
+  --night-ink: #e3eaf0;
+  --night-ink-2: #8fa1b1;
+  --sea-light: #56c8b8;
+  --coral-light: #ff7c6a;
+  --amber-light: #e6b04c;
+
+  /* Type: five steps, far apart. */
+  --font-text: "Readex Pro", "Geologica", system-ui, sans-serif;
+  --font-display: "Geologica", "Readex Pro", system-ui, sans-serif;
+  --font-code: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  --step-small: clamp(0.875rem, 0.85rem + 0.1vw, 0.9375rem);
+  --step-body: clamp(1.0625rem, 1rem + 0.2vw, 1.1875rem);
+  --step-lead: clamp(1.25rem, 1.1rem + 0.6vw, 1.625rem);
+  --step-head: clamp(2rem, 1.3rem + 2.6vw, 4rem);
+  /* The display step is set per script: Arabic is compact sideways, so it can be set larger
+     and still keep the headline to two lines in seven columns. */
+  --step-display: clamp(2.25rem, 5.8vw, 5.5rem);
+  --weight-text: 400;
+  --weight-strong: 600;
+  --weight-display: 800;
+  --leading-text: 1.6;
+  --leading-tight: 1.2;
+  --leading-display: 1.02;
+  --leading-solid: 1;
+  /* Words set as posters sit on a line no taller than their letters. */
+  --leading-poster: 0.82;
+  --track-head: -0.02em;
+  --track-display: -0.035em;
+  /* Latin display text keeps its tracking on Arabic pages too. */
+  --track-latin: -0.035em;
+  --measure: 62ch;
+  --measure-narrow: 40ch;
+  /* A name in the slip is set to fill about this many ems of its width. */
+  --name-ems: 14;
+
+  /* Space: one scale, base 4px. */
+  --s1: 0.25rem;
+  --s2: 0.5rem;
+  --s3: 0.75rem;
+  --s4: 1rem;
+  --s5: 1.5rem;
+  --s6: 2rem;
+  --s7: 3rem;
+  --s8: 4rem;
+  --s9: 6rem;
+  --s10: 8rem;
+  --s11: 12rem;
+  --margin: clamp(var(--s4), 2.2vw, var(--s6));
+  --gutter: clamp(var(--s3), 1.6vw, var(--s5));
+  /* Two section paddings put 120 to 240px between the last line of one section and the first of the next. */
+  --section: clamp(var(--s8), 2rem + 4vw, var(--s10));
+  /* The try-a-name slip hangs this far below the sea, into the page. */
+  --overhang: clamp(var(--s9), 9vw, var(--s10));
+  /* Heights the blueprints set: the band is a large share of a screen, the close nearly all of one. */
+  --band-h: 60svh;
+  --band-h-phone: 46svh;
+  --foot-h: 80svh;
+  --foot-h-phone: 70svh;
+  /* Screens: about two thirds of the screen's height, and on a phone most of its width. */
+  --shot-h: clamp(20rem, 62svh, 40rem);
+  --shot-w-phone-tall: 70vw;
+
+  /* Shape: the page is square. Only the interface's own parts keep its corners and rules. */
+  --radius-ui: 0.375rem;
+  --rule-ui: 1px;
+  --focus-ring: 2px;
+  --focus-offset: 3px;
+  /* Tayyar's evidence marks, drawn in proportion to the letters they mark. */
+  --mark-line: max(2px, 0.07em);
+  --mark-offset: 0.18em;
+  --mark-fill: 22%;
+  --mark-swatch: 45%;
+  --pale: 32%;
+  /* One square of the pipeline drawing and its gap, in the drawing's units. */
+  --flow-pitch: 14px;
+
+  /* Motion. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --t-press: 140ms;
+  --t-hover: 180ms;
+  --t-ui: 240ms;
+  --t-mark: 600ms;
+  --t-reveal: 800ms;
+  --t-open: 1000ms;
+  --t-flow: 1200ms;
+  --stagger: 70ms;
+  --rise: var(--s5);
+
+  color-scheme: light;
 }
-@media (prefers-color-scheme: light) {
-  :root { --bg: #f4f6f8; --surface: #ffffff; --rule: #d7dfe6; --text: #13212e; --muted: #56687a; --pre: #a96b00; --crt: #0a7c6e; --hit: #c23d2d; --on-accent: #ffffff; color-scheme: light; }
+/* Arabic is never letter-spaced, and its tall letters need more air. */
+html[lang="ar"] {
+  --leading-poster: 1.1;
+  --step-display: clamp(2.75rem, 1rem + 6.6vw, 7.5rem);
+  --leading-text: 1.85;
+  --leading-tight: 1.45;
+  --leading-display: 1.3;
+  --track-head: 0;
+  --track-display: 0;
 }
+
+/* ---------- Grounds. A section takes one, and its inks follow. ---------- */
+.g-paper, .g-paper-2, .g-sea, .g-night { background-color: var(--bg); color: var(--fg); }
+.g-paper { --bg: var(--paper); --bg-2: var(--paper-2); --fg: var(--ink); --fg-2: var(--ink-2); --m-brand: var(--sea); --m-odd: var(--coral); --m-lure: var(--amber); --focus: var(--sea); }
+.g-paper-2 { --bg: var(--paper-2); --bg-2: var(--paper); --fg: var(--ink); --fg-2: var(--ink-2); --m-brand: var(--sea); --m-odd: var(--coral); --m-lure: var(--amber); --focus: var(--sea); }
+.g-sea { --bg: var(--sea); --bg-2: var(--sea-deep); --fg: var(--paper); --fg-2: var(--sea-ink-2); --m-brand: var(--paper); --m-odd: var(--coral-light); --m-lure: var(--amber-light); --focus: var(--paper); }
+.g-night { --bg: var(--night); --bg-2: var(--night-2); --fg: var(--night-ink); --fg-2: var(--night-ink-2); --m-brand: var(--sea-light); --m-odd: var(--coral-light); --m-lure: var(--amber-light); --focus: var(--sea-light); }
+
+/* ---------- Base ---------- */
 html[lang="ar"] .en, html[lang="en"] .ar { display: none !important; }
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 4.5rem; -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: var(--s5); }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans-latin); line-height: 1.6; }
-html[lang="ar"] body { font-family: var(--sans-arabic); line-height: 1.8; }
-a { color: var(--crt); }
-:focus-visible { outline: 2px solid var(--crt); outline-offset: 2px; }
-.top {
-  position: sticky; top: 0; z-index: 5;
-  display: flex; align-items: center; gap: 1.5rem;
-  padding: calc(0.75rem + env(safe-area-inset-top, 0px)) clamp(1rem, 4vw, 3rem) 0.75rem;
-  background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--rule);
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: var(--step-body);
+  font-weight: var(--weight-text);
+  line-height: var(--leading-text);
+  text-rendering: optimizeLegibility;
+  font-kerning: normal;
 }
-.brand { display: flex; align-items: center; gap: 0.6rem; color: var(--text); text-decoration: none; font-weight: 700; font-size: 1.2rem; }
-.logo { width: 1.9rem; height: 1.9rem; }
-.logo rect { fill: var(--surface); stroke: var(--rule); }
-.logo path { fill: none; stroke: var(--crt); stroke-width: 2.4; stroke-linecap: round; }
-.logo .w2 { opacity: 0.55; }
-.logo circle { fill: none; stroke: var(--pre); stroke-width: 2; }
-.links { display: flex; gap: 1.25rem; margin-inline-start: auto; }
-.links a { color: var(--muted); text-decoration: none; }
-.links a:hover { color: var(--text); }
-.btn { display: inline-flex; align-items: center; gap: 0.4rem; font: inherit; font-size: 0.95rem; color: var(--text); background: transparent; border: 1px solid var(--rule); border-radius: 6px; padding: 0.55rem 1rem; text-decoration: none; cursor: pointer; }
-.btn:hover { border-color: var(--muted); }
-.btn.primary { background: var(--crt); border-color: var(--crt); color: var(--on-accent); font-weight: 600; }
-.btn.ghost { border-color: transparent; color: var(--muted); }
-#lang .ar { font-family: var(--sans-latin); }
-#lang .en { font-family: var(--sans-arabic); }
-main { max-width: 72rem; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 3rem); }
-.hero { padding: clamp(2.5rem, 7vw, 5rem) 0 2rem; }
-.hero h1 { font-size: clamp(1.8rem, 4.2vw, 3rem); line-height: 1.2; margin: 0; max-width: 22ch; letter-spacing: -0.01em; }
-html[lang="ar"] .hero h1 { line-height: 1.45; letter-spacing: 0; max-width: 26ch; }
-.lede { font-size: 1.15rem; color: var(--muted); max-width: 44rem; margin: 1.25rem 0 1.75rem; }
-.cta { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 2.5rem; }
-.shot { margin: 0; }
-.shot img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 10px; box-shadow: 0 18px 50px rgb(0 0 0 / 0.35); }
-.shot figcaption { color: var(--muted); font-size: 0.92rem; margin-top: 0.75rem; }
-.numbers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-block: 1px solid var(--rule); margin: 2rem 0 1rem; }
-.numbers p { margin: 0; padding: 1.5rem 1.25rem; border-inline-start: 1px solid var(--rule); display: flex; flex-direction: column; }
-.numbers p:first-child { border-inline-start: 0; padding-inline-start: 0; }
-.numbers b { font-size: 2.4rem; line-height: 1.1; color: var(--crt); font-variant-numeric: tabular-nums; }
-.numbers span { color: var(--muted); }
-.block { padding: 3rem 0 1rem; }
-.block h2 { font-size: 1.6rem; margin: 0 0 1.5rem; }
-.features { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem 2.5rem; }
-.features h3 { font-size: 1.08rem; margin: 0 0 0.4rem; }
-.features article { border-top: 2px solid var(--rule); padding-top: 1rem; }
-.features article:nth-child(2) { border-top-color: var(--hit); }
-.features article:nth-child(3) { border-top-color: var(--pre); }
-.features article:nth-child(1) { border-top-color: var(--crt); }
-.features p { margin: 0; color: var(--muted); }
-.gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.5rem 2rem; }
-.phone { max-width: 20rem; margin: 2.5rem auto 0; }
-.phone img { border-radius: 22px; }
-.phone figcaption { text-align: center; }
-.steps { margin: 0; padding-inline-start: 1.4rem; max-width: 46rem; }
-.steps li { margin-bottom: 0.6rem; padding-inline-start: 0.3rem; }
-.steps li::marker { color: var(--crt); font-weight: 700; }
-pre { direction: ltr; text-align: left; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 1rem 1.1rem; overflow-x: auto; font-size: 0.88rem; line-height: 1.55; margin: 0.75rem 0 1.5rem; }
-code { font-family: var(--mono); }
-.endpoints { list-style: none; padding: 0; margin: 0 0 1rem; }
-.endpoints li { padding: 0.4rem 0; border-bottom: 1px solid var(--rule); display: flex; gap: 1rem; }
-.endpoints code { min-width: 9rem; color: var(--text); }
-.endpoints span { color: var(--muted); }
-html[lang="ar"] .endpoints li { flex-direction: row; }
-.foot { max-width: 72rem; margin: 3rem auto 0; padding: 1.5rem clamp(1rem, 4vw, 3rem) calc(2.5rem + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--rule); color: var(--muted); }
-@media (max-width: 56rem) {
-  .features { grid-template-columns: minmax(0, 1fr); }
-  .gallery { grid-template-columns: minmax(0, 1fr); }
+h1, h2, h3 { margin: 0; font-family: var(--font-display); font-weight: var(--weight-display); line-height: var(--leading-tight); letter-spacing: var(--track-head); text-wrap: balance; }
+p { margin: 0; text-wrap: pretty; }
+p + p { margin-block-start: var(--s4); }
+img { display: block; max-inline-size: 100%; block-size: auto; }
+a { color: inherit; text-decoration-line: underline; text-decoration-thickness: max(1px, 0.07em); text-underline-offset: 0.2em; text-decoration-color: var(--fg-2); transition: text-decoration-color var(--t-hover) ease; }
+@media (hover: hover) and (pointer: fine) { a:hover { text-decoration-color: currentColor; } }
+:focus-visible { outline: var(--focus-ring) solid var(--focus, var(--sea)); outline-offset: var(--focus-offset); }
+::selection { background: var(--sea); color: var(--paper); }
+code, pre { font-family: var(--font-code); }
+bdi { unicode-bidi: isolate; }
+.u-code { font-variant-numeric: tabular-nums; unicode-bidi: isolate; }
+.wrap { padding-inline: var(--margin); }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
+.section { padding-block: var(--section); }
+.title { font-size: var(--step-head); }
+.subhead { font-size: var(--step-lead); letter-spacing: 0; }
+.lede { font-size: var(--step-lead); line-height: var(--leading-tight); }
+.note { font-size: var(--step-small); color: var(--fg-2); }
+.skip { position: absolute; inset-inline-start: var(--margin); inset-block-start: var(--s2); z-index: 3; padding: var(--s2) var(--s4); background: var(--paper); color: var(--ink); transform: translateY(-200%); }
+.skip:focus { transform: none; }
+.sr-only { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.is-done { display: none; }
+.is-copied .is-ready { display: none; }
+.is-copied .is-done { display: inline; }
+
+/* Tayyar's evidence, drawn on a name: the brand's letters underlined in sea
+   green, a look-alike letter on a coral block, a lure word dotted in amber. */
+.ev-brand { color: var(--m-brand); text-decoration-line: underline; text-decoration-style: solid; text-decoration-color: var(--m-brand); text-decoration-thickness: var(--mark-line); text-underline-offset: var(--mark-offset); text-decoration-skip-ink: none; }
+.ev-lure { color: var(--m-lure); text-decoration-line: underline; text-decoration-style: dotted; text-decoration-color: var(--m-lure); text-decoration-thickness: var(--mark-line); text-underline-offset: var(--mark-offset); text-decoration-skip-ink: none; }
+.ev-odd { color: var(--m-odd); background-color: color-mix(in srgb, var(--m-odd) var(--mark-fill), transparent); }
+.name { font-family: var(--font-display); font-weight: var(--weight-strong); overflow-wrap: anywhere; unicode-bidi: isolate; }
+
+/* ---------- Buttons: square, flat, one fill. ---------- */
+.button {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--s2);
+  min-block-size: var(--s7); padding-inline: var(--s5);
+  border: 0; border-radius: 0; background: var(--ink); color: var(--paper);
+  font: inherit; font-weight: var(--weight-strong); cursor: pointer;
+  transition: transform var(--t-press) var(--ease-out), background-color var(--t-hover) ease;
 }
+.button:active { transform: scale(0.97); }
+@media (hover: hover) and (pointer: fine) { .button:hover { background: var(--night-3); } }
+
+/* ---------- The bar ---------- */
+.bar { display: flex; align-items: center; gap: var(--s5); padding-block: var(--s4); }
+.wordmark { display: inline-flex; align-items: center; gap: var(--s3); color: var(--fg); text-decoration: none; font-family: var(--font-display); font-weight: var(--weight-display); font-size: var(--step-lead); line-height: var(--leading-solid); }
+.mark { inline-size: var(--s6); block-size: var(--s6); flex: none; }
+.mark rect { fill: var(--night); }
+.mark path { fill: none; stroke: var(--sea-light); stroke-width: 2.4; stroke-linecap: round; }
+.mark .w2 { opacity: 0.55; }
+.mark circle { fill: none; stroke: var(--amber-light); stroke-width: 2; }
+.bar-links { display: flex; gap: var(--s5); margin: 0; margin-inline-start: auto; padding: 0; list-style: none; }
+.bar-links a, .bar-out { color: var(--fg); text-decoration-color: transparent; }
+@media (hover: hover) and (pointer: fine) { .bar-links a:hover, .bar-out:hover { text-decoration-color: currentColor; } }
+.lang { min-block-size: var(--s7); padding: var(--s2) 0; font: inherit; color: var(--fg); background: transparent; border: 0; cursor: pointer; text-decoration-line: underline; text-decoration-thickness: max(1px, 0.07em); text-underline-offset: 0.2em; text-decoration-color: var(--fg-2); }
+.lang .ar { font-family: var(--font-display); }
+.lang .en { font-family: var(--font-text); }
+
+/* ---------- Hero: the claim on the sea, the slip hung across the seam ---------- */
+.hero { position: relative; z-index: 1; }
+.hero-body { grid-template-rows: auto 1fr; row-gap: var(--s7); padding-block-start: var(--s9); }
+.hero-title { grid-column: 1 / span 7; grid-row: 1; font-size: var(--step-display); line-height: var(--leading-display); letter-spacing: var(--track-display); }
+.hero-copy { grid-column: 1 / span 7; grid-row: 2; align-self: start; display: grid; justify-items: start; gap: var(--s5); padding-block-end: var(--s8); }
+.hero-copy .lede { max-inline-size: var(--measure-narrow); }
+.copy-cmd { display: flex; flex-wrap: wrap; max-inline-size: 100%; background: var(--paper); color: var(--ink); }
+.copy-cmd .button { flex: 1 0 auto; }
+.copy-cmd code { display: flex; align-items: center; padding: var(--s3) var(--s4); font-size: var(--step-small); overflow-wrap: anywhere; }
+.hero-out { font-weight: var(--weight-strong); }
+.hero .slip { grid-column: 8 / -1; grid-row: 1 / span 2; margin-block-end: calc(-1 * var(--overhang)); }
+
+/* ---------- The slip: a working piece of Tayyar's watchlist tester ---------- */
+[data-ui].slip { display: grid; align-self: start; gap: var(--s5); padding: var(--s6); container-type: inline-size; }
+[data-ui] .slip-head { display: grid; gap: var(--s2); }
+[data-ui] .slip-title { font-size: var(--step-lead); letter-spacing: 0; }
+[data-ui] .slip-field { display: grid; gap: var(--s2); }
+[data-ui] .slip-label { font-size: var(--step-small); color: var(--fg-2); }
+[data-ui] .slip-input {
+  inline-size: 100%; min-block-size: var(--s7); padding-inline: var(--s4);
+  font-family: var(--font-display); font-size: var(--step-body); color: var(--night-ink);
+  background: var(--night-2); border: var(--rule-ui) solid var(--night-3); border-radius: var(--radius-ui);
+}
+[data-ui] .slip-input:focus-visible { outline: var(--focus-ring) solid var(--sea-light); outline-offset: 0; border-color: var(--sea-light); }
+[data-ui] .slip-out { display: grid; gap: var(--s4); }
+[data-ui] .slip-name { font-family: var(--font-display); font-weight: var(--weight-strong); font-size: clamp(var(--step-lead), calc(100cqi / var(--name-ems)), var(--step-head)); line-height: var(--leading-tight); overflow-wrap: anywhere; }
+[data-ui] .slip-verdict { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s1) var(--s3); }
+[data-ui] .score { font-family: var(--font-display); font-size: var(--step-head); font-weight: var(--weight-display); line-height: var(--leading-solid); font-variant-numeric: tabular-nums; }
+[data-ui] .sev-high .score { color: var(--coral-light); }
+[data-ui] .sev-medium .score { color: var(--amber-light); }
+[data-ui] .sev { font-weight: var(--weight-strong); }
+[data-ui] .like { color: var(--fg-2); }
+[data-ui] .slip-why { display: grid; gap: var(--s3); margin: 0; padding: 0; list-style: none; font-size: var(--step-small); }
+[data-ui] .slip-why b { display: block; font-size: var(--step-body); }
+[data-ui] .slip-why .why { display: block; color: var(--fg-2); }
+[data-ui] .ev-val { font-family: var(--font-display); unicode-bidi: isolate; }
+[data-ui] .slip-legend { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s4); font-size: var(--step-small); color: var(--fg-2); }
+[data-ui] .slip-legend > span::before { content: ""; display: inline-block; inline-size: var(--s4); block-size: var(--s3); margin-inline-end: var(--s2); vertical-align: middle; }
+[data-ui] .l-brand::before { border-block-end: var(--mark-line) solid var(--m-brand); }
+[data-ui] .l-odd::before { background: color-mix(in srgb, var(--m-odd) var(--mark-swatch), transparent); }
+[data-ui] .l-lure::before { border-block-end: var(--mark-line) dotted var(--m-lure); }
+[data-ui] .slip-none { color: var(--fg-2); }
+[data-ui] .slip-try { display: grid; gap: var(--s2); }
+[data-ui] .chips { display: flex; flex-wrap: wrap; gap: var(--s2); margin: 0; padding: 0; list-style: none; }
+[data-ui] .chip {
+  min-block-size: var(--s7); padding-inline: var(--s3);
+  font-family: var(--font-display); font-size: var(--step-small); color: var(--night-ink);
+  background: transparent; border: var(--rule-ui) solid var(--night-3); border-radius: var(--radius-ui); cursor: pointer;
+  transition: transform var(--t-press) var(--ease-out), border-color var(--t-hover) ease, background-color var(--t-hover) ease;
+}
+[data-ui] .chip:active { transform: scale(0.97); }
+[data-ui] .chip[aria-pressed="true"] { border-color: var(--sea-light); background: var(--night-2); }
+@media (hover: hover) and (pointer: fine) { [data-ui] .chip:hover { border-color: var(--sea-light); } }
+
+/* ---------- Letters: two words compared, then the letters folded ---------- */
+.letters { padding-block-start: calc(var(--overhang) + var(--section)); }
+.head-row { align-items: end; row-gap: var(--s5); }
+.head-row > :first-child { grid-column: 1 / span 6; }
+.head-row > :last-child { grid-column: 7 / -1; max-inline-size: var(--measure); }
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: var(--s9) 0 0; }
+.pair-half { container-type: inline-size; display: grid; grid-template-columns: minmax(0, 1fr); align-content: space-between; gap: var(--s4); padding: var(--s6) var(--margin); overflow: clip; }
+.pair-cap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s2) var(--s4); font-size: var(--step-small); color: var(--fg-2); }
+.pair-cap .u-code { color: var(--fg); }
+/* The word fills its half: the half's width divided by the word's advance, in em
+   (measured at 4.17 in Geologica 800 with this tracking, plus air). */
+.pair-word { --advance: 4.3; font-family: var(--font-display); font-size: calc(100cqi / var(--advance)); font-weight: var(--weight-display); line-height: var(--leading-solid); letter-spacing: var(--track-latin); white-space: nowrap; direction: ltr; text-align: left; }
+.pair-statement { max-inline-size: var(--measure); margin-block-start: var(--s6); }
+.set { display: grid; gap: var(--s6); margin-block-start: var(--section); }
+/* Cells sit further from each other than lines sit inside a cell, so every label belongs to its own glyph. */
+.glyphs { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--s5) var(--s2); margin: 0; padding: 0; list-style: none; }
+.glyph { display: grid; align-content: start; gap: var(--s2); padding: var(--s5); background: var(--bg-2); }
+.glyph p { font-size: var(--step-small); }
+.glyph p + p { margin: 0; }
+.glyph .glyph-char { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s3); font-family: var(--font-display); font-size: var(--step-head); font-weight: var(--weight-display); line-height: var(--leading-display); }
+.glyph .glyph-char .u-code { font-family: var(--font-text); font-size: var(--step-small); font-weight: var(--weight-text); }
+.glyph .glyph-as { color: var(--fg-2); }
+.glyph .glyph-name { font-weight: var(--weight-strong); }
+.glyph .u-code { color: var(--fg-2); }
+.lures { display: grid; gap: var(--s4); margin-block-start: var(--s9); }
+.lures > p:not(.lure-list) { max-inline-size: var(--measure); }
+html[dir="rtl"] .lure-list[dir="ltr"] { text-align: right; }
+.lure-list { font-family: var(--font-display); font-size: var(--step-lead); line-height: var(--leading-display); }
+.lure-list .ev-lure { display: inline-block; margin-block-end: var(--s3); margin-inline-end: var(--s4); }
+
+/* ---------- Reasons: a line-up at one size ---------- */
+.reasons .head-row { margin-block-end: var(--s8); }
+.lineup { inline-size: 100%; border-collapse: collapse; }
+.lineup .c-reason { inline-size: 40%; }
+.lineup .c-name { inline-size: 42%; }
+.lineup th, .lineup td { padding: var(--s5) 0; text-align: start; vertical-align: baseline; font-weight: var(--weight-text); }
+.lineup thead th { padding-block: 0 var(--s3); font-size: var(--step-small); color: var(--fg-2); }
+.lineup thead th:last-child { text-align: end; }
+.lineup td + td { padding-inline-start: var(--gutter); }
+.lineup .group th { padding-block: var(--s8) var(--s3); font-family: var(--font-display); font-size: var(--step-small); font-weight: var(--weight-strong); color: var(--m-brand); }
+.lineup tbody:first-of-type .group th { padding-block-start: 0; }
+.lineup .reason b { display: block; font-family: var(--font-display); font-size: var(--step-lead); font-weight: var(--weight-strong); line-height: var(--leading-tight); }
+.lineup .reason .why { display: block; max-inline-size: var(--measure-narrow); padding-block-start: var(--s1); font-size: var(--step-small); color: var(--fg-2); }
+.lineup .name { font-size: var(--step-lead); }
+.lineup .ascii { display: block; padding-block-start: var(--s1); font-family: var(--font-display); font-size: var(--step-small); color: var(--fg-2); }
+.lineup .pts { text-align: end; font-family: var(--font-display); font-size: var(--step-lead); font-weight: var(--weight-strong); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* ---------- How it works: many into one ---------- */
+.how .head-row { align-items: start; }
+.how .head-row > div { grid-column: 1 / span 5; display: grid; gap: var(--s5); }
+.how .head-row > .lede { grid-column: 7 / -1; max-inline-size: var(--measure-narrow); }
+.flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: var(--s9) 0 0; padding: 0; list-style: none; }
+.flow li { display: grid; align-content: start; gap: var(--s3); }
+.flow h3 { padding-inline-end: var(--gutter); font-size: var(--step-lead); letter-spacing: 0; }
+.flow p { padding-inline-end: var(--gutter); max-inline-size: var(--measure-narrow); }
+.flow-art { display: block; inline-size: 100%; block-size: auto; overflow: hidden; margin-block-end: var(--s4); }
+html[dir="rtl"] .flow-art { transform: scaleX(-1); }
+.q-crt { fill: var(--sea); }
+.q-pre { fill: var(--amber-light); }
+.q-crt.pale { fill: color-mix(in srgb, var(--sea) var(--pale), var(--bg)); }
+.q-pre.pale { fill: color-mix(in srgb, var(--amber-light) var(--pale), var(--bg)); }
+.q-ok { fill: var(--ink-2); }
+.q-hit { fill: var(--coral); }
+
+/* ---------- What it does: names at poster scale ---------- */
+.does-title { font-size: var(--step-head); color: var(--fg-2); }
+.does-list { margin: var(--s4) 0 0; padding: 0; list-style: none; }
+.does-list li { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: first baseline; padding-block: var(--s5); }
+.does-list h3 { grid-column: 1 / span 7; font-size: var(--step-head); line-height: var(--leading-display); }
+.does-list p { grid-column: 9 / -1; max-inline-size: var(--measure-narrow); }
+
+/* ---------- Screens: a row of the real interface, each with its tag ---------- */
+.screens .head-row { margin-block-end: var(--s7); }
+.shots { display: flex; gap: var(--s4); overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scroll-padding-inline: var(--margin); padding-inline: var(--margin); padding-block-end: var(--s5); scrollbar-width: thin; scrollbar-color: var(--fg-2) transparent; }
+.shot { display: table; flex: none; margin: 0; scroll-snap-align: start; }
+.shot img { block-size: var(--shot-h); inline-size: auto; max-inline-size: none; background: var(--bg-2); }
+.shot figcaption { display: table-caption; caption-side: bottom; padding: var(--s3) var(--s4) var(--s4); }
+.shot figcaption b { display: block; font-family: var(--font-display); font-weight: var(--weight-strong); }
+.shot figcaption .cap { font-size: var(--step-small); }
+.tag-sea { background: var(--sea); color: var(--paper); }
+.tag-night { background: var(--night); color: var(--night-ink); }
+.tag-amber { background: var(--amber-light); color: var(--night); }
+
+/* ---------- Run it: one word is the button ---------- */
+.cta {
+  position: relative; display: grid; grid-template-rows: auto 1fr; align-content: space-between; gap: var(--s5);
+  inline-size: 100%; min-block-size: var(--band-h); padding: var(--s6) var(--margin);
+  border: 0; border-radius: 0; font: inherit; text-align: start; cursor: pointer; container-type: inline-size;
+  transition: background-color var(--t-hover) ease, color var(--t-hover) ease;
+}
+.cta-top { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: start; gap: var(--s5); }
+.cta-note { display: block; max-inline-size: var(--measure-narrow); font-size: var(--step-lead); line-height: var(--leading-tight); }
+.cta-note code { display: block; margin-block-start: var(--s3); font-size: var(--step-small); direction: ltr; text-align: start; }
+.cta-arrow { inline-size: var(--s8); block-size: var(--s8); flex: none; transition: transform var(--t-ui) var(--ease-out); }
+.cta-arrow path { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: square; }
+html[dir="rtl"] .cta-arrow { transform: scaleX(-1); }
+/* The verb fills the band: the band's width divided by the word's advance, in em, measured
+   per word: Run it 2.79, Copied 3.38, شغّله 2.52, نُسخ 2.05, each with a little air. */
+.cta-word { --advance: 2.9; align-self: end; display: block; font-family: var(--font-display); font-size: calc(100cqi / var(--advance)); font-weight: var(--weight-display); line-height: var(--leading-poster); letter-spacing: var(--track-display); white-space: nowrap; }
+/* Arabic is compact sideways: at full width the verb would stand a screen tall, so it fills three quarters. */
+html[lang="ar"] .cta-word { --advance: 3.5; }
+.is-copied .cta-word { --advance: 3.5; }
+.cta:focus-visible { outline: var(--focus-ring) solid var(--paper); outline-offset: calc(-1 * var(--s3)); }
+@media (hover: hover) and (pointer: fine) {
+  .cta:hover { background-color: var(--paper); color: var(--sea); }
+  .cta:hover .cta-arrow { transform: translate(var(--s2), calc(-1 * var(--s2))); }
+  html[dir="rtl"] .cta:hover .cta-arrow { transform: scaleX(-1) translate(var(--s2), calc(-1 * var(--s2))); }
+}
+.cmds { row-gap: var(--s5); }
+.cmds > .title { grid-column: 1 / span 4; }
+.cmds > .body { grid-column: 5 / -1; display: grid; gap: var(--s4); }
+.cmds .body > p { max-inline-size: var(--measure); }
+pre { margin: 0 0 var(--s4); padding: var(--s4) var(--s5); background: var(--night); color: var(--night-ink); font-size: var(--step-small); line-height: var(--leading-text); overflow-x: auto; direction: ltr; text-align: left; tab-size: 2; }
+pre .c { color: var(--night-ink-2); }
+
+/* ---------- Connect: the addresses, set as display rows ---------- */
+.connect .head-row { margin-block-end: var(--s7); }
+.rows { margin: 0; padding: 0; list-style: none; }
+.rows li { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: baseline; padding: var(--s5) var(--margin); }
+.rows li:nth-child(odd) { background: var(--bg-2); }
+.rows .path { grid-column: 1 / span 6; font-family: var(--font-display); font-size: var(--step-head); font-weight: var(--weight-display); line-height: var(--leading-solid); letter-spacing: var(--track-latin); direction: ltr; unicode-bidi: isolate; text-align: left; }
+html[dir="rtl"] .rows .path { text-align: right; }
+.rows .what { grid-column: 7 / -1; }
+.rows .kind { display: block; font-size: var(--step-small); color: var(--fg-2); }
+.connect pre { margin: var(--s7) var(--margin) 0; }
+
+/* ---------- Disclaimer ---------- */
+.terms .grid { row-gap: var(--s5); }
+.terms .title { grid-column: 1 / span 4; }
+.terms-list { grid-column: 5 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s6) var(--gutter); }
+.terms-list p + p { margin: 0; }
+
+/* ---------- Footer: the way in is the headline ---------- */
+.foot { display: grid; grid-template-rows: auto 1fr auto auto; min-block-size: var(--foot-h); padding-block: var(--s6) var(--s5); }
+.foot-top { row-gap: var(--s5); }
+.foot-top > p { grid-column: span 4; max-inline-size: var(--measure-narrow); }
+.foot-top > .up { grid-column: 11 / -1; justify-self: end; }
+.foot-line { align-self: end; container-type: inline-size; margin: var(--s8) var(--margin) var(--s5); }
+/* The address fills the width: the width divided by its advance, in em (measured at 12.8, plus air). */
+.foot-line a { --advance: 13.1; display: block; font-family: var(--font-display); font-size: calc(100cqi / var(--advance)); font-weight: var(--weight-display); line-height: var(--leading-solid); letter-spacing: var(--track-latin); text-decoration-thickness: var(--mark-line); text-underline-offset: var(--mark-offset); white-space: nowrap; direction: ltr; unicode-bidi: isolate; text-align: left; }
+html[dir="rtl"] .foot-line a { text-align: right; }
+.foot-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s2) var(--s5); font-size: var(--step-small); color: var(--fg-2); }
+
+/* ---------- Tablet ---------- */
+@media (max-width: 64rem) {
+  .bar-links { display: none; }
+  .bar-out { margin-inline-start: auto; }
+  .hero-title, .hero-copy { grid-column: 1 / -1; }
+  .hero-copy { padding-block-end: 0; }
+  .hero .slip { grid-column: 1 / -1; grid-row: auto; }
+  .head-row > .title, .head-row > p, .how .head-row > div, .how .head-row > .lede { grid-column: 1 / -1; }
+  .glyphs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .does-list h3, .does-list p { grid-column: 1 / -1; }
+  .does-list p { padding-block-start: var(--s3); }
+  .cmds > .title, .cmds > .body, .terms .title, .terms-list { grid-column: 1 / -1; }
+  .rows .path, .rows .what { grid-column: 1 / -1; }
+  .rows .what { padding-block-start: var(--s2); }
+  .foot-top > p { grid-column: 1 / span 6; }
+  .foot-top > .up { grid-column: 1 / -1; justify-self: start; }
+}
+
+/* ---------- Phone: its own composition ---------- */
 @media (max-width: 40rem) {
-  .links { display: none; }
-  #lang { margin-inline-start: auto; }
-  .numbers { grid-template-columns: minmax(0, 1fr); }
-  .numbers p { border-inline-start: 0; padding-inline-start: 0; border-top: 1px solid var(--rule); }
-  .numbers p:first-child { border-top: 0; }
+  .hero-body { row-gap: var(--s6); padding-block-start: var(--s8); }
+  [data-ui].slip { padding: var(--s5); }
+  .pair { grid-template-columns: minmax(0, 1fr); margin-block-start: var(--s8); }
+  .pair-half { padding-block: var(--s5); }
+  .glyphs { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--s6); }
+  .glyph { padding: var(--s4); }
+  .lineup, .lineup tbody, .lineup tr, .lineup th, .lineup td { display: block; }
+  .lineup colgroup { display: none; }
+  .lineup thead { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); }
+  .lineup tr.row { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--s4); padding-block: var(--s5); }
+  .lineup td { padding: 0; }
+  .lineup td + td { padding-inline-start: 0; }
+  .lineup .reason { grid-column: 1; grid-row: 1; }
+  .lineup .pts { grid-column: 2; grid-row: 1; }
+  .lineup .example { grid-column: 1 / -1; grid-row: 2; padding-block-start: var(--s3); }
+  .flow { grid-template-columns: minmax(0, 1fr); row-gap: var(--s7); margin-block-start: var(--s8); }
+  .flow h3, .flow p { padding-inline-end: 0; }
+  .terms-list { grid-template-columns: minmax(0, 1fr); }
+  /* On a phone the screens stack as plates, read with the thumb rather than swiped past. */
+  .shots { display: grid; gap: var(--s7); overflow: visible; padding-block-end: 0; }
+  .shot { display: block; }
+  .shot img { block-size: auto; inline-size: 100%; }
+  .shot figcaption { display: block; }
+  .shot.is-tall { inline-size: var(--shot-w-phone-tall); }
+  .cta { min-block-size: var(--band-h-phone); padding-block: var(--s5); }
+  .cta-arrow { inline-size: var(--s7); block-size: var(--s7); }
+  .foot { min-block-size: var(--foot-h-phone); }
+  .foot-top > p { grid-column: 1 / -1; }
 }
+
+/* ---------- Motion. Everything is in place without it, and nothing waits hidden. ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  /* The first screen arrives in order, settled within about a second. */
+  .js .hero-title, .js .hero-copy > * { animation: rise var(--t-reveal) var(--ease-expo) both; animation-delay: calc(var(--d, 0) * var(--stagger)); }
+  .js .hero .slip { animation: open var(--t-open) var(--ease-in-out) both; animation-delay: calc(2 * var(--stagger)); }
+  /* The signature: Tayyar's evidence appears on the name, brand first, then the odd letter, then the lure. */
+  .is-drawing .ev-brand { animation: mark-line var(--t-mark) ease both; animation-delay: var(--mark-delay, 0ms); }
+  .is-drawing .ev-odd { animation: mark-odd var(--t-mark) ease both; animation-delay: calc(var(--mark-delay, 0ms) + 3 * var(--stagger)); }
+  .is-drawing .ev-lure { animation: mark-line var(--t-mark) ease both; animation-delay: calc(var(--mark-delay, 0ms) + 6 * var(--stagger)); }
+  .pair-odd.is-in .ev-odd { animation: mark-odd var(--t-open) var(--ease-in-out) both; animation-delay: var(--t-ui); }
+  /* Each section's parts play their entrance as they arrive on screen, once. Until then they are simply there. */
+  .js [data-reveal].is-in { animation: rise var(--t-reveal) var(--ease-expo) both; animation-delay: calc(var(--i, 0) * var(--stagger)); }
+  /* The current: the ribbon of certificates moves while it is on screen. */
+  .flow-stream { animation: stream var(--t-flow) linear infinite; animation-play-state: paused; }
+  .is-moving .flow-stream { animation-play-state: running; }
+}
+@keyframes rise { from { opacity: 0; transform: translateY(var(--rise)); } }
+@keyframes open { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
+@keyframes mark-line { from { color: var(--fg); text-decoration-color: transparent; } }
+@keyframes mark-odd { from { color: var(--fg); background-color: transparent; } }
+@keyframes stream { to { transform: translateX(calc(-1 * var(--flow-pitch))); } }
