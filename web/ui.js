@@ -211,7 +211,10 @@ export function clearFailure(box) {
   if (!box.hidden && box.contains(document.activeElement)) {
     // Try again worked: focus moves to the heading of what came back, instead
     // of falling to the page when the line disappears.
-    const heading = box.closest('section, aside')?.querySelector('h1, h2');
+    // The heading that names the view or rail, else its first heading.
+    const scope = box.closest('section, aside');
+    const named = scope?.getAttribute('aria-labelledby');
+    const heading = (named && document.getElementById(named)) || scope?.querySelector('h1, h2');
     if (heading) {
       heading.setAttribute('tabindex', '-1');
       heading.focus({ preventScroll: true });
