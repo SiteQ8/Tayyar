@@ -290,7 +290,8 @@ export function relabel() {
 
 export function show() {
   visible = true;
-  if (!loaded) skeleton();
+  // Loading bars only before anything was tried; after a failure the error line stays alone.
+  if (!loaded && $('alerts-error').hidden) skeleton();
   load();
 }
 
