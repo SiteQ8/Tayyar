@@ -10,6 +10,7 @@ const STAGES = ['logs', 'entries', 'copies', 'certs', 'names', 'alerts', 'hooks'
 let timer = null;
 let rows = [];
 let loaded = false;
+let failed = false;
 let pipeline = null;
 // How it works plays its stages in order once, the first time it is seen.
 let explained = false;
@@ -27,6 +28,12 @@ function renderPipeline() {
   const box = $('pipe');
   if (!box) return;
   if (!pipeline) {
+    if (failed) {
+      // Nothing has loaded yet: the stages without figures, under the error line.
+      box.removeAttribute('aria-busy');
+      box.replaceChildren(...STAGES.map((key) => stage(key, '')));
+      return;
+    }
     box.setAttribute('aria-busy', 'true');
     box.replaceChildren(...STAGES.map((key) => stage(key, null)));
     return;
@@ -93,12 +100,20 @@ async function load() {
     rows = logs.logs;
     pipeline = overview.pipeline;
     loaded = true;
+    failed = false;
     clearFailure($('logs-error'));
     render();
     renderPipeline();
   } catch {
     // The figures on screen stay, with a way to try again; the timer also retries.
     showFailure($('logs-error'), load);
+    if (!loaded) {
+      failed = true;
+      const body = $('logs-table').tBodies[0];
+      body.removeAttribute('aria-busy');
+      body.textContent = '';
+      renderPipeline();
+    }
   }
 }
 

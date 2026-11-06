@@ -43,7 +43,7 @@ function entry(item) {
     }
   });
   const detail = item.kind === 'brand'
-    ? el('span', { class: 'detail' }, [...item.domains, ...item.keywords].map((w) => el('bdi', { dir: 'auto', text: w })))
+    ? el('span', { class: 'detail' }, ...item.domains.map((d) => nameNode(d, 'n')), ...item.keywords.map((w) => el('bdi', { dir: 'auto', text: w })))
     : el('span', { class: 'detail' }, el('bdi', { dir: 'ltr', text: item.pattern }), el('span', { class: 'chip', text: t(`severity_${item.severity}`) }));
   const edit = el('button', { class: 'btn small quiet', type: 'button', text: t('edit') });
   edit.addEventListener('click', () => startEdit(item));

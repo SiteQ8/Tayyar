@@ -309,6 +309,7 @@ main:focus { outline: none; }
 .note.warn { color: var(--pre); }
 .empty { margin: 0; padding-block: var(--sp-8); color: var(--muted); font-size: var(--fs-3); }
 .empty-frame { margin-top: var(--sp-4); padding: var(--sp-6); border: var(--hairline) solid var(--rule); border-radius: var(--r-4); }
+.empty-frame:empty { display: none; }
 .empty-state { padding-block: var(--sp-10); color: var(--muted); font-size: var(--fs-3); }
 .empty-state p { margin: 0 0 var(--sp-4); max-width: var(--measure); }
 .state-error { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-3); margin: 0 0 var(--sp-4); padding: var(--sp-2) var(--sp-4); border: var(--hairline) solid var(--rule); border-radius: var(--r-4); font-size: var(--fs-3); }
@@ -501,7 +502,7 @@ html[dir="rtl"] .row .issuer, html[dir="rtl"] .row .log { text-align: right; }
 .idn { margin-inline-start: var(--sp-2); font-family: var(--font-sans); color: var(--pre); }
 .more { margin-inline-start: var(--sp-2); color: var(--muted); font-family: var(--font-sans); font-size: var(--fs-1); }
 .row.hit { background: var(--hit-tint); }
-.row.hit .name > bdi:first-child { color: var(--hit); }
+.row.hit .name > bdi:first-child { color: var(--hit); text-decoration: underline; text-decoration-thickness: var(--stroke); text-underline-offset: var(--sp-1); }
 .row:not(.hit) .hit-label { display: none; }
 .stream.only-hits .row:not(.hit) { display: none; }
 

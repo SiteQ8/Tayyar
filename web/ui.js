@@ -188,6 +188,12 @@ export function copyButton(value) {
 // One line inside the view that failed, with a way to try again. Whatever was
 // loaded before stays on screen under it.
 export function showFailure(box, retry) {
+  if (!box.hidden && box.retry === retry && box.querySelector('button')) {
+    // Already on screen: the same nodes stay, so focus stays on Try again and
+    // the line is not announced again each time a refresh fails.
+    box.querySelector('button').disabled = false;
+    return;
+  }
   const button = el('button', { class: 'btn small quiet', type: 'button', text: t('retry') });
   button.addEventListener('click', () => {
     button.disabled = true;
@@ -204,7 +210,10 @@ export function clearFailure(box) {
 }
 
 export function relabelFailure(box) {
-  if (!box.hidden && box.retry) showFailure(box, box.retry);
+  if (box.hidden || !box.retry) return;
+  const [line, button] = box.children;
+  if (line) line.textContent = t('error_load');
+  if (button) button.textContent = t('retry');
 }
 
 export function skeletonBar(size = 'sk-2', extra = '') {
@@ -224,7 +233,7 @@ export function typeMark(pre, labelled = true) {
 
 // A score with its severity in words, coloured by severity as well.
 export function scoreBlock(score, severity, inline = false) {
-  const box = el('div', { class: inline ? 'score inline' : 'score', title: `${t('score')} ${score}` },
+  const box = el('div', { class: inline ? 'score inline' : 'score', title: t('score_value', { score }) },
     el('b', { text: String(score) }),
     el('span', { text: t(`severity_${severity}`) }));
   box.dataset.severity = severity;

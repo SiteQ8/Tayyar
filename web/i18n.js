@@ -238,6 +238,9 @@ export const STRINGS = {
     retry: 'Try again',
     match: 'Matches your filter',
     loading: 'Loading',
+    score_value: 'Score {score}',
+    search_window_none: 'There is nothing to search yet.',
+    search_type_label: 'Certificate type',
     spark_window: 'Last minute',
   },
   ar: {
@@ -470,6 +473,9 @@ export const STRINGS = {
     retry: 'أعد المحاولة',
     match: 'يطابق المرشّح',
     loading: 'يجري التحميل',
+    score_value: 'الدرجة {score}',
+    search_window_none: 'لا شهادات للبحث فيها بعد.',
+    search_type_label: 'نوع الشهادة',
     spark_window: 'آخر دقيقة',
   },
 };

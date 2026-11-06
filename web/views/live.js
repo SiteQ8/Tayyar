@@ -1,7 +1,7 @@
 // The live view: the stream itself, its figures, the filter, and the
 // hourly breakdown by issuer and ending.
 
-import { $, el, t, p, formatNumber, certRow, certFromMessage, openCert } from '../ui.js';
+import { $, el, t, p, formatNumber, certRow, certFromMessage, openCert, showFailure, clearFailure, relabelFailure } from '../ui.js';
 import { toUnicode } from '../punycode.js';
 import { api } from '../api.js';
 
@@ -114,8 +114,11 @@ async function insights() {
     bars('top-issuers', data.top_issuers);
     bars('top-endings', data.top_endings.map((e) => ({ ...e, name: `.${e.name}` })));
     $('insights-empty').hidden = data.total > 0;
+    clearFailure($('insights-error'));
   } catch {
-    // Shown again on the next refresh.
+    // Said plainly, so a failed load never reads as "nothing yet"; the next refresh tries again.
+    $('insights-empty').hidden = true;
+    showFailure($('insights-error'), insights);
   }
 }
 
@@ -151,6 +154,7 @@ export function init() {
 }
 
 export function relabel() {
+  relabelFailure($('insights-error'));
   $('pause').textContent = t(state.paused ? 'resume' : 'pause');
   setEmpty();
   figures();

@@ -188,7 +188,7 @@ Tints are mixed from the meaning colours, never picked: a matched stream row car
 ### Named Rules
 **The Three Meanings Rule.** Sea green, amber and coral each mean what the list above says, in both themes and both languages; a new use must already be that meaning.
 
-**The Never Colour Alone Rule.** A colour is always paired with a shape or a word: the ring and the dot for the certificate types, the severity word under every score, the state word beside every log's dot, a hidden "matches your filter" on every matched row.
+**The Never Colour Alone Rule.** A colour is always paired with a shape or a word: the ring and the dot for the certificate types, the severity word under every score, the state word beside every log's dot, an underline on the name of every matched row, with a hidden "matches your filter" for screen readers.
 
 ## Typography
 
@@ -290,7 +290,7 @@ Seven stages in one band divided by rules, each with a 20px figure, a label and 
 Opens from the reading end at 32rem wide (full width on phones) over a scrim, with the domain as its title, a close button, and sections divided by rules: why it was flagged, triage, DNS, names, certificate and log entry.
 
 ### States
-- **Loading:** the final layout with flat Raise bars where values will be; no shimmer, no spinner, no layout shift when data lands.
+- **Loading:** where the first load takes a moment (Alerts, Logs), the final layout with flat Raise bars where values will be; no shimmer, no spinner, no layout shift when data lands. Watchlist and Search answer from memory and show their content or their sentence directly. A failed first load ends the loading state and shows the error line, never bars under it.
 - **Empty:** one sentence in the kept frame, with the next action when there is one ("Open the watchlist").
 - **Nothing matched:** the filter stays, the empty line says every certificate is still checked.
 - **Error:** one line inside the failed view, a Coral dot, what happened and "Try again"; what was loaded stays on screen.
@@ -315,7 +315,7 @@ Opens from the reading end at 32rem wide (full width on phones) over a scrim, wi
 - **Do** pair every meaning colour with a mark or a word, and keep a severity word beside every score.
 - **Do** set domain names, patterns, fingerprints and endpoints in the monospace and everything else in Readex Pro.
 - **Do** keep a domain left to right inside Arabic text, and keep its Unicode form in a span that takes the page's direction so the gap faces the ASCII form.
-- **Do** give every new view its title and lede, its loading bars, its empty sentence and its error line before it ships.
+- **Do** give every new view its title and lede, its empty sentence and its error line before it ships, and loading bars when its first load takes a moment.
 - **Do** check every change at 390px first, then 768px and 1280px, in both languages and both themes.
 
 ### Don't:
