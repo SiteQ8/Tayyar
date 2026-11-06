@@ -118,11 +118,15 @@ function switchLang() {
 
 function connect(path, onMessage, onState) {
   let retry = 1000;
+  let lost = false;
   const open = () => {
-    onState?.('connecting');
+    // Once the connection is lost, every new attempt keeps saying so until
+    // one opens, so the words do not drop away at each try.
+    if (!lost) onState?.('connecting');
     const ws = new WebSocket(`${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}${path}`);
     ws.onopen = () => {
       retry = 1000;
+      lost = false;
       onState?.('live');
     };
     ws.onmessage = (ev) => {
@@ -135,6 +139,7 @@ function connect(path, onMessage, onState) {
       onMessage(msg);
     };
     ws.onclose = () => {
+      lost = true;
       onState?.('retry');
       api('/api/session').then((s) => { if (s.auth && !s.signed_in) showSignin(); }).catch(() => {});
       setTimeout(open, retry);
