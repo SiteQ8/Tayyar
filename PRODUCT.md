@@ -34,7 +34,7 @@ The interface runs locally (`npx github:SiteQ8/Tayyar serve`) and opens in a bro
 ## Brand Commitments
 
 - Name: تيّار / Tayyar, a current, as in a stream.
-- Readex Pro sets both languages, Arabic and English.
+- Readex Pro sets both languages, Arabic and English; on the site, Geologica sets the display lines and the Cyrillic and Greek letters.
 - The wave mark.
 - In the interface, amber marks a precertificate, sea green an issued certificate, and coral a match or a high severity alert; severity is never carried by colour alone.
 

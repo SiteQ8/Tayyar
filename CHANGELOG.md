@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.0 (6 November 2026)
+
+- The interface is refined on one scale of type, spacing and colour, which a test enforces, with complete light and dark themes and stronger contrast in the light one.
+- On phones and tablets the tabs sit at the bottom of the screen, within reach of a thumb. On phones a lost connection is said in full on a strip under the bar, and every view and the sign-in screen fit a 320 pixel screen.
+- Every view says plainly when a load fails and offers Try again, which keeps focus while it retries and hands it to the view's heading when it works. Alerts and Logs show their shape while they load, and Search has a sentence of its own when there is nothing to search yet.
+- Digits share one width, so figures hold still as they count, and matched names in the stream are underlined as well as coloured.
+- A skip link, a label for every field, focus kept when a drawer closes on a row that has gone, and motion that follows the system's reduced motion setting.
+- The sign-in error follows a switch of language, a log added with `--log` names its operator in the reader's language, and a failed upload no longer blames the watchlist file.
+- The site is redesigned around the letters Tayyar reads as one: a name to try in the browser with the same checks as the tool, the letters it folds with their code points, the ten reasons with their scores, how it works, and the real screens, in Arabic and English, laid out for phones first.
+- The site sets its display lines and the Cyrillic and Greek letters it shows in Geologica, served with the site under the SIL Open Font License 1.1.
+
 ## 0.3.1 (25 September 2026)
 
 - Arabic text in the interface and on the site uses Readex Pro, served by Tayyar and the site themselves rather than by a font service, with its licence alongside.
