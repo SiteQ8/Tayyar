@@ -50,6 +50,8 @@
   --weight-display: 800;
   --leading-text: 1.6;
   --leading-tight: 1.2;
+  /* A lead paragraph runs several lines at the lead step, so it sits between the two. */
+  --leading-lead: 1.4;
   --leading-display: 1.02;
   --leading-solid: 1;
   /* Words set as posters sit on a line no taller than their letters. */
@@ -95,6 +97,9 @@
   --rule-ui: 1px;
   --focus-ring: 2px;
   --focus-offset: 3px;
+  /* Links are underlined finer than the evidence marks, so the two never read alike. */
+  --link-line: max(1px, 0.07em);
+  --link-offset: 0.2em;
   /* Tayyar's evidence marks, drawn in proportion to the letters they mark. */
   --mark-line: max(2px, 0.07em);
   --mark-offset: 0.18em;
@@ -117,6 +122,8 @@
   --t-flow: 1200ms;
   --stagger: 70ms;
   --rise: var(--s5);
+  /* A pressed control gives a little under the finger. */
+  --press-scale: 0.97;
 
   color-scheme: light;
 }
@@ -126,6 +133,7 @@ html[lang="ar"] {
   --step-display: clamp(2.75rem, 1rem + 6.6vw, 7.5rem);
   --leading-text: 1.85;
   --leading-tight: 1.45;
+  --leading-lead: 1.65;
   --leading-display: 1.3;
   --track-head: 0;
   --track-display: 0;
@@ -158,7 +166,7 @@ h1, h2, h3 { margin: 0; font-family: var(--font-display); font-weight: var(--wei
 p { margin: 0; text-wrap: pretty; }
 p + p { margin-block-start: var(--s4); }
 img { display: block; max-inline-size: 100%; block-size: auto; }
-a { color: inherit; text-decoration-line: underline; text-decoration-thickness: max(1px, 0.07em); text-underline-offset: 0.2em; text-decoration-color: var(--fg-2); transition: text-decoration-color var(--t-hover) ease; }
+a { color: inherit; text-decoration-line: underline; text-decoration-thickness: var(--link-line); text-underline-offset: var(--link-offset); text-decoration-color: var(--fg-2); transition: text-decoration-color var(--t-hover) ease; }
 @media (hover: hover) and (pointer: fine) { a:hover { text-decoration-color: currentColor; } }
 :focus-visible { outline: var(--focus-ring) solid var(--focus, var(--sea)); outline-offset: var(--focus-offset); }
 ::selection { background: var(--sea); color: var(--paper); }
@@ -170,7 +178,7 @@ bdi { unicode-bidi: isolate; }
 .section { padding-block: var(--section); }
 .title { font-size: var(--step-head); }
 .subhead { font-size: var(--step-lead); letter-spacing: 0; }
-.lede { font-size: var(--step-lead); line-height: var(--leading-tight); }
+.lede { font-size: var(--step-lead); line-height: var(--leading-lead); }
 .note { font-size: var(--step-small); color: var(--fg-2); }
 .skip { position: absolute; inset-inline-start: var(--margin); inset-block-start: var(--s2); z-index: 3; padding: var(--s2) var(--s4); background: var(--paper); color: var(--ink); transform: translateY(-200%); }
 .skip:focus { transform: none; }
@@ -194,7 +202,7 @@ bdi { unicode-bidi: isolate; }
   font: inherit; font-weight: var(--weight-strong); cursor: pointer;
   transition: transform var(--t-press) var(--ease-out), background-color var(--t-hover) ease;
 }
-.button:active { transform: scale(0.97); }
+@media (prefers-reduced-motion: no-preference) { .button:active { transform: scale(var(--press-scale)); } }
 @media (hover: hover) and (pointer: fine) { .button:hover { background: var(--night-3); } }
 
 /* ---------- The bar ---------- */
@@ -202,13 +210,13 @@ bdi { unicode-bidi: isolate; }
 .wordmark { display: inline-flex; align-items: center; gap: var(--s3); color: var(--fg); text-decoration: none; font-family: var(--font-display); font-weight: var(--weight-display); font-size: var(--step-lead); line-height: var(--leading-solid); }
 .mark { inline-size: var(--s6); block-size: var(--s6); flex: none; }
 .mark rect { fill: var(--night); }
-.mark path { fill: none; stroke: var(--sea-light); stroke-width: 2.4; stroke-linecap: round; }
-.mark .w2 { opacity: 0.55; }
-.mark circle { fill: none; stroke: var(--amber-light); stroke-width: 2; }
+/* The mark is the favicon's drawing; its strokes and the second wave's tone live in the drawing itself. */
+.mark path { fill: none; stroke: var(--sea-light); stroke-linecap: round; }
+.mark circle { fill: none; stroke: var(--amber-light); }
 .bar-links { display: flex; gap: var(--s5); margin: 0; margin-inline-start: auto; padding: 0; list-style: none; }
 .bar-links a, .bar-out { color: var(--fg); text-decoration-color: transparent; }
 @media (hover: hover) and (pointer: fine) { .bar-links a:hover, .bar-out:hover { text-decoration-color: currentColor; } }
-.lang { min-block-size: var(--s7); padding: var(--s2) 0; font: inherit; color: var(--fg); background: transparent; border: 0; cursor: pointer; text-decoration-line: underline; text-decoration-thickness: max(1px, 0.07em); text-underline-offset: 0.2em; text-decoration-color: var(--fg-2); }
+.lang { min-block-size: var(--s7); padding: var(--s2) 0; font: inherit; color: var(--fg); background: transparent; border: 0; cursor: pointer; text-decoration-line: underline; text-decoration-thickness: var(--link-line); text-underline-offset: var(--link-offset); text-decoration-color: var(--fg-2); }
 .lang .ar { font-family: var(--font-display); }
 .lang .en { font-family: var(--font-text); }
 
@@ -262,7 +270,7 @@ bdi { unicode-bidi: isolate; }
   background: transparent; border: var(--rule-ui) solid var(--night-3); border-radius: var(--radius-ui); cursor: pointer;
   transition: transform var(--t-press) var(--ease-out), border-color var(--t-hover) ease, background-color var(--t-hover) ease;
 }
-[data-ui] .chip:active { transform: scale(0.97); }
+@media (prefers-reduced-motion: no-preference) { [data-ui] .chip:active { transform: scale(var(--press-scale)); } }
 [data-ui] .chip[aria-pressed="true"] { border-color: var(--sea-light); background: var(--night-2); }
 @media (hover: hover) and (pointer: fine) { [data-ui] .chip:hover { border-color: var(--sea-light); } }
 
@@ -298,20 +306,24 @@ html[dir="rtl"] .lure-list[dir="ltr"] { text-align: right; }
 
 /* ---------- Reasons: a line-up at one size ---------- */
 .reasons .head-row { margin-block-end: var(--s8); }
-.lineup { inline-size: 100%; border-collapse: collapse; }
-.lineup .c-reason { inline-size: 40%; }
-.lineup .c-name { inline-size: 42%; }
+.lineup { inline-size: 100%; border-collapse: collapse; table-layout: fixed; }
+/* The line-up sits on the page grid: the reasons in four of its twelve columns, the names from
+   column 5, where the commands and the disclaimer start too, and the scores in the last two. */
+.lineup .c-reason { inline-size: calc(4 / 12 * 100%); }
+.lineup .c-pts { inline-size: calc(2 / 12 * 100%); }
 .lineup th, .lineup td { padding: var(--s5) 0; text-align: start; vertical-align: baseline; font-weight: var(--weight-text); }
 .lineup thead th { padding-block: 0 var(--s3); font-size: var(--step-small); color: var(--fg-2); }
 .lineup thead th:last-child { text-align: end; }
-.lineup td + td { padding-inline-start: var(--gutter); }
+/* A third of a gutter past the fourth column is where column 5 begins. */
+.lineup thead th + th, .lineup .example { padding-inline-start: calc(var(--gutter) / 3); }
+.lineup .pts { padding-inline-start: var(--gutter); }
 .lineup .group th { padding-block: var(--s8) var(--s3); font-family: var(--font-display); font-size: var(--step-small); font-weight: var(--weight-strong); color: var(--m-brand); }
 .lineup tbody:first-of-type .group th { padding-block-start: 0; }
 .lineup .reason b { display: block; font-family: var(--font-display); font-size: var(--step-lead); font-weight: var(--weight-strong); line-height: var(--leading-tight); }
 .lineup .reason .why { display: block; max-inline-size: var(--measure-narrow); padding-block-start: var(--s1); font-size: var(--step-small); color: var(--fg-2); }
 .lineup .name { font-size: var(--step-lead); }
 .lineup .ascii { display: block; padding-block-start: var(--s1); font-family: var(--font-display); font-size: var(--step-small); color: var(--fg-2); }
-.lineup .pts { text-align: end; font-family: var(--font-display); font-size: var(--step-lead); font-weight: var(--weight-strong); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.lineup .pts { text-align: end; font-family: var(--font-display); font-size: var(--step-lead); font-weight: var(--weight-strong); line-height: var(--leading-tight); font-variant-numeric: tabular-nums; text-wrap: balance; }
 
 /* ---------- How it works: many into one ---------- */
 .how .head-row { align-items: start; }
@@ -340,6 +352,9 @@ html[dir="rtl"] .flow-art { transform: scaleX(-1); }
 /* ---------- Screens: a row of the real interface, each with its tag ---------- */
 .screens .head-row { margin-block-end: var(--s7); }
 .shots { display: flex; gap: var(--s4); overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scroll-padding-inline: var(--margin); padding-inline: var(--margin); padding-block-end: var(--s5); scrollbar-width: thin; scrollbar-color: var(--fg-2) transparent; }
+/* A mouse drags the row and it stays where the hand leaves it; a finger swipes it and it settles on a plate. */
+@media (hover: hover) and (pointer: fine) { .shots { cursor: grab; scroll-snap-type: none; } }
+.shots.is-dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
 .shot { display: table; flex: none; margin: 0; scroll-snap-align: start; }
 .shot img { block-size: var(--shot-h); inline-size: auto; max-inline-size: none; background: var(--bg-2); }
 .shot figcaption { display: table-caption; caption-side: bottom; padding: var(--s3) var(--s4) var(--s4); }
@@ -357,10 +372,10 @@ html[dir="rtl"] .flow-art { transform: scaleX(-1); }
   transition: background-color var(--t-hover) ease, color var(--t-hover) ease;
 }
 .cta-top { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: start; gap: var(--s5); }
-.cta-note { display: block; max-inline-size: var(--measure-narrow); font-size: var(--step-lead); line-height: var(--leading-tight); }
+.cta-note { display: block; max-inline-size: var(--measure-narrow); font-size: var(--step-lead); line-height: var(--leading-lead); }
 .cta-note code { display: block; margin-block-start: var(--s3); font-size: var(--step-small); direction: ltr; text-align: start; }
 .cta-arrow { inline-size: var(--s8); block-size: var(--s8); flex: none; transition: transform var(--t-ui) var(--ease-out); }
-.cta-arrow path { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: square; }
+.cta-arrow path { fill: none; stroke: currentColor; stroke-linecap: square; }
 html[dir="rtl"] .cta-arrow { transform: scaleX(-1); }
 /* The verb fills the band: the band's width divided by the word's advance, in em, measured
    per word: Run it 2.79, Copied 3.38, شغّله 2.52, نُسخ 2.05, each with a little air. */
@@ -369,8 +384,9 @@ html[dir="rtl"] .cta-arrow { transform: scaleX(-1); }
 html[lang="ar"] .cta-word { --advance: 3.5; }
 .is-copied .cta-word { --advance: 3.5; }
 .cta:focus-visible { outline: var(--focus-ring) solid var(--paper); outline-offset: calc(-1 * var(--s3)); }
-@media (hover: hover) and (pointer: fine) {
-  .cta:hover { background-color: var(--paper); color: var(--sea); }
+@media (hover: hover) and (pointer: fine) { .cta:hover { background-color: var(--paper); color: var(--sea); } }
+/* The arrow leans toward where the command will run; with less motion asked for, only the colours change. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .cta:hover .cta-arrow { transform: translate(var(--s2), calc(-1 * var(--s2))); }
   html[dir="rtl"] .cta:hover .cta-arrow { transform: scaleX(-1) translate(var(--s2), calc(-1 * var(--s2))); }
 }
@@ -401,8 +417,11 @@ html[dir="rtl"] .rows .path { text-align: right; }
 /* ---------- Footer: the way in is the headline ---------- */
 .foot { display: grid; grid-template-rows: auto 1fr auto auto; min-block-size: var(--foot-h); padding-block: var(--s6) var(--s5); }
 .foot-top { row-gap: var(--s5); }
-.foot-top > p { grid-column: span 4; max-inline-size: var(--measure-narrow); }
-.foot-top > .up { grid-column: 11 / -1; justify-self: end; }
+.foot-top > :not(.up) { grid-column: span 4; max-inline-size: var(--measure-narrow); }
+.foot-top > .up { grid-column: 11 / -1; justify-self: end; align-self: start; }
+.foot-fonts { display: grid; align-content: start; gap: var(--s3); }
+.foot-files { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s5); margin: 0; padding: 0; list-style: none; }
+.foot-files a { display: inline-block; padding-block: var(--s1); }
 .foot-line { align-self: end; container-type: inline-size; margin: var(--s8) var(--margin) var(--s5); }
 /* The address fills the width: the width divided by its advance, in em (measured at 12.8, plus air). */
 .foot-line a { --advance: 13.1; display: block; font-family: var(--font-display); font-size: calc(100cqi / var(--advance)); font-weight: var(--weight-display); line-height: var(--leading-solid); letter-spacing: var(--track-latin); text-decoration-thickness: var(--mark-line); text-underline-offset: var(--mark-offset); white-space: nowrap; direction: ltr; unicode-bidi: isolate; text-align: left; }
@@ -416,14 +435,30 @@ html[dir="rtl"] .foot-line a { text-align: right; }
   .hero-title, .hero-copy { grid-column: 1 / -1; }
   .hero-copy { padding-block-end: 0; }
   .hero .slip { grid-column: 1 / -1; grid-row: auto; }
-  .head-row > .title, .head-row > p, .how .head-row > div, .how .head-row > .lede { grid-column: 1 / -1; }
+  .head-row > :first-child, .head-row > :last-child, .how .head-row > div, .how .head-row > .lede { grid-column: 1 / -1; }
   .glyphs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  /* The line-up reads as a list: each reason with its score on one line, what it means under
+     them across the width, then the name it catches, never broken. */
+  .lineup, .lineup tbody, .lineup tr, .lineup th, .lineup td { display: block; }
+  .lineup colgroup { display: none; }
+  .lineup thead { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); }
+  .lineup tr.row { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--s4); padding-block: var(--s5); }
+  .lineup .row > * { padding: 0; }
+  .lineup .reason { grid-column: 1; grid-row: 1; }
+  .lineup .pts { grid-column: 2; grid-row: 1; }
+  .lineup .example { grid-column: 1 / -1; grid-row: 2; padding-block-start: var(--s3); }
+  @supports (grid-template-columns: subgrid) {
+    .lineup tr.row { grid-template-columns: auto 1fr; }
+    .lineup .reason { grid-column: 1 / -1; grid-row: 1 / span 2; display: grid; grid-template-columns: subgrid; grid-template-rows: subgrid; }
+    .lineup .reason .why { grid-column: 1 / -1; max-inline-size: var(--measure); }
+    .lineup .example { grid-row: 3; }
+  }
   .does-list h3, .does-list p { grid-column: 1 / -1; }
   .does-list p { padding-block-start: var(--s3); }
   .cmds > .title, .cmds > .body, .terms .title, .terms-list { grid-column: 1 / -1; }
   .rows .path, .rows .what { grid-column: 1 / -1; }
   .rows .what { padding-block-start: var(--s2); }
-  .foot-top > p { grid-column: 1 / span 6; }
+  .foot-top > :not(.up) { grid-column: 1 / span 6; }
   .foot-top > .up { grid-column: 1 / -1; justify-self: start; }
 }
 
@@ -435,16 +470,10 @@ html[dir="rtl"] .foot-line a { text-align: right; }
   .pair-half { padding-block: var(--s5); }
   .glyphs { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--s6); }
   .glyph { padding: var(--s4); }
-  .lineup, .lineup tbody, .lineup tr, .lineup th, .lineup td { display: block; }
-  .lineup colgroup { display: none; }
-  .lineup thead { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); }
-  .lineup tr.row { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--s4); padding-block: var(--s5); }
-  .lineup td { padding: 0; }
-  .lineup td + td { padding-inline-start: 0; }
-  .lineup .reason { grid-column: 1; grid-row: 1; }
-  .lineup .pts { grid-column: 2; grid-row: 1; }
-  .lineup .example { grid-column: 1 / -1; grid-row: 2; padding-block-start: var(--s3); }
   .flow { grid-template-columns: minmax(0, 1fr); row-gap: var(--s7); margin-block-start: var(--s8); }
+  /* Stacked, the ribbon keeps only itself and one pitch of air above and below: three rows of 10
+     at a pitch of 14 make 38 units, plus 2 times 14, out of the drawing's 308 by 160. */
+  .flow-reduce { aspect-ratio: 308 / 66; }
   .flow h3, .flow p { padding-inline-end: 0; }
   .terms-list { grid-template-columns: minmax(0, 1fr); }
   /* On a phone the screens stack as plates, read with the thumb rather than swiped past. */
@@ -456,7 +485,10 @@ html[dir="rtl"] .foot-line a { text-align: right; }
   .cta { min-block-size: var(--band-h-phone); padding-block: var(--s5); }
   .cta-arrow { inline-size: var(--s7); block-size: var(--s7); }
   .foot { min-block-size: var(--foot-h-phone); }
-  .foot-top > p { grid-column: 1 / -1; }
+  .foot-top > :not(.up) { grid-column: 1 / -1; }
+  /* Six section links in two even rows, each one a full cell to tap. */
+  .foot-meta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 var(--s4); }
+  .foot-meta a { padding-block: var(--s2); }
 }
 
 /* ---------- Motion. Everything is in place without it, and nothing waits hidden. ---------- */

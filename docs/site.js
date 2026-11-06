@@ -468,7 +468,8 @@
       },
       legend: { brand: 'العلامة', odd: 'محرف مشابه', lure: 'كلمة استدراج' },
       comma: '، ',
-      copied: 'نُسخ الأمر.'
+      copied: 'نُسخ الأمر.',
+      selected: 'تعذّر النسخ فحدّدنا الأمر لتنسخه بنفسك.'
     },
     en: {
       sev: { high: 'High', medium: 'Medium', low: 'Low' },
@@ -500,7 +501,8 @@
       },
       legend: { brand: 'The brand', odd: 'Look-alike', lure: 'Lure word' },
       comma: ', ',
-      copied: 'Command copied.'
+      copied: 'Command copied.',
+      selected: 'Copying was blocked, so the command is selected for you to copy.'
     }
   };
   var DEFAULT_NAME = { ar: 'مثأل-دفع.test', en: 'еxample-pay.test' };
@@ -676,7 +678,11 @@
             if (announce) announce.textContent = '';
           }, 2000);
         }, function () {
-          // The command stays on the page to copy by hand.
+          // Copying was refused: the command is selected on the page instead, ready to copy by hand.
+          var shown = (button.closest('.copy-cmd') || button).querySelector('code');
+          var selection = global.getSelection && global.getSelection();
+          if (shown && selection) selection.selectAllChildren(shown);
+          if (announce) announce.textContent = WORDS[root.lang === 'ar' ? 'ar' : 'en'].selected;
         });
       });
     });
@@ -742,6 +748,48 @@
       new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) { flow.classList.toggle('is-moving', entry.isIntersecting); });
       }, { threshold: 0.2 }).observe(flow);
+    }
+
+    // The row of screens follows a mouse dragged across it, as it already follows a finger,
+    // a trackpad and the arrow keys. It moves only once the pointer has really travelled,
+    // so a plain click stays a click.
+    var row = doc.querySelector('.shots');
+    var TRAVEL = 4; // px, the first step of the page's space scale
+    if (row) {
+      // The row is a stop for the keyboard only while it has somewhere to scroll; on a phone the
+      // plates stack and the page itself scrolls.
+      var focusable = function () {
+        if (row.scrollWidth > row.clientWidth + 1) row.setAttribute('tabindex', '0');
+        else row.removeAttribute('tabindex');
+      };
+      focusable();
+      if ('ResizeObserver' in global) new global.ResizeObserver(focusable).observe(row);
+      var drag = null;
+      var end = function () {
+        if (drag && drag.moved) row.classList.remove('is-dragging');
+        drag = null;
+      };
+      row.addEventListener('pointerdown', function (e) {
+        if (e.pointerType !== 'mouse' || e.button !== 0 || row.scrollWidth <= row.clientWidth) return;
+        // The scrollbar under the row keeps its own drag.
+        if (e.clientY - row.getBoundingClientRect().top > row.clientTop + row.clientHeight) return;
+        drag = { id: e.pointerId, x: e.clientX, left: row.scrollLeft, moved: false };
+      });
+      row.addEventListener('pointermove', function (e) {
+        if (!drag || e.pointerId !== drag.id) return;
+        var dx = e.clientX - drag.x;
+        if (!drag.moved) {
+          if (Math.abs(dx) < TRAVEL) return;
+          drag.moved = true;
+          row.setPointerCapture(e.pointerId);
+          row.classList.add('is-dragging');
+        }
+        row.scrollLeft = drag.left - dx;
+      });
+      row.addEventListener('pointerup', end);
+      row.addEventListener('pointercancel', end);
+      row.addEventListener('lostpointercapture', end);
+      row.addEventListener('dragstart', function (e) { e.preventDefault(); });
     }
   });
 })(this);
