@@ -85,3 +85,46 @@ test('every text slot in the page has a string', () => {
   assert.ok(keys.length > 5);
   for (const k of keys) assert.ok(k in STRINGS.en && k in STRINGS.ar, `missing string ${k}`);
 });
+
+test('every string the scripts ask for exists in both languages', () => {
+  const dir = new URL('../web/', import.meta.url);
+  const files = ['app.js', 'ui.js', ...['live', 'alerts', 'watchlist', 'search', 'logs'].map((v) => `views/${v}.js`)];
+  let checked = 0;
+  for (const f of files) {
+    const src = readFileSync(new URL(f, dir), 'utf8');
+    for (const m of src.matchAll(/\b(t|tn)\('([\w-]+)'/g)) {
+      assert.ok(m[2] in STRINGS.en && m[2] in STRINGS.ar, `${f} asks for ${m[2]}`);
+      checked += 1;
+    }
+    for (const m of src.matchAll(/\b(p|pn)\('([\w-]+)'/g)) {
+      assert.ok(m[2] in PLURALS, `${f} asks for the counted phrase ${m[2]}`);
+      checked += 1;
+    }
+  }
+  assert.ok(checked > 40);
+});
+
+// Sizes, spaces, radii, colours, layers and timings are tokens in :root; the
+// rest of the stylesheet only refers to them. A value picked by eye fails here.
+test('the stylesheet takes its values from its tokens', () => {
+  const css = readFileSync(new URL('../web/app.css', import.meta.url), 'utf8')
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/@font-face\s*\{[^}]*\}/g, '');
+  const SCOPED = /^(font-size|font-weight|line-height|letter-spacing|margin|padding|gap|row-gap|column-gap|inset|top|right|bottom|left|width|height|min-width|min-height|max-width|max-height|border-radius|color|background|background-color|border|outline|outline-offset|box-shadow|fill|stroke|stroke-width|caret-color|scrollbar-color|text-decoration-thickness|text-underline-offset|transition|transition-duration|animation|animation-delay|animation-duration|z-index|opacity|transform)(-[\w-]+)?$/;
+  // What may stay literal: nothing, everything, half, one line, and the small
+  // factors that turn a token around or split it in two.
+  const ALLOWED = new Set(['0', '0px', '0%', '1', '-1', '2', '100%', '-100%', '50%', '1lh']);
+  const bad = [];
+  let checked = 0;
+  for (const m of css.matchAll(/([\w-]+)\s*:\s*([^;{}]+);/g)) {
+    const [, prop, value] = m;
+    if (prop.startsWith('--') || !SCOPED.test(prop)) continue;
+    checked += 1;
+    const rest = value.replace(/var\(--[\w-]+(?:,[^()]*)?\)/g, ' ').replace(/env\([^()]*\)/g, ' ').replace(/attr\([^()]*\)/g, ' ');
+    for (const lit of rest.match(/#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?)\(|-?\d*\.?\d+(?:px|rem|em|ms|s|vw|vh|ch|%|lh|deg)?/gi) || []) {
+      if (!ALLOWED.has(lit)) bad.push(`${prop}: ${value.trim()}`);
+    }
+  }
+  assert.ok(checked > 300, `only ${checked} declarations were read`);
+  assert.deepEqual(bad, [], 'values picked by eye instead of from the tokens');
+});

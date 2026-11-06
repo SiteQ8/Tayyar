@@ -1,7 +1,7 @@
 // The alerts view: triage by status, filter by severity and text, export,
 // and a details drawer with the reasons, DNS and the certificate.
 
-import { $, el, t, p, tn, formatNumber, nameNode, relTime, openDrawer, closeDrawer, section, dl, toast, certSections, certFromAlert, evidenceBlock } from '../ui.js';
+import { $, el, t, p, tn, formatNumber, nameNode, relTime, openDrawer, closeDrawer, isDrawerOpen, section, dl, toast, certSections, certFromAlert, evidenceBlock, scoreBlock, skeletonBar, showFailure, clearFailure, relabelFailure } from '../ui.js';
 import { api } from '../api.js';
 
 const STATUSES = ['new', 'acknowledged', 'resolved', 'false_positive', 'all'];
@@ -13,9 +13,12 @@ let items = [];
 let counts = null;
 let app = null;
 let visible = false;
+let loaded = false;
 let reloadTimer = null;
 let queryTimer = null;
 let cursor = -1;
+// Alerts that arrived while the list was on screen, marked once when drawn.
+const arrived = new Set();
 
 function query() {
   return new URLSearchParams(filters).toString();
@@ -26,10 +29,17 @@ async function load() {
     const data = await api(`/api/alerts?${query()}&limit=300`);
     items = data.items;
     counts = data.counts;
+    loaded = true;
+    clearFailure($('alerts-error'));
     app.setNew(counts.by_status.new);
     render();
   } catch {
-    // Kept as it was; the next event or visit tries again.
+    // What was loaded stays on screen; the next event or visit tries again.
+    showFailure($('alerts-error'), load);
+    if (!loaded) {
+      $('alert-list').textContent = '';
+      $('alerts-empty').hidden = true;
+    }
   }
 }
 
@@ -66,12 +76,14 @@ async function triage(alert, status, note) {
   }
 }
 
-function actions(alert, after) {
+function actions(alert, after, kind = 'quiet') {
   return NEXT[alert.status].map((s) => {
-    const b = el('button', { class: 'btn small', type: 'button', text: t(ACTION[s]) });
+    const b = el('button', { class: `btn small ${kind}`, type: 'button', text: t(ACTION[s]) });
     b.addEventListener('click', async (e) => {
       e.stopPropagation();
+      b.disabled = true;
       const updated = await triage(alert, s);
+      b.disabled = false;
       if (updated && after) after(updated);
     });
     return b;
@@ -83,7 +95,7 @@ function reasonChips(alert) {
 }
 
 function row(alert) {
-  const li = el('li', { class: 'alert', tabindex: '0' });
+  const li = el('li', { class: arrived.delete(alert.id) ? 'alert arrived' : 'alert', tabindex: '0' });
   li.dataset.severity = alert.severity;
   li.dataset.status = alert.status;
   const meta = el('div', { class: 'meta' },
@@ -93,20 +105,37 @@ function row(alert) {
     alert.count > 1 ? el('span', { text: p('times_seen', alert.count) }) : null,
     filters.status === 'all' ? el('span', { class: `chip status-${alert.status}`, text: t(`status_${alert.status}`) }) : null);
   li.append(
-    el('div', { class: 'score' }, el('b', { text: String(alert.score) }), el('span', { text: t(`severity_${alert.severity}`) })),
+    scoreBlock(alert.score, alert.severity),
     el('div', { class: 'what' }, nameNode(alert.domain, 'domain'), meta, reasonChips(alert)),
     el('div', { class: 'actions' }, actions(alert)),
   );
   li.addEventListener('click', () => openAlert(alert));
   li.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && e.target === li) openAlert(alert);
+    if (e.key !== 'Enter' || e.target !== li) return;
+    // Without this the same key press would go on to the drawer's close
+    // button, which takes focus as the drawer opens, and shut it again.
+    e.preventDefault();
+    openAlert(alert);
   });
   return li;
+}
+
+// The list's final shape, with grey bars where the values will be.
+function skeleton() {
+  const list = $('alert-list');
+  list.setAttribute('aria-busy', 'true');
+  list.setAttribute('aria-label', t('loading'));
+  list.replaceChildren(...[0, 1, 2].map(() => el('li', { class: 'alert skeleton-row', 'aria-hidden': 'true' },
+    el('div', { class: 'score' }, skeletonBar('sk-1', 'figure-sk')),
+    el('div', { class: 'what' }, skeletonBar('sk-4'), skeletonBar('sk-3')),
+    el('div', { class: 'actions' }))));
 }
 
 function render() {
   buildControls();
   const list = $('alert-list');
+  list.removeAttribute('aria-busy');
+  list.removeAttribute('aria-label');
   list.textContent = '';
   for (const a of items) list.append(row(a));
   if (cursor >= items.length) cursor = items.length - 1;
@@ -121,7 +150,7 @@ function render() {
 }
 
 function dnsSection(alert, refresh) {
-  const box = el('div');
+  const box = el('div', { class: 'dns' });
   const d = alert.dns;
   if (!d) box.append(el('p', { class: 'note', text: t('dns_not_checked') }));
   else if (!d.resolves) box.append(el('p', { text: t('dns_none') }), el('p', { class: 'note', text: relTime(d.checked_at) }));
@@ -156,13 +185,13 @@ function openAlert(alert) {
   openDrawer(alert.unicode || alert.domain, [
     section(t('details_why'),
       dl([
-        [t('score'), `${alert.score} (${t(`severity_${alert.severity}`)})`],
+        [t('score'), scoreBlock(alert.score, alert.severity, true)],
         [t(`kind_${alert.watch.kind}`), el('bdi', { text: alert.watch.name })],
       ]),
       ...evidenceBlock(alert)),
     section(t('details_triage'),
-      el('p', {}, el('span', { class: `chip status-${alert.status}`, text: t(`status_${alert.status}`) }), ' ', p('times_seen', alert.count)),
-      el('div', { class: 'row-actions' }, actions(alert, refresh)),
+      el('p', { class: 'triage-state' }, el('span', { class: `chip status-${alert.status}`, text: t(`status_${alert.status}`) }), p('times_seen', alert.count)),
+      el('div', { class: 'row-actions' }, actions(alert, refresh, '')),
       el('label', { class: 'field' }, el('span', { text: t('details_note') }), note),
       save),
     dnsSection(alert, refresh),
@@ -178,7 +207,7 @@ function markCursor(scroll = true) {
 
 // Keys for working through alerts without the mouse.
 function onKey(e) {
-  if (!visible || e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey || !$('drawer').hidden) return;
+  if (!visible || e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey || isDrawerOpen()) return;
   const active = document.activeElement;
   if (active && ['INPUT', 'TEXTAREA', 'SELECT'].includes(active.tagName)) {
     if (e.key === 'Escape') active.blur();
@@ -225,8 +254,9 @@ function onKey(e) {
   e.preventDefault();
 }
 
-export function onEvent() {
+export function onEvent(msg) {
   if (!visible) return;
+  if (msg && msg.message_type === 'alert' && msg.data?.id) arrived.add(msg.data.id);
   clearTimeout(reloadTimer);
   reloadTimer = setTimeout(load, 700);
 }
@@ -249,11 +279,15 @@ export function init(a) {
 }
 
 export function relabel() {
-  if (app) render();
+  if (!app) return;
+  if (loaded) render();
+  else buildControls();
+  relabelFailure($('alerts-error'));
 }
 
 export function show() {
   visible = true;
+  if (!loaded) skeleton();
   load();
 }
 

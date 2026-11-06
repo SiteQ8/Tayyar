@@ -2,7 +2,7 @@
 // connections, and the alerts badge.
 
 import { LANGS } from './i18n.js';
-import { ui, t, p, $, el, toast, initDrawer, closeDrawer, formatNumber } from './ui.js';
+import { ui, t, p, $, el, toast, initDrawer, closeDrawer, formatNumber, reducedMotion, token, ms } from './ui.js';
 import { api } from './api.js';
 import * as live from './views/live.js';
 import * as alerts from './views/alerts.js';
@@ -15,19 +15,27 @@ const VIEWS = { live, alerts, watchlist, search, logs };
 const app = {
   overview: null,
   newAlerts: 0,
+  badgeReady: false,
   current: null,
   started: false,
   setNew(n) {
+    const before = app.newAlerts;
     app.newAlerts = n;
     const badge = $('badge');
     badge.hidden = n === 0;
     badge.textContent = n > 99 ? '99+' : formatNumber(n);
     badge.title = p('alerts_new', n);
+    // A count that grows gives one small pop, so a new alert is noticed
+    // without anything moving for long.
+    if (app.badgeReady && n > before && !badge.hidden && !reducedMotion()) {
+      badge.animate([{ transform: `scale(${token('--pop')})` }, { transform: 'none' }], { duration: ms('--dur-3'), easing: token('--ease-out') });
+    }
   },
   async refreshOverview() {
     try {
       app.overview = await api('/api/overview');
       app.setNew(app.overview.alerts.by_status.new);
+      app.badgeReady = true;
       $('logs-count').textContent = p('logs', app.overview.logs.total);
     } catch {
       // The next refresh tries again.
@@ -67,6 +75,13 @@ function setConn(state) {
   connState = state;
   document.querySelector('.conn').dataset.state = state;
   $('status').textContent = t(`status_${state}`);
+  live.setConnection(state);
+}
+
+function labelLangButton(btn, lang) {
+  btn.textContent = t('switch_language');
+  btn.lang = lang === 'ar' ? 'en' : 'ar';
+  btn.setAttribute('aria-label', t('switch_language_label'));
 }
 
 function applyLang(lang) {
@@ -79,10 +94,8 @@ function applyLang(lang) {
   $('alert-q').placeholder = t('alerts_search_placeholder');
   $('search-q').placeholder = t('search_placeholder');
   document.querySelector('#test-form input').placeholder = t('test_placeholder');
-  const btn = $('lang');
-  btn.textContent = t('switch_language');
-  btn.lang = lang === 'ar' ? 'en' : 'ar';
-  btn.setAttribute('aria-label', t('switch_language_label'));
+  labelLangButton($('lang'), lang);
+  labelLangButton($('signin-lang'), lang);
   $('meter').setAttribute('aria-label', t('meter_label'));
   $('tabs').setAttribute('aria-label', t('title'));
   renderEndpoints();
@@ -91,6 +104,16 @@ function applyLang(lang) {
   setConn(connState);
   setTitle();
   for (const v of Object.values(VIEWS)) v.relabel?.();
+}
+
+function switchLang() {
+  const next = ui.lang === 'ar' ? 'en' : 'ar';
+  try {
+    localStorage.setItem('tayyar-lang', next);
+  } catch {
+    // Not remembered, still switched.
+  }
+  applyLang(next);
 }
 
 function connect(path, onMessage, onState) {
@@ -124,9 +147,14 @@ function connect(path, onMessage, onState) {
 function route() {
   const wanted = (location.hash || '#live').slice(1);
   const view = VIEWS[wanted] ? wanted : 'live';
+  const main = $('main');
   for (const [name, mod] of Object.entries(VIEWS)) {
     const on = name === view;
-    $(`view-${name}`).hidden = !on;
+    const section = $(`view-${name}`);
+    section.hidden = !on;
+    // The view on screen comes first in the document, so its title is the
+    // first heading anything reading the page meets.
+    if (on && main.firstElementChild !== section) main.prepend(section);
     if (on && app.current !== name) mod.show?.();
     if (!on && app.current === name) mod.hide?.();
   }
@@ -158,21 +186,41 @@ function start() {
 }
 
 function showSignin() {
-  $('signin').hidden = false;
+  const box = $('signin');
+  if (!box.hidden && box.dataset.state === 'open') return;
+  clearTimeout(box.leaving);
+  box.hidden = false;
+  void box.offsetWidth;
+  box.dataset.state = 'open';
   $('signin-form').elements.token.focus();
 }
 
+function hideSignin() {
+  const box = $('signin');
+  box.dataset.state = 'closed';
+  clearTimeout(box.leaving);
+  box.leaving = setTimeout(() => { if (box.dataset.state === 'closed') box.hidden = true; }, ms('--dur-3'));
+}
+
+// Remembers whether the last thing the person did was a key or a pointer, so
+// overlays opened from the keyboard open at once, without a slide.
+function trackInput() {
+  const root = document.documentElement;
+  window.addEventListener('keydown', (e) => {
+    if (!e.metaKey && !e.ctrlKey && !e.altKey) root.dataset.input = 'keyboard';
+  }, true);
+  window.addEventListener('pointerdown', () => { root.dataset.input = 'pointer'; }, true);
+}
+
 async function boot() {
+  trackInput();
   applyLang(pickLang());
   initDrawer();
-  $('lang').addEventListener('click', () => {
-    const next = ui.lang === 'ar' ? 'en' : 'ar';
-    try {
-      localStorage.setItem('tayyar-lang', next);
-    } catch {
-      // Not remembered, still switched.
-    }
-    applyLang(next);
+  $('lang').addEventListener('click', switchLang);
+  $('signin-lang').addEventListener('click', switchLang);
+  $('skip').addEventListener('click', (e) => {
+    e.preventDefault();
+    $('main').focus();
   });
   $('signout').addEventListener('click', async () => {
     await api('/api/session', { method: 'DELETE' }).catch(() => {});
@@ -186,7 +234,7 @@ async function boot() {
     try {
       await api('/api/session', { method: 'POST', body: { token: form.elements.token.value } });
       form.reset();
-      $('signin').hidden = true;
+      hideSignin();
       start();
     } catch (err) {
       error.textContent = t(err.status === 429 ? 'signin_wait' : 'signin_wrong');

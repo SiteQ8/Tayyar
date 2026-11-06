@@ -7,8 +7,11 @@ import { api } from '../api.js';
 
 const MAX_ROWS = 150;
 const ROWS_PER_SECOND = 12;
+// The sampling note stays up this long after the last skipped row, so it
+// does not blink on and off as the rate hovers around what the page shows.
+const SAMPLING_HOLD_MS = 10000;
 
-const state = { seen: 0, pre: 0, crt: 0, hits: 0, paused: false, matcher: null, perSecond: new Array(60).fill(0), budget: ROWS_PER_SECOND, sampled: false };
+const state = { seen: 0, pre: 0, crt: 0, hits: 0, paused: false, matcher: null, perSecond: new Array(60).fill(0), budget: ROWS_PER_SECOND, sampledAt: 0 };
 let visible = false;
 let insightsTimer = null;
 
@@ -56,8 +59,7 @@ function figures() {
 function tick() {
   state.perSecond.push(0);
   state.perSecond.shift();
-  $('sampling').hidden = !state.sampled;
-  state.sampled = false;
+  $('sampling').hidden = !state.sampledAt || Date.now() - state.sampledAt > SAMPLING_HOLD_MS || state.paused;
   if (visible) figures();
 }
 
@@ -75,15 +77,21 @@ export function onMessage(msg) {
   if (!hit && $('only').checked) return;
   if (!hit) {
     if (state.budget <= 0) {
-      state.sampled = true;
+      state.sampledAt = Date.now();
       return;
     }
     state.budget -= 1;
   }
   const list = $('stream');
-  list.prepend(certRow(certFromMessage(d), { hit, onOpen: openCert }));
+  list.prepend(certRow(certFromMessage(d), { hit, fresh: Boolean(hit), onOpen: openCert }));
   while (list.children.length > MAX_ROWS) list.lastChild.remove();
   $('empty').hidden = true;
+}
+
+// Shown under the controls while the stream's own connection is down.
+export function setConnection(connection) {
+  const note = $('stream-lost');
+  if (note) note.hidden = connection !== 'retry';
 }
 
 function bars(listId, items) {
@@ -131,6 +139,7 @@ export function init() {
   $('pause').addEventListener('click', () => {
     state.paused = !state.paused;
     $('pause').setAttribute('aria-pressed', String(state.paused));
+    $('paused-note').hidden = !state.paused;
     relabel();
   });
   $('clear').addEventListener('click', () => {
