@@ -3,159 +3,342 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="color-scheme" content="dark light">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#0b6157">
   <title>تيّار | Tayyar</title>
-  <meta name="description" content="Tayyar streams every new TLS certificate from public Certificate Transparency logs and alerts on names that imitate your brand, in Arabic and English.">
+  <meta name="description" content="Tayyar streams every new TLS certificate from public Certificate Transparency logs and shows every name that imitates your brand, Arabic look-alike letters included.">
   <meta property="og:title" content="Tayyar">
-  <meta property="og:description" content="Every new TLS certificate the moment it is logged, and every name that imitates your brand.">
+  <meta property="og:description" content="Every name that imitates your brand, the moment its certificate is logged.">
   <meta property="og:image" content="https://tayyar.3li.info/img/live-en.png">
   <meta property="og:url" content="https://tayyar.3li.info/">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/readex-pro-arabic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/geologica-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="site.css">
   <script src="site.js"></script>
 </head>
 <body>
-  <header class="top">
-    <a class="brand" href="#top">
-      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7"/><path class="w1" d="M5 11c3.7-3 7.3-3 11 0s7.3 3 11 0"/><path class="w2" d="M5 17.5c3.7-3 7.3-3 11 0s7.3 3 11 0"/><circle cx="23.5" cy="24.5" r="2.6"/></svg>
+  <a class="skip" href="#main"><span class="ar" lang="ar">انتقل إلى المحتوى</span><span class="en" lang="en">Skip to the content</span></a>
+  <p class="sr-only" id="announce" aria-live="polite"></p>
+
+  <header class="bar wrap g-sea" id="top">
+    <a class="wordmark" href="#top">
+      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="7"/><path d="M5 11c3.7-3 7.3-3 11 0s7.3 3 11 0"/><path class="w2" d="M5 17.5c3.7-3 7.3-3 11 0s7.3 3 11 0"/><circle cx="23.5" cy="24.5" r="2.6"/></svg>
       <span class="ar" lang="ar">تيّار</span><span class="en" lang="en">Tayyar</span>
     </a>
-    <nav class="links">
-      <a href="#features"><span class="ar" lang="ar">المزايا</span><span class="en" lang="en">Features</span></a>
-      <a href="#screens"><span class="ar" lang="ar">الشاشات</span><span class="en" lang="en">Screens</span></a>
-      <a href="#start"><span class="ar" lang="ar">التشغيل</span><span class="en" lang="en">Run it</span></a>
-      <a href="https://github.com/SiteQ8/Tayyar">GitHub</a>
-    </nav>
-    <button id="lang" class="btn ghost" type="button"><span class="ar" lang="en">English</span><span class="en" lang="ar">العربية</span></button>
+    <ul class="bar-links">
+      <li><a href="#letters"><span class="ar" lang="ar">الحروف</span><span class="en" lang="en">Letters</span></a></li>
+      <li><a href="#how"><span class="ar" lang="ar">كيف يعمل</span><span class="en" lang="en">How it works</span></a></li>
+      <li><a href="#screens"><span class="ar" lang="ar">الشاشات</span><span class="en" lang="en">Screens</span></a></li>
+      <li><a href="#start"><span class="ar" lang="ar">التشغيل</span><span class="en" lang="en">Run it</span></a></li>
+    </ul>
+    <a class="bar-out" href="https://github.com/SiteQ8/Tayyar">GitHub</a>
+    <button id="lang" class="lang" type="button"><span class="ar" lang="en">English</span><span class="en" lang="ar">العربية</span></button>
   </header>
 
-  <main id="top">
-    <section class="hero">
-      <h1><span class="ar" lang="ar">كل شهادة TLS جديدة لحظة تسجيلها، وكل اسم يقلّد علامتك قبل أن يصل إلى أحد.</span><span class="en" lang="en">Every new TLS certificate the moment it is logged, and every name that imitates your brand before it reaches anyone.</span></h1>
-      <p class="lede"><span class="ar" lang="ar">تيّار أداة مفتوحة المصدر تقرأ سجلات شفافية الشهادات العامة كلها، فتبث الشهادات لحظة إصدارها وتفحص كل اسم فيها بمقارنته بقائمة مراقبتك، بما في ذلك الأسماء العربية والحروف المتشابهة.</span><span class="en" lang="en">Tayyar is open source. It reads every public Certificate Transparency log, streams certificates as they are issued, and checks every name on them against your watchlist, Arabic names and look-alike letters included.</span></p>
-      <div class="cta">
-        <a class="btn primary" href="#start"><span class="ar" lang="ar">شغّله الآن</span><span class="en" lang="en">Run it now</span></a>
-        <a class="btn" href="https://github.com/SiteQ8/Tayyar"><span class="ar" lang="ar">الشيفرة على GitHub</span><span class="en" lang="en">Code on GitHub</span></a>
+  <main id="main">
+    <section class="hero g-sea" aria-labelledby="hero-title">
+      <div class="hero-body wrap grid">
+        <h1 class="hero-title" id="hero-title"><span class="ar" lang="ar">كل اسم يقلّد علامتك</span><span class="en" lang="en">Every name that imitates your brand</span></h1>
+        <div class="hero-copy">
+          <p class="lede" style="--d:1"><span class="ar" lang="ar">يقرأ تيّار سجلات شفافية الشهادات العامة وهي تكبر، فيرى كل اسم يقلّد علامتك حين تُسجَّل شهادته وقبل أن يصل إلى أحد.</span><span class="en" lang="en">Tayyar reads the public Certificate Transparency logs as they grow, and sees each name that imitates your brand when its certificate is logged, before it reaches anyone.</span></p>
+          <div class="copy-cmd" style="--d:2">
+            <code id="run-cmd" dir="ltr">npx github:SiteQ8/Tayyar serve</code>
+            <button class="button" type="button" data-copy="npx github:SiteQ8/Tayyar serve" aria-describedby="run-cmd"><span class="is-ready"><span class="ar" lang="ar">انسخ الأمر</span><span class="en" lang="en">Copy the command</span></span><span class="is-done"><span class="ar" lang="ar">نُسخ</span><span class="en" lang="en">Copied</span></span></button>
+          </div>
+          <p class="note" style="--d:3"><span class="ar" lang="ar">يكفيه Node 22 أو أحدث دون تثبيت أي مكتبة، ثم تفتح 127.0.0.1:4000 في متصفحك.</span><span class="en" lang="en">All it needs is Node 22 or later, with nothing to install, and then you open 127.0.0.1:4000 in your browser.</span></p>
+          <a class="hero-out" style="--d:3" href="https://github.com/SiteQ8/Tayyar"><span class="ar" lang="ar">الشيفرة على GitHub</span><span class="en" lang="en">Code on GitHub</span></a>
+        </div>
+
+        <section class="slip g-night" data-ui id="try" aria-labelledby="try-title">
+          <div class="slip-head">
+            <h2 class="slip-title" id="try-title"><span class="ar" lang="ar">جرّب اسماً</span><span class="en" lang="en">Try a name</span></h2>
+            <p class="note"><span class="ar" lang="ar">يجري الفحص في متصفحك ولا يُرسَل منه شيء، إذ يقارن الاسم بقائمة فيها علامتان هما مثال وExample بنطاقيها example.com وexample.net.</span><span class="en" lang="en">The check runs in your browser and sends nothing. It compares the name with a watchlist of two brands: مثال, and Example with example.com and example.net.</span></p>
+          </div>
+          <div class="slip-field">
+            <label class="slip-label" for="try-name"><span class="ar" lang="ar">اسم نطاق أو رابط</span><span class="en" lang="en">A domain name or a link</span></label>
+            <input class="slip-input" id="try-name" type="text" inputmode="url" dir="ltr" spellcheck="false" autocomplete="off" autocapitalize="off" value="مثأل-دفع.test">
+          </div>
+          <div class="slip-out is-drawing" id="try-out" aria-live="polite">
+            <p class="slip-name"><bdi dir="ltr"><span class="ev-brand">مث</span><span class="ev-brand ev-odd">أ</span><span class="ev-brand">ل</span>-<span class="ev-lure">دفع</span>.test</bdi></p>
+            <p class="slip-verdict sev-high"><b class="score">100</b><span class="sev"><span class="ar" lang="ar">عالية</span><span class="en" lang="en">High</span></span><span class="like"><span class="ar" lang="ar">يشبه مثال</span><span class="en" lang="en">looks like مثال</span></span></p>
+            <ul class="slip-why">
+              <li><b><span class="ar" lang="ar">حروف متشابهة</span><span class="en" lang="en">Look-alike letters</span></b><span class="why"><span class="ar" lang="ar">أ برمز U+0623 صورة أخرى لحرف عربي، ويُقرأ ا.</span><span class="en" lang="en">أ (U+0623) is another form of an Arabic letter, and reads as ا.</span></span></li>
+              <li><b><span class="ar" lang="ar">كلمة استدراج</span><span class="en" lang="en">Lure word</span></b><span class="why"><span class="ar" lang="ar">كلمات الاستدراج: دفع.</span><span class="en" lang="en">Lure words: دفع.</span></span></li>
+              <li><b><span class="ar" lang="ar">حروف دولية</span><span class="en" lang="en">International letters</span></b><span class="why"><span class="ar" lang="ar">تكتبه الشهادة هكذا xn----qmcxs4c6bsf.test.</span><span class="en" lang="en">The certificate writes it as xn----qmcxs4c6bsf.test.</span></span></li>
+            </ul>
+            <p class="slip-legend"><span class="l-brand"><span class="ar" lang="ar">العلامة</span><span class="en" lang="en">The brand</span></span><span class="l-odd"><span class="ar" lang="ar">محرف مشابه</span><span class="en" lang="en">Look-alike</span></span><span class="l-lure"><span class="ar" lang="ar">كلمة استدراج</span><span class="en" lang="en">Lure word</span></span></p>
+          </div>
+          <div class="slip-try">
+            <p class="note" id="try-chips"><span class="ar" lang="ar">أو جرّب أحد هذه الأسماء</span><span class="en" lang="en">Or try one of these</span></p>
+            <ul class="chips" aria-labelledby="try-chips">
+              <li><button class="chip" type="button" dir="ltr" data-name="مثأل-دفع.test" aria-pressed="true">مثأل-دفع.test</button></li>
+              <li><button class="chip" type="button" dir="ltr" data-name="مثـال-مخالفات.test" aria-pressed="false">مثـال-مخالفات.test</button></li>
+              <li><button class="chip" type="button" dir="ltr" data-name="еxample-pay.test" aria-pressed="false">еxample-pay.test</button></li>
+              <li><button class="chip" type="button" dir="ltr" data-name="example.com.verify-account.test" aria-pressed="false">example.com.verify-account.test</button></li>
+              <li><button class="chip" type="button" dir="ltr" data-name="examp1e-pay.test" aria-pressed="false">examp1e-pay.test</button></li>
+            </ul>
+          </div>
+        </section>
       </div>
-      <figure class="shot hero-shot">
-        <img class="ar" src="img/live-ar.png" width="1280" height="820" alt="الواجهة بالعربية وفيها البث الحي وأرقامه وأكثر الجهات إصداراً">
-        <img class="en" src="img/live-en.png" width="1280" height="820" alt="The interface in English showing the live stream, its figures and the top issuers">
+    </section>
+
+    <section class="letters section g-paper" id="letters" aria-labelledby="letters-title">
+      <div class="head-row grid wrap">
+        <h2 class="title" id="letters-title" data-reveal><span class="ar" lang="ar">حرفان يُقرآن حرفاً واحداً</span><span class="en" lang="en">Two letters, read as one</span></h2>
+        <p data-reveal style="--i:1"><span class="ar" lang="ar">يوحّد تيّار الحروف التي يقرؤها الناس حرفاً واحداً قبل أن يقارن الأسماء، فالحرف الكيريلي الذي يشبه حرفاً لاتينياً يُعامَل معاملته، وكذلك الكاف الفارسية والكاف العربية والياء غير المنقوطة والتاء المربوطة والأرقام العربية، ثم يعلّم على الاسم الحرف المختلف ويذكر رمزه.</span><span class="en" lang="en">Before it compares names, Tayyar folds the letters people read as one. A Cyrillic letter that looks Latin counts as that Latin letter, and so do the Persian and Arabic kaf, the dotless yeh, the teh marbuta and Arabic digits. Then it marks the odd letter on the name and gives its code point.</span></p>
+      </div>
+      <figure class="pair" data-reveal>
+        <div class="pair-half">
+          <p class="pair-word">example</p>
+          <p class="pair-cap"><span><span class="ar" lang="ar">الكلمة الأصلية، وأول حروفها e لاتينية</span><span class="en" lang="en">The real word, starting with a Latin e</span></span><bdi class="u-code">U+0065</bdi></p>
+        </div>
+        <div class="pair-half pair-odd g-night">
+          <p class="pair-word"><span class="ev-odd">е</span>xample</p>
+          <p class="pair-cap"><span><span class="ar" lang="ar">الكلمة المقلِّدة، وأول حروفها е كيريلية</span><span class="en" lang="en">The imitation, starting with a Cyrillic е</span></span><bdi class="u-code">U+0435</bdi></p>
+        </div>
       </figure>
-    </section>
+      <div class="wrap">
+        <p class="pair-statement lede" data-reveal><span class="ar" lang="ar">تراهما كلمة واحدة مكررة، بينما يرى تيّار أن الثانية تبدأ بحرف كيريلي فيعلّمه لك.</span><span class="en" lang="en">You see the same word twice. Tayyar sees that the second one starts with a Cyrillic letter, and marks it for you.</span></p>
 
-    <section class="numbers" aria-label="Figures">
-      <p><b>49</b><span class="ar" lang="ar">سجلاً يقرؤها في آن واحد</span><span class="en" lang="en">logs read at once</span></p>
-      <p><b>1,200</b><span class="ar" lang="ar">شهادة فريدة في الثانية</span><span class="en" lang="en">unique certificates a second</span></p>
-      <p><b>10</b><span class="ar" lang="ar">أسباب يُرفع بها التنبيه</span><span class="en" lang="en">reasons a name is flagged</span></p>
-    </section>
+        <div class="set">
+          <div class="head-row grid">
+            <h3 class="subhead" data-reveal><span class="ar" lang="ar">حروف يوحّدها تيّار</span><span class="en" lang="en">Letters Tayyar folds</span></h3>
+            <p data-reveal style="--i:1"><span class="ar" lang="ar">في كل مربع حرف يقلّد غيره، ومعه الحرف الذي يُقرأ مكانه ورمزه في يونيكود.</span><span class="en" lang="en">Each square holds a letter that imitates another, with the letter it reads as and its Unicode code point.</span></p>
+          </div>
+          <ul class="glyphs">
+            <li class="glyph" data-reveal style="--i:0"><p class="glyph-char"><span>أ</span><bdi class="u-code">U+0623</bdi></p><p class="glyph-name"><span class="ar" lang="ar">ألف فوقها همزة</span><span class="en" lang="en">Alef with hamza above</span></p><p class="glyph-as"><span class="ar" lang="ar">تُقرأ ا</span><span class="en" lang="en">reads as ا</span></p></li>
+            <li class="glyph" data-reveal style="--i:1"><p class="glyph-char"><span>ٱ</span><bdi class="u-code">U+0671</bdi></p><p class="glyph-name"><span class="ar" lang="ar">ألف الوصل</span><span class="en" lang="en">Alef wasla</span></p><p class="glyph-as"><span class="ar" lang="ar">تُقرأ ا</span><span class="en" lang="en">reads as ا</span></p></li>
+            <li class="glyph" data-reveal style="--i:2"><p class="glyph-char"><span>ى</span><bdi class="u-code">U+0649</bdi></p><p class="glyph-name"><span class="ar" lang="ar">ياء غير منقوطة</span><span class="en" lang="en">Dotless yeh</span></p><p class="glyph-as"><span class="ar" lang="ar">تُقرأ ي</span><span class="en" lang="en">reads as ي</span></p></li>
+            <li class="glyph" data-reveal style="--i:3"><p class="glyph-char"><span>ة</span><bdi class="u-code">U+0629</bdi></p><p class="glyph-name"><span class="ar" lang="ar">تاء مربوطة</span><span class="en" lang="en">Teh marbuta</span></p><p class="glyph-as"><span class="ar" lang="ar">تُقرأ ه</span><span class="en" lang="en">reads as ه</span></p></li>
+            <li class="glyph" data-reveal style="--i:4"><p class="glyph-char"><span>ثـا</span><bdi class="u-code">U+0640</bdi></p><p class="glyph-name"><span class="ar" lang="ar">الكشيدة</span><span class="en" lang="en">Tatweel</span></p><p class="glyph-as"><span class="ar" lang="ar">تُحذف</span><span class="en" lang="en">dropped</span></p></li>
+            <li class="glyph" data-reveal style="--i:5"><p class="glyph-char"><span>٣</span><bdi class="u-code">U+0663</bdi></p><p class="glyph-name"><span class="ar" lang="ar">ثلاثة بالأرقام العربية</span><span class="en" lang="en">Arabic-Indic three</span></p><p class="glyph-as"><span class="ar" lang="ar">تُقرأ 3</span><span class="en" lang="en">reads as 3</span></p></li>
+            <li class="glyph" data-reveal style="--i:0"><p class="glyph-char"><span>е</span><bdi class="u-code">U+0435</bdi></p><p class="glyph-name"><span class="ar" lang="ar">e كيريلية</span><span class="en" lang="en">Cyrillic e</span></p><p class="glyph-as"><span class="ar" lang="ar">تُقرأ e</span><span class="en" lang="en">reads as e</span></p></li>
+            <li class="glyph" data-reveal style="--i:1"><p class="glyph-char"><span>а</span><bdi class="u-code">U+0430</bdi></p><p class="glyph-name"><span class="ar" lang="ar">a كيريلية</span><span class="en" lang="en">Cyrillic a</span></p><p class="glyph-as"><span class="ar" lang="ar">تُقرأ a</span><span class="en" lang="en">reads as a</span></p></li>
+            <li class="glyph" data-reveal style="--i:2"><p class="glyph-char"><span>о</span><bdi class="u-code">U+043E</bdi></p><p class="glyph-name"><span class="ar" lang="ar">o كيريلية</span><span class="en" lang="en">Cyrillic o</span></p><p class="glyph-as"><span class="ar" lang="ar">تُقرأ o</span><span class="en" lang="en">reads as o</span></p></li>
+            <li class="glyph" data-reveal style="--i:3"><p class="glyph-char"><span>ο</span><bdi class="u-code">U+03BF</bdi></p><p class="glyph-name"><span class="ar" lang="ar">أوميكرون يونانية</span><span class="en" lang="en">Greek omicron</span></p><p class="glyph-as"><span class="ar" lang="ar">تُقرأ o</span><span class="en" lang="en">reads as o</span></p></li>
+            <li class="glyph" data-reveal style="--i:4"><p class="glyph-char"><span>1</span><bdi class="u-code">U+0031</bdi></p><p class="glyph-name"><span class="ar" lang="ar">الرقم واحد</span><span class="en" lang="en">The digit one</span></p><p class="glyph-as"><span class="ar" lang="ar">مكان l</span><span class="en" lang="en">for l</span></p></li>
+            <li class="glyph" data-reveal style="--i:5"><p class="glyph-char"><span>rn</span><bdi class="u-code">U+0072 U+006E</bdi></p><p class="glyph-name"><span class="ar" lang="ar">الحرفان r وn معاً</span><span class="en" lang="en">An r and an n together</span></p><p class="glyph-as"><span class="ar" lang="ar">مكان m</span><span class="en" lang="en">for m</span></p></li>
+          </ul>
+        </div>
 
-    <section id="features" class="block">
-      <h2><span class="ar" lang="ar">ما يقدّمه</span><span class="en" lang="en">What it does</span></h2>
-      <div class="features">
-        <article>
-          <h3><span class="ar" lang="ar">كل السجلات موثَّقة</span><span class="en" lang="en">Every log, verified</span></h3>
-          <p><span class="ar" lang="ar">يقرأ تيّار نوعي السجلات معاً، أي السجلات التي تتبع RFC 6962 والسجلات الثابتة، ويتحقق من توقيع كل رأس شجرة قبل أن يثق بحجمها.</span><span class="en" lang="en">Tayyar reads both kinds of log, RFC 6962 and static tiles, and checks each log's signature on every tree head before it trusts the size.</span></p>
-        </article>
-        <article>
-          <h3><span class="ar" lang="ar">المقلِّدات بالعربية أيضاً</span><span class="en" lang="en">Look-alikes, in Arabic too</span></h3>
-          <p><span class="ar" lang="ar">يكشف الأسماء التي تقلّد علامتك بحروف من خطوط أخرى أو بأرقام مكان الحروف أو بأخطاء إملائية أو بامتداد آخر، ويوحّد الحروف العربية المتشابهة كالكاف الفارسية والعربية.</span><span class="en" lang="en">It spots names that imitate your brand with letters from other scripts, digits for letters, misspellings or another ending, and it unifies Arabic letters that read alike, such as the Persian and Arabic kaf.</span></p>
-        </article>
-        <article>
-          <h3><span class="ar" lang="ar">تنبيهات تتابعها حتى النهاية</span><span class="en" lang="en">Alerts you can work through</span></h3>
-          <p><span class="ar" lang="ar">لكل تنبيه درجة وأدلة ترسمها الواجهة على الاسم نفسه، أي حروف العلامة والمحارف المشابهة وكلمات الاستدراج، ثم تفرزه بلوحة المفاتيح بينما يبقى الإنذار الخاطئ صامتاً.</span><span class="en" lang="en">Every alert has a score and evidence drawn on the name itself: the brand's letters, the look-alike characters and the lure words. Work through them from the keyboard, and false positives stay quiet.</span></p>
-        </article>
-        <article>
-          <h3><span class="ar" lang="ar">إشعارات موقَّعة</span><span class="en" lang="en">Signed webhooks</span></h3>
-          <p><span class="ar" lang="ar">يرسل التنبيهات الجديدة إلى أي عنوان ويب بصيغة JSON أو نص، ويوقّع كل رسالة بمفتاح سري حتى يتأكد المستقبِل من مصدرها.</span><span class="en" lang="en">New alerts go to any webhook as JSON or text, and every body is signed with HMAC SHA-256 so the receiver can check where it came from.</span></p>
-        </article>
-        <article>
-          <h3><span class="ar" lang="ar">البحث وآخر ساعة</span><span class="en" lang="en">Search and the last hour</span></h3>
-          <p><span class="ar" lang="ar">ابحث في آخر نصف مليون شهادة، واطّلع على أكثر الجهات إصداراً وأكثر الامتدادات ظهوراً خلال الساعة الأخيرة.</span><span class="en" lang="en">Search the last half a million certificates, and see which issuers and endings led the last hour.</span></p>
-        </article>
-        <article>
-          <h3><span class="ar" lang="ar">على جهازك وتحت سيطرتك</span><span class="en" lang="en">On your machine, under your control</span></h3>
-          <p><span class="ar" lang="ar">لا يعتمد على أي مكتبة خارجية ولا يرسل شيئاً إلى طرف ثالث، ويستمع على العنوان المحلي ما لم تطلب غير ذلك، ويحمي الواجهة برمز وصول حين يصل إليها غيرك.</span><span class="en" lang="en">No dependencies and no third-party requests. It listens locally unless you say otherwise, and an access token guards the interface when others can reach it.</span></p>
-        </article>
+        <div class="lures">
+          <h3 class="subhead" data-reveal><span class="ar" lang="ar">كلمات الاستدراج</span><span class="en" lang="en">Lure words</span></h3>
+          <p data-reveal style="--i:1"><span class="ar" lang="ar">وتزيد درجة الاسم خمس عشرة نقطة حين تأتي معه كلمة من الكلمات التي تستعملها صفحات التصيد، بالعربية أو بالإنجليزية.</span><span class="en" lang="en">A name scores 15 points more when it also carries a word that phishing pages use, in Arabic or in English.</span></p>
+          <p class="lure-list" lang="ar" dir="rtl" data-reveal style="--i:2"><span class="ev-lure">دخول</span> <span class="ev-lure">تسجيل</span> <span class="ev-lure">تحقق</span> <span class="ev-lure">تأكيد</span> <span class="ev-lure">تحديث</span> <span class="ev-lure">حساب</span> <span class="ev-lure">دفع</span> <span class="ev-lure">سداد</span> <span class="ev-lure">بطاقة</span> <span class="ev-lure">بنك</span> <span class="ev-lure">مكافأة</span> <span class="ev-lure">جائزة</span> <span class="ev-lure">استرداد</span> <span class="ev-lure">مخالفات</span> <span class="ev-lure">شحنة</span> <span class="ev-lure">طرد</span> <span class="ev-lure">بريد</span></p>
+          <p class="lure-list" lang="en" dir="ltr" data-reveal style="--i:3"><span class="ev-lure">login</span> <span class="ev-lure">signin</span> <span class="ev-lure">secure</span> <span class="ev-lure">verify</span> <span class="ev-lure">verification</span> <span class="ev-lure">update</span> <span class="ev-lure">account</span> <span class="ev-lure">auth</span> <span class="ev-lure">otp</span> <span class="ev-lure">pay</span> <span class="ev-lure">payment</span> <span class="ev-lure">billing</span> <span class="ev-lure">invoice</span> <span class="ev-lure">refund</span> <span class="ev-lure">wallet</span> <span class="ev-lure">bank</span> <span class="ev-lure">card</span> <span class="ev-lure">reward</span> <span class="ev-lure">gift</span> <span class="ev-lure">prize</span> <span class="ev-lure">claim</span> <span class="ev-lure">confirm</span> <span class="ev-lure">unlock</span> <span class="ev-lure">support</span> <span class="ev-lure">service</span> <span class="ev-lure">kyc</span> <span class="ev-lure">fines</span> <span class="ev-lure">parcel</span> <span class="ev-lure">delivery</span> <span class="ev-lure">tracking</span> <span class="ev-lure">customs</span></p>
+        </div>
       </div>
     </section>
 
-    <section id="screens" class="block">
-      <h2><span class="ar" lang="ar">الشاشات</span><span class="en" lang="en">Screens</span></h2>
-      <div class="gallery">
-        <figure class="shot">
-          <img class="ar" src="img/alerts-ar.png" width="1280" height="820" loading="lazy" alt="قائمة التنبيهات مرتبة حسب الحالة والخطورة">
-          <img class="en" src="img/alerts-en.png" width="1280" height="820" loading="lazy" alt="The alerts list by status and severity">
-          <figcaption><span class="ar" lang="ar">التنبيهات مرتبة حسب الحالة والخطورة.</span><span class="en" lang="en">Alerts by status and severity.</span></figcaption>
+    <section class="reasons section g-night" id="reasons" aria-labelledby="reasons-title">
+      <div class="wrap">
+        <div class="head-row grid">
+          <h2 class="title" id="reasons-title" data-reveal><span class="ar" lang="ar">عشرة أسباب ودرجة من مئة</span><span class="en" lang="en">Ten reasons, one score out of 100</span></h2>
+          <p data-reveal style="--i:1"><span class="ar" lang="ar">لكل اسم يشبه علامة في قائمتك درجة من مئة، فهو عالي الخطورة من ثمانين ومتوسطها من ستين ومنخفضها دون ذلك، ويرافق كل سبب دليله على الاسم نفسه.</span><span class="en" lang="en">Every name that resembles a brand on your list gets a score out of 100: high from 80, medium from 60, low below that. Each reason comes with its evidence, on the name itself.</span></p>
+        </div>
+        <table class="lineup">
+          <colgroup><col class="c-reason"><col class="c-name"><col class="c-pts"></colgroup>
+          <thead class="note">
+            <tr><th scope="col"><span class="ar" lang="ar">السبب</span><span class="en" lang="en">Reason</span></th><th scope="col"><span class="ar" lang="ar">اسم يكشفه</span><span class="en" lang="en">A name it catches</span></th><th scope="col"><span class="ar" lang="ar">الدرجة</span><span class="en" lang="en">Score</span></th></tr>
+          </thead>
+          <tbody>
+            <tr class="group"><th colspan="3" scope="rowgroup"><span class="ar" lang="ar">ما يرفع التنبيه</span><span class="en" lang="en">What raises an alert</span></th></tr>
+            <tr class="row" data-reason="embedded-domain" data-reveal style="--i:0">
+              <td class="reason"><b><span class="ar" lang="ar">النطاق الحقيقي بداخله</span><span class="en" lang="en">Real domain inside</span></b><span class="why"><span class="ar" lang="ar">كُتب نطاق العلامة الحقيقي داخل نطاق آخر.</span><span class="en" lang="en">The brand's real domain is written inside a different domain.</span></span></td>
+              <td class="example"><bdi class="name" dir="ltr"><span class="ev-brand">example.com</span>.<span class="ev-lure">verify</span>-<span class="ev-lure">account</span>.test</bdi></td>
+              <td class="pts"><span class="ar" lang="ar">90، أو 85 بشرطات</span><span class="en" lang="en">90, or 85 with hyphens</span></td>
+            </tr>
+            <tr class="row" data-reason="homoglyph" data-reveal style="--i:1">
+              <td class="reason"><b><span class="ar" lang="ar">حروف متشابهة</span><span class="en" lang="en">Look-alike letters</span></b><span class="why"><span class="ar" lang="ar">حروف من خط آخر أو بعلامات تجعل الاسم يشبه العلامة.</span><span class="en" lang="en">Letters from another script, or with marks, make the name look like the brand.</span></span></td>
+              <td class="example"><bdi class="name" dir="ltr"><span class="ev-brand ev-odd">е</span><span class="ev-brand">xample</span>.test</bdi></td>
+              <td class="pts">85</td>
+            </tr>
+            <tr class="row" data-reason="tld-swap" data-reveal style="--i:2">
+              <td class="reason"><b><span class="ar" lang="ar">امتداد آخر</span><span class="en" lang="en">Other ending</span></b><span class="why"><span class="ar" lang="ar">الاسم نفسه الذي في نطاق العلامة لكن بامتداد آخر.</span><span class="en" lang="en">The same name as the brand's domain, under a different ending.</span></span></td>
+              <td class="example"><bdi class="name" dir="ltr"><span class="ev-brand">example</span>.test</bdi></td>
+              <td class="pts">75</td>
+            </tr>
+            <tr class="row" data-reason="swap" data-reveal style="--i:3">
+              <td class="reason"><b><span class="ar" lang="ar">محارف مستبدلة</span><span class="en" lang="en">Swapped characters</span></b><span class="why"><span class="ar" lang="ar">أرقام أو أزواج حروف تحل محل حروف تشبهها، كالصفر مكان الحرف الذي يشبهه.</span><span class="en" lang="en">Digits or letter pairs stand in for letters, such as 0 for o or rn for m.</span></span></td>
+              <td class="example"><bdi class="name" dir="ltr"><span class="ev-brand">examp</span><span class="ev-brand ev-odd">1</span><span class="ev-brand">e</span>.test</bdi></td>
+              <td class="pts">75</td>
+            </tr>
+            <tr class="row" data-reason="typo" data-reveal style="--i:4">
+              <td class="reason"><b><span class="ar" lang="ar">خطأ إملائي</span><span class="en" lang="en">Misspelling</span></b><span class="why"><span class="ar" lang="ar">يبعد الاسم عن العلامة حرفاً أو حرفين.</span><span class="en" lang="en">The name is one or two letters away from the brand.</span></span></td>
+              <td class="example"><bdi class="name" dir="ltr"><span class="ev-brand">exmaple</span>.test</bdi></td>
+              <td class="pts"><span class="ar" lang="ar">من 55 إلى 70</span><span class="en" lang="en">55 to 70</span></td>
+            </tr>
+            <tr class="row" data-reason="keyword" data-reveal style="--i:5">
+              <td class="reason"><b><span class="ar" lang="ar">كلمة العلامة</span><span class="en" lang="en">Brand word</span></b><span class="why"><span class="ar" lang="ar">يحتوي الاسم على كلمة من كلمات هذه العلامة.</span><span class="en" lang="en">The name contains a word from this brand.</span></span></td>
+              <td class="example"><bdi class="name" dir="ltr"><span class="ev-brand">example</span>-shop.test</bdi></td>
+              <td class="pts">55</td>
+            </tr>
+            <tr class="row" data-reason="pattern" data-reveal style="--i:6">
+              <td class="reason"><b><span class="ar" lang="ar">نمطك</span><span class="en" lang="en">Your pattern</span></b><span class="why"><span class="ar" lang="ar">يطابق الاسم نمطاً في قائمة المراقبة.</span><span class="en" lang="en">The name matches a pattern on your watchlist.</span></span></td>
+              <td class="example"><bdi class="name" dir="ltr">\.example$</bdi></td>
+              <td class="pts"><span class="ar" lang="ar">45 أو 65 أو 85</span><span class="en" lang="en">45, 65 or 85</span></td>
+            </tr>
+          </tbody>
+          <tbody>
+            <tr class="group"><th colspan="3" scope="rowgroup"><span class="ar" lang="ar">ما يزيد الدرجة</span><span class="en" lang="en">What adds to the score</span></th></tr>
+            <tr class="row" data-reason="subdomain" data-reveal style="--i:0">
+              <td class="reason"><b><span class="ar" lang="ar">العلامة نطاق فرعي</span><span class="en" lang="en">Brand as a subdomain</span></b><span class="why"><span class="ar" lang="ar">تظهر العلامة نطاقاً فرعياً لنطاق لا علاقة له بها.</span><span class="en" lang="en">The brand appears as a subdomain of an unrelated domain.</span></span></td>
+              <td class="example"><bdi class="name" dir="ltr"><span class="ev-brand">example</span>.store.test</bdi></td>
+              <td class="pts"><bdi dir="ltr">+10</bdi></td>
+            </tr>
+            <tr class="row" data-reason="lure-word" data-reveal style="--i:1">
+              <td class="reason"><b><span class="ar" lang="ar">كلمة استدراج</span><span class="en" lang="en">Lure word</span></b><span class="why"><span class="ar" lang="ar">يقرن الاسم العلامة بكلمة تستعملها صفحات التصيد كالدخول والتحقق والدفع.</span><span class="en" lang="en">The name pairs the brand with a word phishing pages use, such as login, verify or pay.</span></span></td>
+              <td class="example"><bdi class="name" dir="ltr"><span class="ev-brand">مثال</span>-<span class="ev-lure">دفع</span>.test</bdi></td>
+              <td class="pts"><bdi dir="ltr">+15</bdi></td>
+            </tr>
+            <tr class="row" data-reason="idn" data-reveal style="--i:2">
+              <td class="reason"><b><span class="ar" lang="ar">حروف دولية</span><span class="en" lang="en">International letters</span></b><span class="why"><span class="ar" lang="ar">يستعمل النطاق حروفاً دولية، لذا يظهر في شريط العنوان بشكل مختلف.</span><span class="en" lang="en">The domain uses international letters, so it shows differently in the address bar.</span></span></td>
+              <td class="example"><bdi class="name" dir="ltr"><span class="ev-brand">مثال</span>.test</bdi><span class="ascii"><bdi dir="ltr">xn--mgbh0fb.test</bdi></span></td>
+              <td class="pts"><bdi dir="ltr">+5</bdi></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="how section g-paper" id="how" aria-labelledby="how-title">
+      <div class="wrap">
+        <div class="head-row grid">
+          <div>
+            <h2 class="title" id="how-title" data-reveal><span class="ar" lang="ar">من 49 سجلاً إلى تنبيه واحد</span><span class="en" lang="en">From 49 logs to one alert</span></h2>
+            <p data-reveal style="--i:1"><span class="ar" lang="ar">يجلب تيّار قائمة Google العامة للسجلات الموثوقة ويختار منها ما يقبل الشهادات اليوم، فيقرأ النوعين معاً، أي سجلات RFC 6962 والسجلات الثابتة التي تُقدَّم في ملفات tile.</span><span class="en" lang="en">Tayyar loads Google's public list of trusted logs and keeps the ones that accept certificates today. It reads both kinds: RFC 6962 logs, and static logs served as tiles.</span></p>
+          </div>
+          <p class="lede" data-reveal style="--i:2"><span class="ar" lang="ar">وفي تجربة حية بتاريخ 25 سبتمبر 2026 قرأ تيّار 49 سجلاً، فبث نحو 1,200 شهادة فريدة في الثانية مستهلكاً قرابة ربع نواة واحدة من المعالج.</span><span class="en" lang="en">In a live run on 25 September 2026, Tayyar read 49 logs and streamed about 1,200 unique certificates a second, using about a quarter of one CPU core.</span></p>
+        </div>
+        <ol class="flow" id="flow">
+          <li data-reveal style="--i:0"><svg class="flow-art flow-read" viewBox="0 0 308 160" aria-hidden="true" focusable="false"><rect class="q-crt pale" x="2.0" y="66.6" width="10" height="10"/><rect class="q-crt pale" x="8.3" y="98.4" width="10" height="10"/><rect class="q-crt pale" x="5.3" y="101.4" width="10" height="10"/><rect class="q-crt pale" x="2.3" y="104.4" width="10" height="10"/><rect class="q-crt pale" x="31.2" y="111.8" width="10" height="10"/><rect class="q-pre pale" x="36.2" y="89.1" width="10" height="10"/><rect class="q-crt pale" x="34.8" y="109.4" width="10" height="10"/><rect class="q-pre pale" x="51.2" y="117.2" width="10" height="10"/><rect class="q-crt pale" x="64.3" y="74.7" width="10" height="10"/><rect class="q-crt pale" x="58.6" y="86.0" width="10" height="10"/><rect class="q-crt pale" x="65.7" y="26.4" width="10" height="10"/><rect class="q-pre pale" x="72.0" y="74.5" width="10" height="10"/><rect class="q-pre pale" x="69.0" y="77.5" width="10" height="10"/><rect class="q-pre pale" x="66.0" y="80.5" width="10" height="10"/><rect class="q-pre pale" x="84.5" y="117.0" width="10" height="10"/><rect class="q-crt pale" x="108.8" y="59.0" width="10" height="10"/><rect class="q-pre pale" x="105.2" y="65.1" width="10" height="10"/><rect class="q-pre pale" x="114.7" y="41.9" width="10" height="10"/><rect class="q-crt pale" x="121.2" y="116.6" width="10" height="10"/><rect class="q-crt pale" x="127.8" y="79.6" width="10" height="10"/><rect class="q-crt pale" x="124.8" y="82.6" width="10" height="10"/><rect class="q-crt pale" x="121.8" y="85.6" width="10" height="10"/><rect class="q-pre pale" x="134.3" y="69.0" width="10" height="10"/><rect class="q-pre pale" x="153.7" y="80.3" width="10" height="10"/><rect class="q-crt pale" x="159.9" y="43.4" width="10" height="10"/><rect class="q-crt pale" x="167.5" y="78.7" width="10" height="10"/><rect class="q-pre pale" x="178.5" y="74.2" width="10" height="10"/><rect class="q-pre pale" x="175.5" y="77.2" width="10" height="10"/><rect class="q-crt pale" x="196.7" y="70.7" width="10" height="10"/><rect class="q-crt pale" x="193.7" y="73.7" width="10" height="10"/><rect class="q-crt pale" x="190.7" y="76.7" width="10" height="10"/><rect class="q-crt pale" x="180.2" y="98.3" width="10" height="10"/><rect class="q-crt pale" x="177.2" y="101.3" width="10" height="10"/><rect class="q-crt pale" x="174.2" y="104.3" width="10" height="10"/><rect class="q-crt pale" x="183.7" y="65.0" width="10" height="10"/><rect class="q-crt pale" x="194.1" y="82.0" width="10" height="10"/><rect class="q-crt pale" x="191.1" y="85.0" width="10" height="10"/><rect class="q-crt pale" x="188.1" y="88.0" width="10" height="10"/><rect class="q-crt pale" x="212.6" y="56.6" width="10" height="10"/><rect class="q-pre pale" x="222.1" y="56.9" width="10" height="10"/><rect class="q-crt pale" x="224.1" y="84.2" width="10" height="10"/><rect class="q-crt pale" x="221.1" y="87.2" width="10" height="10"/><rect class="q-crt pale" x="218.1" y="90.2" width="10" height="10"/><rect class="q-crt pale" x="232.1" y="71.9" width="10" height="10"/><rect class="q-pre pale" x="236.0" y="86.0" width="10" height="10"/><rect class="q-crt pale" x="260.6" y="76.4" width="10" height="10"/><rect class="q-pre pale" x="253.8" y="69.9" width="10" height="10"/><rect class="q-pre pale" x="265.5" y="65.0" width="10" height="10"/><rect class="q-crt pale" x="292.5" y="77.4" width="10" height="10"/><rect class="q-crt pale" x="289.5" y="80.4" width="10" height="10"/><rect class="q-crt pale" x="286.5" y="83.4" width="10" height="10"/></svg><h3><span class="ar" lang="ar">يقرأ</span><span class="en" lang="en">Read</span></h3><p><span class="ar" lang="ar">يشغّل لكل سجل عاملاً مستقلاً يقرأ رأس الشجرة الموقَّع ويتحقق من توقيعه قبل أن يثق بحجمها، ثم يجلب المدخلات الجديدة عبر get-entries أو من ملفات tile.</span><span class="en" lang="en">One watcher per log reads the signed tree head and checks the log's signature before it trusts the size, then fetches the new entries, with get-entries or from tiles.</span></p></li>
+          <li data-reveal style="--i:1"><svg class="flow-art flow-reduce" viewBox="0 0 308 160" aria-hidden="true" focusable="false"><g class="flow-stream"><rect class="q-crt" x="2.0" y="59.0" width="10" height="10"/><rect class="q-pre" x="2.0" y="73.0" width="10" height="10"/><rect class="q-pre" x="2.0" y="87.0" width="10" height="10"/><rect class="q-crt" x="16.0" y="59.0" width="10" height="10"/><rect class="q-pre" x="16.0" y="73.0" width="10" height="10"/><rect class="q-pre" x="16.0" y="87.0" width="10" height="10"/><rect class="q-crt" x="30.0" y="59.0" width="10" height="10"/><rect class="q-crt" x="30.0" y="73.0" width="10" height="10"/><rect class="q-pre" x="30.0" y="87.0" width="10" height="10"/><rect class="q-pre" x="44.0" y="59.0" width="10" height="10"/><rect class="q-pre" x="44.0" y="73.0" width="10" height="10"/><rect class="q-crt" x="44.0" y="87.0" width="10" height="10"/><rect class="q-pre" x="58.0" y="59.0" width="10" height="10"/><rect class="q-crt" x="58.0" y="73.0" width="10" height="10"/><rect class="q-crt" x="58.0" y="87.0" width="10" height="10"/><rect class="q-crt" x="72.0" y="59.0" width="10" height="10"/><rect class="q-crt" x="72.0" y="73.0" width="10" height="10"/><rect class="q-crt" x="72.0" y="87.0" width="10" height="10"/><rect class="q-pre" x="86.0" y="59.0" width="10" height="10"/><rect class="q-crt" x="86.0" y="73.0" width="10" height="10"/><rect class="q-crt" x="86.0" y="87.0" width="10" height="10"/><rect class="q-pre" x="100.0" y="59.0" width="10" height="10"/><rect class="q-pre" x="100.0" y="73.0" width="10" height="10"/><rect class="q-crt" x="100.0" y="87.0" width="10" height="10"/><rect class="q-crt" x="114.0" y="59.0" width="10" height="10"/><rect class="q-crt" x="114.0" y="73.0" width="10" height="10"/><rect class="q-crt" x="114.0" y="87.0" width="10" height="10"/><rect class="q-crt" x="128.0" y="59.0" width="10" height="10"/><rect class="q-pre" x="128.0" y="73.0" width="10" height="10"/><rect class="q-crt" x="128.0" y="87.0" width="10" height="10"/><rect class="q-pre" x="142.0" y="59.0" width="10" height="10"/><rect class="q-crt" x="142.0" y="73.0" width="10" height="10"/><rect class="q-pre" x="142.0" y="87.0" width="10" height="10"/><rect class="q-crt" x="156.0" y="59.0" width="10" height="10"/><rect class="q-crt" x="156.0" y="73.0" width="10" height="10"/><rect class="q-crt" x="156.0" y="87.0" width="10" height="10"/><rect class="q-crt" x="170.0" y="59.0" width="10" height="10"/><rect class="q-pre" x="170.0" y="73.0" width="10" height="10"/><rect class="q-pre" x="170.0" y="87.0" width="10" height="10"/><rect class="q-pre" x="184.0" y="59.0" width="10" height="10"/><rect class="q-crt" x="184.0" y="73.0" width="10" height="10"/><rect class="q-crt" x="184.0" y="87.0" width="10" height="10"/><rect class="q-crt" x="198.0" y="59.0" width="10" height="10"/><rect class="q-crt" x="198.0" y="73.0" width="10" height="10"/><rect class="q-crt" x="198.0" y="87.0" width="10" height="10"/><rect class="q-crt" x="212.0" y="59.0" width="10" height="10"/><rect class="q-pre" x="212.0" y="73.0" width="10" height="10"/><rect class="q-crt" x="212.0" y="87.0" width="10" height="10"/><rect class="q-crt" x="226.0" y="59.0" width="10" height="10"/><rect class="q-crt" x="226.0" y="73.0" width="10" height="10"/><rect class="q-pre" x="226.0" y="87.0" width="10" height="10"/><rect class="q-pre" x="240.0" y="59.0" width="10" height="10"/><rect class="q-crt" x="240.0" y="73.0" width="10" height="10"/><rect class="q-crt" x="240.0" y="87.0" width="10" height="10"/><rect class="q-crt" x="254.0" y="59.0" width="10" height="10"/><rect class="q-pre" x="254.0" y="73.0" width="10" height="10"/><rect class="q-crt" x="254.0" y="87.0" width="10" height="10"/><rect class="q-crt" x="268.0" y="59.0" width="10" height="10"/><rect class="q-pre" x="268.0" y="73.0" width="10" height="10"/><rect class="q-pre" x="268.0" y="87.0" width="10" height="10"/><rect class="q-crt" x="282.0" y="59.0" width="10" height="10"/><rect class="q-crt" x="282.0" y="73.0" width="10" height="10"/><rect class="q-crt" x="282.0" y="87.0" width="10" height="10"/><rect class="q-crt" x="296.0" y="59.0" width="10" height="10"/><rect class="q-crt" x="296.0" y="73.0" width="10" height="10"/><rect class="q-crt" x="296.0" y="87.0" width="10" height="10"/><rect class="q-pre" x="310.0" y="59.0" width="10" height="10"/><rect class="q-pre" x="310.0" y="73.0" width="10" height="10"/><rect class="q-pre" x="310.0" y="87.0" width="10" height="10"/></g></svg><h3><span class="ar" lang="ar">يصفّي</span><span class="en" lang="en">Reduce</span></h3><p><span class="ar" lang="ar">يحذف النسخ المكررة لأن كل شهادة تُسجَّل في سجلين أو ثلاثة، ثم يحلل كل شهادة مرة واحدة ويبثها.</span><span class="en" lang="en">It drops the copies, since each certificate is logged in two or three logs, then parses every certificate once and streams it.</span></p></li>
+          <li data-reveal style="--i:2"><svg class="flow-art flow-check" viewBox="0 0 308 160" aria-hidden="true" focusable="false"><rect class="q-ok" x="4.0" y="48.5" width="10" height="10"/><rect class="q-ok" x="4.0" y="66.0" width="10" height="10"/><rect class="q-ok" x="4.0" y="73.0" width="10" height="10"/><rect class="q-ok" x="4.0" y="90.5" width="10" height="10"/><rect class="q-ok" x="4.0" y="97.5" width="10" height="10"/><rect class="q-ok" x="34.2" y="38.0" width="10" height="10"/><rect class="q-ok" x="34.2" y="59.0" width="10" height="10"/><rect class="q-ok" x="34.2" y="73.0" width="10" height="10"/><rect class="q-ok" x="34.2" y="94.0" width="10" height="10"/><rect class="q-ok" x="34.2" y="108.0" width="10" height="10"/><rect class="q-ok" x="64.4" y="27.5" width="10" height="10"/><rect class="q-ok" x="64.4" y="52.0" width="10" height="10"/><rect class="q-ok" x="64.4" y="73.0" width="10" height="10"/><rect class="q-ok" x="64.4" y="97.5" width="10" height="10"/><rect class="q-ok" x="64.4" y="118.5" width="10" height="10"/><rect class="q-ok" x="94.6" y="17.0" width="10" height="10"/><rect class="q-hit" x="94.6" y="45.0" width="10" height="10"/><rect class="q-ok" x="94.6" y="73.0" width="10" height="10"/><rect class="q-ok" x="94.6" y="101.0" width="10" height="10"/><rect class="q-ok" x="94.6" y="129.0" width="10" height="10"/><rect class="q-ok" x="124.8" y="17.0" width="10" height="10"/><rect class="q-ok" x="124.8" y="45.0" width="10" height="10"/><rect class="q-ok" x="124.8" y="73.0" width="10" height="10"/><rect class="q-ok" x="124.8" y="101.0" width="10" height="10"/><rect class="q-ok" x="124.8" y="129.0" width="10" height="10"/><rect class="q-ok" x="155.0" y="17.0" width="10" height="10"/><rect class="q-ok" x="155.0" y="45.0" width="10" height="10"/><rect class="q-ok" x="155.0" y="73.0" width="10" height="10"/><rect class="q-ok" x="155.0" y="101.0" width="10" height="10"/><rect class="q-hit" x="155.0" y="129.0" width="10" height="10"/><rect class="q-ok" x="185.2" y="17.0" width="10" height="10"/><rect class="q-ok" x="185.2" y="45.0" width="10" height="10"/><rect class="q-ok" x="185.2" y="73.0" width="10" height="10"/><rect class="q-ok" x="185.2" y="101.0" width="10" height="10"/><rect class="q-ok" x="185.2" y="129.0" width="10" height="10"/><rect class="q-ok" x="215.4" y="17.0" width="10" height="10"/><rect class="q-ok" x="215.4" y="45.0" width="10" height="10"/><rect class="q-ok" x="215.4" y="73.0" width="10" height="10"/><rect class="q-hit" x="215.4" y="101.0" width="10" height="10"/><rect class="q-ok" x="215.4" y="129.0" width="10" height="10"/><rect class="q-ok" x="245.6" y="17.0" width="10" height="10"/><rect class="q-ok" x="245.6" y="45.0" width="10" height="10"/><rect class="q-ok" x="245.6" y="73.0" width="10" height="10"/><rect class="q-ok" x="245.6" y="101.0" width="10" height="10"/><rect class="q-ok" x="245.6" y="129.0" width="10" height="10"/><rect class="q-ok" x="275.8" y="17.0" width="10" height="10"/><rect class="q-ok" x="275.8" y="45.0" width="10" height="10"/><rect class="q-ok" x="275.8" y="73.0" width="10" height="10"/><rect class="q-ok" x="275.8" y="101.0" width="10" height="10"/><rect class="q-ok" x="275.8" y="129.0" width="10" height="10"/></svg><h3><span class="ar" lang="ar">يفحص</span><span class="en" lang="en">Check</span></h3><p><span class="ar" lang="ar">يفحص كل اسم في الشهادة بمقارنته بقائمة المراقبة، فإن شابه علامة رفع تنبيهاً وبثه عبر WebSocket وأرسله إلى عناوين الويب.</span><span class="en" lang="en">It checks every name on the certificate against the watchlist. When one imitates a brand it raises an alert, streams it over WebSocket and posts it to your webhooks.</span></p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="does section g-paper-2" id="does" aria-labelledby="does-title">
+      <div class="wrap">
+        <h2 class="does-title" id="does-title" data-reveal><span class="ar" lang="ar">ما يقدّمه</span><span class="en" lang="en">What it does</span></h2>
+        <ul class="does-list">
+          <li data-reveal><h3><span class="ar" lang="ar">كل السجلات موثَّقة</span><span class="en" lang="en">Every log, verified</span></h3><p><span class="ar" lang="ar">يقرأ تيّار نوعي السجلات معاً، أي السجلات التي تتبع RFC 6962 والسجلات الثابتة، ويتحقق من توقيع كل رأس شجرة قبل أن يثق بحجمها.</span><span class="en" lang="en">Tayyar reads both kinds of log, RFC 6962 and static tiles, and checks each log's signature on every tree head before it trusts the size.</span></p></li>
+          <li data-reveal><h3><span class="ar" lang="ar">المقلِّدات بالعربية أيضاً</span><span class="en" lang="en">Look-alikes, in Arabic too</span></h3><p><span class="ar" lang="ar">يكشف الأسماء التي تقلّد علامتك بحروف من خطوط أخرى أو بأرقام مكان الحروف أو بأخطاء إملائية أو بامتداد آخر، ويوحّد الحروف العربية المتشابهة كالكاف الفارسية والعربية.</span><span class="en" lang="en">It spots names that imitate your brand with letters from other scripts, digits for letters, misspellings or another ending, and it unifies Arabic letters that read alike, such as the Persian and Arabic kaf.</span></p></li>
+          <li data-reveal><h3><span class="ar" lang="ar">تنبيهات تتابعها حتى النهاية</span><span class="en" lang="en">Alerts you work through</span></h3><p><span class="ar" lang="ar">لكل تنبيه درجة وأدلة ترسمها الواجهة على الاسم نفسه، أي حروف العلامة والمحارف المشابهة وكلمات الاستدراج، ثم تفرزه بلوحة المفاتيح بينما يبقى الإنذار الخاطئ صامتاً.</span><span class="en" lang="en">Every alert has a score and evidence drawn on the name itself: the brand's letters, the look-alike characters and the lure words. Work through them from the keyboard, and false positives stay quiet.</span></p></li>
+          <li data-reveal><h3><span class="ar" lang="ar">إشعارات موقَّعة</span><span class="en" lang="en">Signed webhooks</span></h3><p><span class="ar" lang="ar">يرسل التنبيهات الجديدة إلى أي عنوان ويب بصيغة JSON أو نص، ويوقّع كل رسالة بمفتاح سري حتى يتأكد المستقبِل من مصدرها.</span><span class="en" lang="en">New alerts go to any webhook as JSON or text, and every body is signed with HMAC SHA-256 so the receiver can check where it came from.</span></p></li>
+          <li data-reveal><h3><span class="ar" lang="ar">البحث وآخر ساعة</span><span class="en" lang="en">Search and the last hour</span></h3><p><span class="ar" lang="ar">ابحث في آخر نصف مليون شهادة، واطّلع على أكثر الجهات إصداراً وأكثر الامتدادات ظهوراً خلال الساعة الأخيرة.</span><span class="en" lang="en">Search the last half a million certificates, and see which issuers and endings led the last hour.</span></p></li>
+          <li data-reveal><h3><span class="ar" lang="ar">على جهازك وتحت سيطرتك</span><span class="en" lang="en">On your own machine</span></h3><p><span class="ar" lang="ar">لا يعتمد على أي مكتبة خارجية ولا يرسل شيئاً إلى طرف ثالث، ويستمع على العنوان المحلي ما لم تطلب غير ذلك، ويحمي الواجهة برمز وصول حين يصل إليها غيرك.</span><span class="en" lang="en">No dependencies and no third-party requests. It listens locally unless you say otherwise, and an access token guards the interface when others can reach it.</span></p></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="screens section g-paper" id="screens" aria-labelledby="screens-title">
+      <div class="head-row grid wrap">
+        <h2 class="title" id="screens-title" data-reveal><span class="ar" lang="ar">الشاشات</span><span class="en" lang="en">Screens</span></h2>
+        <p data-reveal style="--i:1"><span class="ar" lang="ar">صور من واجهة تيّار وهي تعمل، والأسماء في شاشات التنبيهات وقائمة المراقبة متخيَّلة ومحجوزة للأمثلة.</span><span class="en" lang="en">Pictures of Tayyar's interface as it runs. The names on the alert and watchlist screens are invented, from names reserved for examples.</span></p>
+      </div>
+      <div class="shots" role="region" aria-labelledby="screens-title" tabindex="0">
+        <figure class="shot" data-reveal>
+          <img class="ar" src="img/live-ar.png" width="1280" height="820" loading="lazy" decoding="async" alt="الواجهة بالعربية وفيها البث الحي وأرقامه وأكثر الجهات إصداراً">
+          <img class="en" src="img/live-en.png" width="1280" height="820" loading="lazy" decoding="async" alt="The interface in English showing the live stream, its figures and the top issuers">
+          <figcaption class="tag-sea"><b><span class="ar" lang="ar">البث</span><span class="en" lang="en">Live</span></b><span class="cap"><span class="ar" lang="ar">كل شهادة لحظة تسجيلها، مع أكثر الجهات إصداراً وأكثر الامتدادات ظهوراً خلال الساعة الأخيرة.</span><span class="en" lang="en">Every certificate as it is logged, with the issuers and endings that led the last hour.</span></span></figcaption>
         </figure>
-        <figure class="shot">
-          <img class="ar" src="img/alert-ar.png" width="1280" height="820" loading="lazy" alt="تفاصيل تنبيه وأسبابه والشهادة">
-          <img class="en" src="img/alert-en.png" width="1280" height="820" loading="lazy" alt="An alert's details, reasons and certificate">
-          <figcaption><span class="ar" lang="ar">سبب كل تنبيه ودليله مرسوماً على الاسم، مع الشهادة كاملة.</span><span class="en" lang="en">Why each alert was raised and the evidence, drawn on the name, with the full certificate.</span></figcaption>
+        <figure class="shot" data-reveal style="--i:1">
+          <img class="ar" src="img/alerts-ar.png" width="1280" height="820" loading="lazy" decoding="async" alt="قائمة التنبيهات مرتبة حسب الحالة والخطورة">
+          <img class="en" src="img/alerts-en.png" width="1280" height="820" loading="lazy" decoding="async" alt="The alerts list by status and severity">
+          <figcaption class="tag-night"><b><span class="ar" lang="ar">التنبيهات</span><span class="en" lang="en">Alerts</span></b><span class="cap"><span class="ar" lang="ar">التنبيهات مرتبة حسب الحالة والخطورة.</span><span class="en" lang="en">Alerts by status and severity.</span></span></figcaption>
         </figure>
-        <figure class="shot">
-          <img class="ar" src="img/watchlist-ar.png" width="1280" height="1000" loading="lazy" alt="قائمة المراقبة ونموذج إضافة علامة وتجربة اسم">
-          <img class="en" src="img/watchlist-en.png" width="1280" height="1000" loading="lazy" alt="The watchlist with the add brand form and a tested name">
-          <figcaption><span class="ar" lang="ar">أضف علاماتك وأنماطك ثم جرّب أي اسم لترى لماذا يطابق قبل أن يظهر.</span><span class="en" lang="en">Add your brands and patterns, then try any name and see why it matches, before it ever appears.</span></figcaption>
+        <figure class="shot" data-reveal style="--i:2">
+          <img class="ar" src="img/alert-ar.png" width="1280" height="820" loading="lazy" decoding="async" alt="تفاصيل تنبيه وأسبابه والشهادة">
+          <img class="en" src="img/alert-en.png" width="1280" height="820" loading="lazy" decoding="async" alt="An alert's details, reasons and certificate">
+          <figcaption class="tag-amber"><b><span class="ar" lang="ar">تنبيه واحد</span><span class="en" lang="en">One alert</span></b><span class="cap"><span class="ar" lang="ar">سبب كل تنبيه ودليله مرسوماً على الاسم، مع الشهادة كاملة.</span><span class="en" lang="en">Why each alert was raised and the evidence, drawn on the name, with the full certificate.</span></span></figcaption>
         </figure>
-        <figure class="shot">
-          <img src="img/logs-en.png" width="1280" height="820" loading="lazy" alt="How it works, counting each stage live, above the table of logs">
-          <figcaption><span class="ar" lang="ar">كيف يعمل تيّار مرحلة بعد مرحلة، مع حالة كل سجل ومقدار التأخر عنه.</span><span class="en" lang="en">How Tayyar works, stage by stage, with every log's state and lag.</span></figcaption>
+        <figure class="shot" data-reveal style="--i:3">
+          <img class="ar" src="img/watchlist-ar.png" width="1280" height="1000" loading="lazy" decoding="async" alt="قائمة المراقبة ونموذج إضافة علامة وتجربة اسم">
+          <img class="en" src="img/watchlist-en.png" width="1280" height="1000" loading="lazy" decoding="async" alt="The watchlist with the add brand form and a tested name">
+          <figcaption class="tag-sea"><b><span class="ar" lang="ar">قائمة المراقبة</span><span class="en" lang="en">Watchlist</span></b><span class="cap"><span class="ar" lang="ar">أضف علاماتك وأنماطك ثم جرّب أي اسم لترى لماذا يطابق قبل أن يظهر.</span><span class="en" lang="en">Add your brands and patterns, then try any name and see why it matches, before it ever appears.</span></span></figcaption>
+        </figure>
+        <figure class="shot" data-reveal style="--i:4">
+          <img src="img/logs-en.png" width="1280" height="820" loading="lazy" decoding="async" alt="How it works, counting each stage live, above the table of logs">
+          <figcaption class="tag-night"><b><span class="ar" lang="ar">السجلات</span><span class="en" lang="en">Logs</span></b><span class="cap"><span class="ar" lang="ar">كيف يعمل تيّار مرحلة بعد مرحلة، مع حالة كل سجل ومقدار التأخر عنه.</span><span class="en" lang="en">How Tayyar works, stage by stage, with every log's state and lag.</span></span></figcaption>
+        </figure>
+        <figure class="shot is-tall" data-reveal style="--i:5">
+          <img src="img/mobile-ar.png" width="780" height="1688" loading="lazy" decoding="async" alt="الواجهة على الهاتف">
+          <figcaption class="tag-amber"><b><span class="ar" lang="ar">على الهاتف</span><span class="en" lang="en">On a phone</span></b><span class="cap"><span class="ar" lang="ar">الواجهة كاملة على الهاتف.</span><span class="en" lang="en">The whole interface on a phone.</span></span></figcaption>
         </figure>
       </div>
-      <figure class="shot phone">
-        <img src="img/mobile-ar.png" width="390" height="844" loading="lazy" alt="الواجهة على الهاتف">
-        <figcaption><span class="ar" lang="ar">الواجهة كاملة على الهاتف.</span><span class="en" lang="en">The whole interface on a phone.</span></figcaption>
-      </figure>
     </section>
 
-    <section id="how" class="block">
-      <h2><span class="ar" lang="ar">كيف يعمل</span><span class="en" lang="en">How it works</span></h2>
-      <ol class="steps">
-        <li><span class="ar" lang="ar">يجلب القائمة العامة للسجلات الموثوقة ويختار منها ما يقبل الشهادات اليوم.</span><span class="en" lang="en">It loads the public list of trusted logs and keeps the ones accepting certificates today.</span></li>
-        <li><span class="ar" lang="ar">يقرأ رأس الشجرة الموقَّع من كل سجل ويتحقق من توقيعه.</span><span class="en" lang="en">It reads each log's signed tree head and checks the signature.</span></li>
-        <li><span class="ar" lang="ar">يجلب المدخلات الجديدة ويحذف النسخ المكررة ثم يحلل كل شهادة مرة واحدة.</span><span class="en" lang="en">It fetches the new entries, drops the copies from other logs and parses each certificate once.</span></li>
-        <li><span class="ar" lang="ar">يفحص كل اسم بمقارنته بقائمة المراقبة ويرفع تنبيهاً عند التشابه.</span><span class="en" lang="en">It checks every name against the watchlist and raises an alert on a look-alike.</span></li>
-        <li><span class="ar" lang="ar">يبث الشهادات والتنبيهات عبر WebSocket ويرسل التنبيهات إلى عناوين الويب.</span><span class="en" lang="en">It streams certificates and alerts over WebSocket and posts alerts to webhooks.</span></li>
-      </ol>
-    </section>
-
-    <section id="start" class="block">
-      <h2><span class="ar" lang="ar">التشغيل</span><span class="en" lang="en">Run it</span></h2>
-      <p><span class="ar" lang="ar">يعمل تيّار على Node 22 أو أحدث دون تثبيت، فشغّله ثم افتح العنوان المحلي في متصفحك.</span><span class="en" lang="en">Tayyar runs on Node 22 or later with nothing to install. Start it, then open the local address in your browser.</span></p>
-      <pre dir="ltr"><code>npx github:SiteQ8/Tayyar serve --data ./tayyar-data
-# http://127.0.0.1:4000/</code></pre>
-      <p><span class="ar" lang="ar">وحين يصل إليه غيرك فاحمِه برمز وصول وأرسل التنبيهات إلى عنوان ويب يوقّع تيّار رسائله إليه.</span><span class="en" lang="en">When others can reach it, protect it with an access token and send alerts to a webhook, with every message signed.</span></p>
-      <pre dir="ltr"><code>TAYYAR_TOKEN='a long random secret' npx github:SiteQ8/Tayyar serve \
+    <section class="start g-paper" id="start" aria-labelledby="start-title">
+      <button class="cta g-sea" type="button" data-copy="npx github:SiteQ8/Tayyar serve">
+        <span class="cta-top">
+          <span class="cta-note"><span class="ar" lang="ar">انسخ الأمر ثم شغّله في الطرفية، فيبدأ تيّار على جهازك.</span><span class="en" lang="en">Copy the command, run it in a terminal, and Tayyar starts on your machine.</span><code>npx github:SiteQ8/Tayyar serve</code></span>
+          <svg class="cta-arrow" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M12 36 36 12M16 12h20v20"/></svg>
+        </span>
+        <span class="cta-word"><span class="is-ready"><span class="ar" lang="ar">شغّله</span><span class="en" lang="en">Run it</span></span><span class="is-done"><span class="ar" lang="ar">نُسخ</span><span class="en" lang="en">Copied</span></span></span>
+      </button>
+      <div class="cmds section grid wrap">
+        <h2 class="title" id="start-title" data-reveal><span class="ar" lang="ar">الأوامر</span><span class="en" lang="en">Commands</span></h2>
+        <div class="body">
+          <p data-reveal><span class="ar" lang="ar">يعمل تيّار على Node 22 أو أحدث دون تثبيت، فشغّله ثم افتح العنوان المحلي في متصفحك.</span><span class="en" lang="en">Tayyar runs on Node 22 or later with nothing to install. Start it, then open the local address in your browser.</span></p>
+          <pre dir="ltr" data-reveal><code>npx github:SiteQ8/Tayyar serve --data ./tayyar-data
+<span class="c"># http://127.0.0.1:4000/</span></code></pre>
+          <p data-reveal><span class="ar" lang="ar">وحين يصل إليه غيرك فاحمِه برمز وصول وأرسل التنبيهات إلى عنوان ويب يوقّع تيّار رسائله إليه.</span><span class="en" lang="en">When others can reach it, protect it with an access token and send alerts to a webhook, with every message signed.</span></p>
+          <pre dir="ltr" data-reveal><code>TAYYAR_TOKEN='a long random secret' npx github:SiteQ8/Tayyar serve \
   --host 0.0.0.0 --data /var/lib/tayyar \
   --webhook text:https://example.com/hooks/tayyar --webhook-secret 'another secret'</code></pre>
-      <p><span class="ar" lang="ar">ومن سطر الأوامر تجرّب الأسماء بمقارنتها بقائمة المراقبة أو تتابع البث دون واجهة.</span><span class="en" lang="en">From the command line you can test names against a watchlist, or follow the stream without the interface.</span></p>
-      <pre dir="ltr"><code>npx github:SiteQ8/Tayyar check --watchlist watchlist.json examp1e-pay.test
+          <p data-reveal><span class="ar" lang="ar">ومن سطر الأوامر تجرّب الأسماء بمقارنتها بقائمة المراقبة أو تتابع البث دون واجهة.</span><span class="en" lang="en">From the command line you can test names against a watchlist, or follow the stream without the interface.</span></p>
+          <pre dir="ltr" data-reveal><code>npx github:SiteQ8/Tayyar check --watchlist watchlist.json examp1e-pay.test
 npx github:SiteQ8/Tayyar watch --watchlist watchlist.json --format json</code></pre>
+        </div>
+      </div>
     </section>
 
-    <section id="connect" class="block">
-      <h2><span class="ar" lang="ar">اربط أدواتك</span><span class="en" lang="en">Connect your tools</span></h2>
-      <p><span class="ar" lang="ar">كل مسار WebSocket يرسل رسائل JSON، فتبدأ بسطرين وتصلك التنبيهات على مسارها الخاص.</span><span class="en" lang="en">Every WebSocket path sends JSON messages, so two lines are enough to start, and alerts have a path of their own.</span></p>
-      <ul class="endpoints" dir="ltr">
-        <li><code>/</code> <span class="ar" lang="ar">الشهادات</span><span class="en" lang="en">certificates</span></li>
-        <li><code>/full-stream</code> <span class="ar" lang="ar">الشهادات مع بياناتها الكاملة</span><span class="en" lang="en">certificates with their DER bytes and chain</span></li>
-        <li><code>/domains-only</code> <span class="ar" lang="ar">الأسماء فقط</span><span class="en" lang="en">names only</span></li>
-        <li><code>/alerts</code> <span class="ar" lang="ar">التنبيهات</span><span class="en" lang="en">alerts</span></li>
+    <section class="connect section g-paper" id="connect" aria-labelledby="connect-title">
+      <div class="head-row grid wrap">
+        <h2 class="title" id="connect-title" data-reveal><span class="ar" lang="ar">اربط أدواتك</span><span class="en" lang="en">Connect your tools</span></h2>
+        <p data-reveal style="--i:1"><span class="ar" lang="ar">كل مسار WebSocket يرسل رسائل JSON، فتبدأ بسطرين وتصلك التنبيهات على مسارها الخاص.</span><span class="en" lang="en">Every WebSocket path sends JSON messages, so two lines are enough to start, and alerts have a path of their own.</span></p>
+      </div>
+      <ul class="rows">
+        <li data-reveal><code class="path">/</code><span class="what"><span class="ar" lang="ar">الشهادات دون بايتات DER والسلسلة</span><span class="en" lang="en">certificates, without the DER bytes or the chain</span><span class="kind">WebSocket</span></span></li>
+        <li data-reveal style="--i:1"><code class="path">/full-stream</code><span class="what"><span class="ar" lang="ar">الشهادات مع بايتات DER والسلسلة</span><span class="en" lang="en">certificates with their DER bytes and chain</span><span class="kind">WebSocket</span></span></li>
+        <li data-reveal style="--i:2"><code class="path">/domains-only</code><span class="what"><span class="ar" lang="ar">الأسماء فقط</span><span class="en" lang="en">names only</span><span class="kind">WebSocket</span></span></li>
+        <li data-reveal style="--i:3"><code class="path">/alerts</code><span class="what"><span class="ar" lang="ar">التنبيهات الجديدة وكل تغيير عليها</span><span class="en" lang="en">new alerts, and every change to them</span><span class="kind">WebSocket</span></span></li>
+        <li data-reveal style="--i:4"><code class="path">/metrics</code><span class="what"><span class="ar" lang="ar">الأرقام بصيغة نصية تقرؤها أنظمة المراقبة</span><span class="en" lang="en">the figures, in the Prometheus text format</span><span class="kind">HTTP</span></span></li>
       </ul>
-      <pre dir="ltr"><code>const ws = new WebSocket('ws://127.0.0.1:4000/alerts');
+      <pre dir="ltr" data-reveal><code>const ws = new WebSocket('ws://127.0.0.1:4000/alerts');
 ws.onmessage = (e) =&gt; console.log(JSON.parse(e.data));</code></pre>
     </section>
-    <section id="disclaimer" class="block">
-      <h2><span class="ar" lang="ar">إخلاء المسؤولية</span><span class="en" lang="en">Disclaimer</span></h2>
-      <p><span class="ar" lang="ar">يُشارَك تيّار ليبيّن كيف تعمل مراقبة شفافية الشهادات، لذا يُقدَّم كما هو دون أي ضمان، ولا يتحمل صاحبه أي مسؤولية عن طريقة استخدامه أو عن أي قرار يُتخذ بناءً على نتائجه.</span><span class="en" lang="en">Tayyar is shared to show how Certificate Transparency monitoring works. It comes as is, without warranty of any kind, and its author accepts no liability for how it is used or for any decision based on its output.</span></p>
-      <p><span class="ar" lang="ar">والتنبيهات تقديرات آلية، أي أن الاسم الذي يُنبَّه عليه ليس دليلاً على أن أحداً أخطأ، كما أن الاسم الذي لا يُنبَّه عليه ليس دليلاً على سلامته.</span><span class="en" lang="en">Alerts are automated guesses: a flagged name is not proof that anyone did anything wrong, and a name that is not flagged is not proof that it is safe.</span></p>
-      <p><span class="ar" lang="ar">وأسماء العلامات والنطاقات في شاشات التنبيهات وقائمة المراقبة متخيَّلة ومحجوزة للأمثلة، بينما يعرض البث الحي شهادات عامة من سجلات الشفافية، فلا يعني ظهور أي اسم ادعاءً على أحد ولا ارتباطاً به.</span><span class="en" lang="en">The brands and domains in the alert and watchlist screens are invented, using names reserved for examples, while the live stream shows public certificates from CT logs. No name shown implies a claim against anyone or any affiliation.</span></p>
-      <p><span class="ar" lang="ar">ثم إنك تشغّل تيّار على جهازك بنفسك، لذا تتحمل مسؤولية استخدامه واحترام سياسة الاستخدام لكل سجل يقرؤه.</span><span class="en" lang="en">You run Tayyar on your own machine, so how you use it, and respecting each log's usage policy, are up to you.</span></p>
+
+    <section class="terms section g-paper-2" id="disclaimer" aria-labelledby="terms-title">
+      <div class="grid wrap">
+        <h2 class="title" id="terms-title" data-reveal><span class="ar" lang="ar">إخلاء المسؤولية</span><span class="en" lang="en">Disclaimer</span></h2>
+        <div class="terms-list">
+          <p data-reveal><span class="ar" lang="ar">يُشارَك تيّار ليبيّن كيف تعمل مراقبة شفافية الشهادات، لذا يُقدَّم كما هو دون أي ضمان، ولا يتحمل صاحبه أي مسؤولية عن طريقة استخدامه أو عن أي قرار يُتخذ بناءً على نتائجه.</span><span class="en" lang="en">Tayyar is shared to show how Certificate Transparency monitoring works. It comes as is, without warranty of any kind, and its author accepts no liability for how it is used or for any decision based on its output.</span></p>
+          <p data-reveal style="--i:1"><span class="ar" lang="ar">والتنبيهات تقديرات آلية، أي أن الاسم الذي يُنبَّه عليه ليس دليلاً على أن أحداً أخطأ، كما أن الاسم الذي لا يُنبَّه عليه ليس دليلاً على سلامته.</span><span class="en" lang="en">Alerts are automated guesses: a flagged name is not proof that anyone did anything wrong, and a name that is not flagged is not proof that it is safe.</span></p>
+          <p data-reveal style="--i:2"><span class="ar" lang="ar">وأسماء العلامات والنطاقات في شاشات التنبيهات وقائمة المراقبة وفي أمثلة هذه الصفحة متخيَّلة ومحجوزة للأمثلة، بينما يعرض البث الحي شهادات عامة من سجلات الشفافية، فلا يعني ظهور أي اسم ادعاءً على أحد ولا ارتباطاً به.</span><span class="en" lang="en">The brands and domains in the alert and watchlist screens and in the examples on this page are invented, using names reserved for examples, while the live stream shows public certificates from CT logs. No name shown implies a claim against anyone or any affiliation.</span></p>
+          <p data-reveal style="--i:3"><span class="ar" lang="ar">ثم إنك تشغّل تيّار على جهازك بنفسك، لذا تتحمل مسؤولية استخدامه واحترام سياسة الاستخدام لكل سجل يقرؤه.</span><span class="en" lang="en">You run Tayyar on your own machine, so how you use it, and respecting each log's usage policy, are up to you.</span></p>
+        </div>
+      </div>
     </section>
   </main>
 
-  <footer class="foot">
-    <p><span class="ar" lang="ar">تيّار مفتوح المصدر بترخيص MIT، ويُقدَّم كما هو دون أي ضمان.</span><span class="en" lang="en">Tayyar is open source under the MIT license, shared as is and without warranty.</span> <a href="https://github.com/SiteQ8/Tayyar">github.com/SiteQ8/Tayyar</a></p>
+  <footer class="foot g-sea">
+    <div class="foot-top grid wrap">
+      <p><span class="ar" lang="ar">تيّار مفتوح المصدر بترخيص MIT، ويُقدَّم كما هو دون أي ضمان.</span><span class="en" lang="en">Tayyar is open source under the MIT license, shared as is and without warranty.</span></p>
+      <p><span class="ar" lang="ar">خطّا Readex Pro وGeologica بترخيص SIL Open Font License 1.1، ونص الترخيص بجانب كل خط.</span><span class="en" lang="en">Readex Pro and Geologica are under the SIL Open Font License 1.1, with the licence beside each font.</span> <a href="fonts/OFL.txt">Readex Pro</a> <a href="fonts/geologica-OFL.txt">Geologica</a></p>
+      <a class="up" href="#top"><span class="ar" lang="ar">إلى أعلى الصفحة</span><span class="en" lang="en">Back to the top</span></a>
+    </div>
+    <p class="foot-line"><a href="https://github.com/SiteQ8/Tayyar">github.com/SiteQ8/Tayyar</a></p>
+    <nav class="foot-meta wrap" aria-label="Tayyar">
+      <a href="#letters"><span class="ar" lang="ar">الحروف</span><span class="en" lang="en">Letters</span></a>
+      <a href="#reasons"><span class="ar" lang="ar">الأسباب</span><span class="en" lang="en">Reasons</span></a>
+      <a href="#how"><span class="ar" lang="ar">كيف يعمل</span><span class="en" lang="en">How it works</span></a>
+      <a href="#screens"><span class="ar" lang="ar">الشاشات</span><span class="en" lang="en">Screens</span></a>
+      <a href="#start"><span class="ar" lang="ar">التشغيل</span><span class="en" lang="en">Run it</span></a>
+      <a href="#disclaimer"><span class="ar" lang="ar">إخلاء المسؤولية</span><span class="en" lang="en">Disclaimer</span></a>
+    </nav>
   </footer>
 </body>
 </html>

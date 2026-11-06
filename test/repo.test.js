@@ -132,7 +132,7 @@ test('the Arabic typeface ships with its licence, in the interface and on the si
   }
 });
 
-test('the site is complete in both languages and loads nothing from elsewhere', () => {
+test('the site is complete in both languages and loads nothing from elsewhere', async () => {
   const html = read('docs/index.html');
   assert.equal(read('docs/CNAME').trim(), 'tayyar.3li.info');
   const pairs = [...html.matchAll(/<span class="ar" lang="ar">([^<]*)<\/span><span class="en" lang="en">([^<]*)<\/span>/g)];
@@ -154,5 +154,59 @@ test('the site is complete in both languages and loads nothing from elsewhere', 
     if (/^https:\/\/(github\.com\/SiteQ8\/Tayyar|tayyar\.3li\.info\/)/.test(ref)) continue;
     assert.ok(!/^[a-z]+:/.test(ref), `${ref} would load from elsewhere`);
     assert.ok(statSync(join(root, 'docs', ref)).isFile(), `${ref} is missing`);
+  }
+
+  // Every typeface the site serves sits beside its licence.
+  for (const f of readdirSync(join(root, 'docs/fonts')).filter((n) => n.endsWith('.woff2'))) {
+    const licence = f.startsWith('readex-pro') ? 'OFL.txt' : `${f.split('-')[0]}-OFL.txt`;
+    assert.match(read(`docs/fonts/${licence}`), /SIL OPEN FONT LICENSE/i, `${f} has no licence beside it`);
+  }
+
+  // The language is still remembered under the same key.
+  const script = read('docs/site.js');
+  assert.ok(script.includes("'tayyar-site-lang'"));
+
+  // The page's name check is the product's own: run the site's copy in a bare
+  // context and compare it with src/detect.js behind the interface's hostFrom.
+  const { createContext, runInContext } = await import('node:vm');
+  const { compileWatchlist, detectDomain } = await import('../src/detect.js');
+  const { hostFrom } = await import('../src/api.js');
+  const sandbox = {
+    URL,
+    document: { documentElement: { classList: { add() {} } }, addEventListener() {} },
+    navigator: { language: 'ar' },
+    localStorage: { getItem: () => null, setItem() {} },
+  };
+  createContext(sandbox);
+  runInContext(script, sandbox);
+  const site = sandbox.tayyarCheck;
+  const watchlist = compileWatchlist(site.sample);
+  const names = [...html.matchAll(/data-name="([^"]+)"/g)].map((m) => m[1]);
+  const rows = [...html.matchAll(/<tr class="row" data-reason="([\w-]+)"[\s\S]*?<bdi class="name" dir="ltr">([\s\S]*?)<\/bdi>/g)]
+    .map((m) => ({ reason: m[1], name: m[2].replace(/<[^>]+>/g, '').replace(/&amp;/g, '&') }));
+  assert.ok(names.length >= 4 && rows.length === 10, 'the sample names and the ten reasons are on the page');
+  const extra = ['Example.COM.verify-account.test', 'https://example.com.verify-account.test/login?next=1', '*.examp1e.test', 'exarnple.test',
+    'xn--mgbh0fb.test', 'مِثال.test', 'example.com', 'login.example.net', 'ｅｘａｍｐｌｅ.test', 'exmaple-support.test', 'example-com-login.test', 'nothing.test', 'a b'];
+  for (const name of [...names, ...rows.map((r) => r.name).filter((n) => !n.startsWith('\\')), ...extra]) {
+    const host = hostFrom(name);
+    const want = host ? JSON.stringify(detectDomain(host, watchlist)) : '[]';
+    const got = site.check(name);
+    assert.equal(got.domain, host, `the site reads ${name} as Tayyar does`);
+    assert.equal(JSON.stringify(got.findings), want, `the site checks ${name} as Tayyar does`);
+  }
+
+  // Each example in the reasons table is caught for the reason beside it, and every example
+  // name is one reserved for examples.
+  for (const { reason, name } of rows) {
+    if (reason === 'pattern') {
+      const pattern = compileWatchlist([{ id: 'p', kind: 'pattern', name: 'p', pattern: name, severity: 'low' }]);
+      assert.ok(detectDomain('shop.example', pattern).length, `${name} is a pattern Tayyar accepts`);
+      continue;
+    }
+    const reasons = detectDomain(hostFrom(name), watchlist).flatMap((f) => f.reasons);
+    assert.ok(reasons.includes(reason), `${name} shows the reason ${reason}`);
+  }
+  for (const name of [...names, ...rows.map((r) => r.name)]) {
+    assert.match(name, /(\.test|\\\.example\$)$/, `${name} is not a name reserved for examples`);
   }
 });
