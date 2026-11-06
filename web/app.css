@@ -807,6 +807,7 @@ html[dir="rtl"] .row .issuer, html[dir="rtl"] .row .log { text-align: right; }
   .conn[data-state="retry"] #status { position: absolute; inset-inline: 0; top: 100%; height: var(--strip-h); padding: var(--sp-1) var(--gutter); line-height: var(--lh-arabic); background: var(--surface); border-bottom: var(--hairline) solid var(--rule); color: var(--text); text-align: center; }
   /* The page moves down by the strip, so it covers no heading. */
   body:has(.conn[data-state="retry"]) main { padding-top: calc(var(--sp-4) + var(--strip-h)); }
+  html:has(.conn[data-state="retry"]) { scroll-padding-top: calc(var(--bar-h) + var(--strip-h) + var(--sp-4)); }
   .meter { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .figure { padding: var(--sp-3) var(--sp-4); gap: 0; }
   .spark { height: var(--spark-h-sm); margin-top: var(--sp-1); }
